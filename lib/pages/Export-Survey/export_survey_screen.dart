@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:survey_stunting/consts/colors.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:get/get.dart';
+import 'package:survey_stunting/controllers/export_survey_controller.dart';
 
 class ExportSurveyScreen extends StatelessWidget {
-  const ExportSurveyScreen({Key? key}) : super(key: key);
+  ExportSurveyScreen({Key? key}) : super(key: key);
+  final surveyController = Get.find<ExportSurveyController>();
+
+  static const surveyType = ["Pre", "Post"];
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
@@ -13,15 +19,41 @@ class ExportSurveyScreen extends StatelessWidget {
         children: [
           Text(
             "Export Survey",
-            style: Theme.of(context)
-                .textTheme
-                .headline5!
-                .copyWith(fontWeight: FontWeight.w700, color: kTextColor),
+            style: Theme.of(context).textTheme.headline5!.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
           ),
           // const Text(
           //   "Memorandum Of Agreement",
           //   style: TextStyle(fontSize: 14, color: kHintColor),
           // )
+          SizedBox(height: size.height * 0.04),
+          TypeAheadField(
+            textFieldConfiguration: TextFieldConfiguration(
+              decoration: InputDecoration(
+                hintText: "Pilih tipe survey",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide:
+                      BorderSide(color: Theme.of(context).secondaryHeaderColor),
+                ),
+              ),
+              controller: surveyController.tipeSurvey,
+            ),
+            suggestionsCallback: (pattern) => surveyType.where((element) =>
+                element.toLowerCase().contains(pattern.toLowerCase())),
+            itemBuilder: (_, String suggestion) => ListTile(
+              title: Text(suggestion),
+            ),
+            getImmediateSuggestions: true,
+            onSuggestionSelected: (String suggestion) {
+              surveyController.tipeSurvey.text = suggestion;
+            },
+            noItemsFoundBuilder: (context) => const Padding(
+              padding: EdgeInsets.all(8),
+              child: Text("Item tidak ditemukan"),
+            ),
+          ),
         ],
       ),
     );

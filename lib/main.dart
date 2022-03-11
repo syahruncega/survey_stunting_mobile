@@ -1,7 +1,7 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:survey_stunting/consts/colors.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:survey_stunting/pages/Login/login_screen.dart';
 import 'package:survey_stunting/routes/app_page.dart';
@@ -19,13 +19,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Survey Stunting',
-      theme: ThemeData(
-        primarySwatch: Colors.lightBlue,
+      theme: FlexThemeData.light(
+        scheme: FlexScheme.ebonyClay,
         fontFamily: GoogleFonts.inter().fontFamily,
-        textTheme: const TextTheme(
-          bodyText2: TextStyle(color: kTextColor),
-        ),
       ),
+      darkTheme: FlexThemeData.dark(scheme: FlexScheme.ebonyClay),
+      themeMode: ThemeMode.light,
       home: const LoginScreen(),
       initialRoute: RouteName.login,
       getPages: AppPage.pages,

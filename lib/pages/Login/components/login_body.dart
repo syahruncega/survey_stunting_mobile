@@ -37,7 +37,6 @@ class LoginBody extends StatelessWidget {
                       style: GoogleFonts.kodchasan(
                         fontWeight: FontWeight.w700,
                         fontSize: 22,
-                        color: kTextColor,
                       ),
                     ),
                   ),
@@ -48,7 +47,6 @@ class LoginBody extends StatelessWidget {
                     "Username",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: kTextColor,
                     ),
                   ),
                   SizedBox(height: size.height * 0.01),
@@ -62,7 +60,6 @@ class LoginBody extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: SvgPicture.asset(
                           "assets/icons/bold/sms.svg",
-                          color: kPrimaryColor,
                         ),
                       ),
                       suffixIconConstraints: const BoxConstraints(
@@ -70,13 +67,14 @@ class LoginBody extends StatelessWidget {
                         minWidth: 12,
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+                            color: Theme.of(context).secondaryHeaderColor),
                       ),
                       filled: true,
-                      fillColor: Colors.grey.shade300,
+                      fillColor: Theme.of(context).hintColor.withAlpha(20),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                     ),
                   ),
@@ -85,7 +83,6 @@ class LoginBody extends StatelessWidget {
                     "Password",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: kTextColor,
                     ),
                   ),
                   SizedBox(height: size.height * 0.01),
@@ -99,7 +96,6 @@ class LoginBody extends StatelessWidget {
                       suffixIcon: IconButton(
                         icon: SvgPicture.asset(
                           "assets/icons/bold/eye.svg",
-                          color: kPrimaryColor,
                         ),
                         onPressed: () {},
                       ),
@@ -108,13 +104,14 @@ class LoginBody extends StatelessWidget {
                         minWidth: 12,
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+                            color: Theme.of(context).secondaryHeaderColor),
                       ),
                       filled: true,
-                      fillColor: Colors.grey.shade300,
+                      fillColor: Theme.of(context).hintColor.withAlpha(20),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                     ),
                   ),
@@ -125,18 +122,18 @@ class LoginBody extends StatelessWidget {
                         Get.toNamed(RouteName.layout);
                       },
                       style: ElevatedButton.styleFrom(
-                          primary: kPrimaryColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          shadowColor: Colors.lightBlue.shade400,
+                          shadowColor: Theme.of(context).primaryColor,
                           elevation: 8,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 40, vertical: 14)),
                       child: const Text(
                         "Login",
                         style: TextStyle(
-                            fontWeight: FontWeight.w600, color: kTextColor),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   )

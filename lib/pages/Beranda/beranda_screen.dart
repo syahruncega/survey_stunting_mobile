@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:survey_stunting/consts/colors.dart';
 
 class BerandaScreen extends StatelessWidget {
   const BerandaScreen({Key? key}) : super(key: key);
@@ -13,10 +12,9 @@ class BerandaScreen extends StatelessWidget {
         children: [
           Text(
             "Beranda",
-            style: Theme.of(context)
-                .textTheme
-                .headline5!
-                .copyWith(fontWeight: FontWeight.w700, color: kTextColor),
+            style: Theme.of(context).textTheme.headline5!.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
           ),
           // const Text(
           //   "Memorandum Of Agreement",

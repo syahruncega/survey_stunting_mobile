@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:survey_stunting/consts/colors.dart';
 import 'package:survey_stunting/controllers/layout_controller.dart';
 import 'package:survey_stunting/pages/Beranda/beranda_screen.dart';
 import 'package:survey_stunting/pages/Export-Survey/export_survey_screen.dart';
@@ -24,7 +23,7 @@ class Layout extends StatelessWidget {
               onPressed: () {},
               icon: SvgPicture.asset(
                 "assets/icons/outline/menu.svg",
-                color: kTextColor,
+                color: Theme.of(context).primaryColorLight,
               ),
             ),
             // title: Text(
@@ -35,11 +34,11 @@ class Layout extends StatelessWidget {
           body: SafeArea(
             child: IndexedStack(
               index: controller.tabIndex,
-              children: const [
-                BerandaScreen(),
-                SurveyScreen(),
+              children: [
+                const BerandaScreen(),
+                const SurveyScreen(),
                 ExportSurveyScreen(),
-                ProfilScreen(),
+                const ProfilScreen(),
               ],
             ),
           ),
@@ -47,53 +46,52 @@ class Layout extends StatelessWidget {
             onTap: controller.changeTabIndex,
             currentIndex: controller.tabIndex,
             type: BottomNavigationBarType.fixed,
-            showUnselectedLabels: false,
-            showSelectedLabels: false,
-            backgroundColor: Colors.white,
+            // showUnselectedLabels: false,
+            // showSelectedLabels: false,
             elevation: 20,
             items: [
               BottomNavigationBarItem(
                 label: 'Beranda',
                 icon: SvgPicture.asset(
                   "assets/icons/outline/home.svg",
-                  color: kHintColor,
+                  color: Theme.of(context).hintColor.withAlpha(100),
                 ),
                 activeIcon: SvgPicture.asset(
                   "assets/icons/bold/home.svg",
-                  color: kPrimaryColor,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
               BottomNavigationBarItem(
                 label: 'Survey',
                 icon: SvgPicture.asset(
                   "assets/icons/outline/note.svg",
-                  color: kHintColor,
+                  color: Theme.of(context).hintColor.withAlpha(100),
                 ),
                 activeIcon: SvgPicture.asset(
                   "assets/icons/bold/note.svg",
-                  color: kPrimaryColor,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
               BottomNavigationBarItem(
-                label: 'Export Survey',
+                label: 'Export',
                 icon: SvgPicture.asset(
                   "assets/icons/outline/document-download.svg",
-                  color: kHintColor,
+                  color: Theme.of(context).hintColor.withAlpha(100),
                 ),
                 activeIcon: SvgPicture.asset(
                   "assets/icons/bold/document-download.svg",
-                  color: kPrimaryColor,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
               BottomNavigationBarItem(
-                label: 'Profile',
+                label: 'Profil',
                 icon: SvgPicture.asset(
                   "assets/icons/outline/frame.svg",
-                  color: kHintColor,
+                  color: Theme.of(context).hintColor.withAlpha(100),
                 ),
                 activeIcon: SvgPicture.asset(
                   "assets/icons/bold/frame.svg",
-                  color: kPrimaryColor,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
             ],

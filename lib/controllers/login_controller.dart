@@ -26,14 +26,14 @@ class LoginController extends GetxController {
     return true;
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  // }
 
-  @override
-  onClose() {
-    usernameNode.dispose();
-    super.onClose();
-  }
+  // @override
+  // onClose() {
+  //   usernameNode.dispose();
+  //   super.onClose();
+  // }
 }
