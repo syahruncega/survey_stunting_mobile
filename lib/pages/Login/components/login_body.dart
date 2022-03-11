@@ -119,7 +119,7 @@ class LoginBody extends StatelessWidget {
                   Center(
                     child: ElevatedButton(
                       onPressed: () {
-                        Get.toNamed(RouteName.layout);
+                        Get.offAllNamed(RouteName.layout);
                       },
                       style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(

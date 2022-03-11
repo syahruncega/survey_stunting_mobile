@@ -39,6 +39,7 @@ dependencies:
   flutter_hooks: ^0.18.2+1
   flutter_svg: ^1.0.3
   flutter_typeahead: ^3.2.4
+  fluttertoast: ^8.0.9
   get: ^4.6.1
   google_fonts: ^2.3.1
   shared_preferences: ^2.0.13

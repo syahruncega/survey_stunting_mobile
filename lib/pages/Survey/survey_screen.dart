@@ -21,7 +21,7 @@ class SurveyScreen extends StatelessWidget {
                 ),
           ),
           SizedBox(
-            height: size.height * 0.03,
+            height: size.height * 0.04,
           ),
           Row(
             children: [
