@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:survey_stunting/controllers/layout_controller.dart';
@@ -20,11 +21,16 @@ class Layout extends StatelessWidget {
             backgroundColor: Colors.transparent,
             elevation: 0,
             leading: IconButton(
-              onPressed: () {},
+              onPressed: controller.openDrawer,
               icon: SvgPicture.asset(
                 "assets/icons/outline/menu.svg",
                 color: Theme.of(context).primaryColorLight,
               ),
+            ),
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              // statusBarColor: Theme.of(context).primaryColor,
+              statusBarIconBrightness: Brightness.dark,
+              statusBarBrightness: Brightness.light,
             ),
             // title: Text(
             //   "Dahboard",
@@ -45,6 +51,7 @@ class Layout extends StatelessWidget {
               ),
             ),
           ),
+          drawer: const Drawer(),
           bottomNavigationBar: BottomNavigationBar(
             onTap: controller.changeTabIndex,
             currentIndex: controller.tabIndex,

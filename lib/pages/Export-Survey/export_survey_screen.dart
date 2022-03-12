@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:survey_stunting/components/filled_autocomplete.dart';
 import 'package:survey_stunting/controllers/export_survey_controller.dart';
@@ -30,6 +31,22 @@ class ExportSurveyScreen extends StatelessWidget {
             controller: exportSurveyController.jenisSurvey,
             hintText: "Pilih jenis survey",
             items: const ["Pre", "Post"],
+          ),
+          ElevatedButton.icon(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            icon: SvgPicture.asset("assets/icons/outline/import.svg",
+                color: Theme.of(context).backgroundColor),
+            label: const Text(
+              "Export",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           )
         ],
       ),

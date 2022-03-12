@@ -33,6 +33,14 @@ class LayoutController extends GetxController {
     update();
   }
 
+  void openDrawer() {
+    scaffoldKey.currentState?.openDrawer();
+  }
+
+  void closeDrawer() {
+    scaffoldKey.currentState?.openEndDrawer();
+  }
+
   @override
   void onInit() {
     Future.delayed(const Duration(milliseconds: 1500), () {

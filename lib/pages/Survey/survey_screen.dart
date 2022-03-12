@@ -86,8 +86,24 @@ class SurveyScreen extends StatelessWidget {
                     ),
                   );
                 },
-              )
+              ),
             ],
+          ),
+          ElevatedButton.icon(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            icon: SvgPicture.asset("assets/icons/outline/add-square.svg",
+                color: Theme.of(context).backgroundColor),
+            label: const Text(
+              "Tambah",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),

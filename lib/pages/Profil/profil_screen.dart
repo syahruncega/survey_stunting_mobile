@@ -38,7 +38,7 @@ class ProfilScreen extends StatelessWidget {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             title: const Text("Profil"),
             subtitle: const Text("Update informasi profil"),
-            onTap: () {},
+            onTap: () => Get.toNamed(RouteName.ubahProfil),
             dense: true,
             trailing: SvgPicture.asset(
               "assets/icons/outline/arrow-right.svg",
@@ -57,8 +57,8 @@ class ProfilScreen extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             title: const Text("Username & Password"),
-            subtitle: const Text("Ganti username atau password"),
-            onTap: () {},
+            subtitle: const Text("Ubah username atau password"),
+            onTap: () => Get.toNamed(RouteName.ubahAkun),
             dense: true,
             trailing: SvgPicture.asset(
               "assets/icons/outline/arrow-right.svg",
