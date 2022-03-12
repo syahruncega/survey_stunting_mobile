@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:survey_stunting/routes/route_name.dart';
 
 class ProfilScreen extends StatelessWidget {
   const ProfilScreen({Key? key}) : super(key: key);
@@ -24,9 +26,13 @@ class ProfilScreen extends StatelessWidget {
           ),
           SizedBox(height: size.height * 0.04),
           ListTile(
-            leading: SvgPicture.asset(
-              "assets/icons/bold/frame.svg",
-              height: 26,
+            leading: Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: SvgPicture.asset(
+                "assets/icons/bold/frame.svg",
+                height: 26,
+                color: Theme.of(context).textTheme.bodyText1!.color,
+              ),
             ),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -34,12 +40,19 @@ class ProfilScreen extends StatelessWidget {
             subtitle: const Text("Update informasi profil"),
             onTap: () {},
             dense: true,
-            trailing: SvgPicture.asset("assets/icons/outline/arrow-right.svg"),
+            trailing: SvgPicture.asset(
+              "assets/icons/outline/arrow-right.svg",
+              color: Theme.of(context).textTheme.bodyText1!.color,
+            ),
           ),
           ListTile(
-            leading: SvgPicture.asset(
-              "assets/icons/bold/lock.svg",
-              height: 26,
+            leading: Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: SvgPicture.asset(
+                "assets/icons/bold/lock.svg",
+                height: 26,
+                color: Theme.of(context).textTheme.bodyText1!.color,
+              ),
             ),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -47,19 +60,34 @@ class ProfilScreen extends StatelessWidget {
             subtitle: const Text("Ganti username atau password"),
             onTap: () {},
             dense: true,
-            trailing: SvgPicture.asset("assets/icons/outline/arrow-right.svg"),
+            trailing: SvgPicture.asset(
+              "assets/icons/outline/arrow-right.svg",
+              color: Theme.of(context).textTheme.bodyText1!.color,
+            ),
           ),
           ListTile(
-            leading: SvgPicture.asset(
-              "assets/icons/bold/logout.svg",
-              height: 26,
+            leading: Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: SvgPicture.asset(
+                "assets/icons/bold/logout.svg",
+                height: 26,
+                color: Theme.of(context).errorColor,
+              ),
             ),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             title: const Text("Logout"),
-            onTap: () {},
+            subtitle: const Text("Keluar dari akun anda"),
+            onTap: () {
+              Get.defaultDialog(
+                onConfirm: () => Get.offAllNamed(RouteName.login),
+                title: "Logout",
+                middleText: "Anda yakin akan logout?",
+                buttonColor: Theme.of(context).errorColor,
+                textConfirm: "Logout",
+              );
+            },
             dense: true,
-            trailing: SvgPicture.asset("assets/icons/outline/arrow-right.svg"),
           )
         ],
       ),

@@ -14,7 +14,7 @@ class AppPage {
     ),
     GetPage(
       name: RouteName.layout,
-      page: () => Layout(),
+      page: () => const Layout(),
       binding: LayoutBinding(),
     ),
   ];

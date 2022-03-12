@@ -51,7 +51,6 @@ class LoginBody extends StatelessWidget {
                   ),
                   SizedBox(height: size.height * 0.01),
                   TextFormField(
-                    autofocus: true,
                     decoration: InputDecoration(
                       hintText: "Username",
                       hintStyle: const TextStyle(color: kHintColor),
@@ -87,8 +86,6 @@ class LoginBody extends StatelessWidget {
                   ),
                   SizedBox(height: size.height * 0.01),
                   TextFormField(
-                    // focusNode: loginController.usernameNode,
-                    autofocus: true,
                     decoration: InputDecoration(
                       hintText: "Password",
                       hintStyle: const TextStyle(color: kHintColor),
