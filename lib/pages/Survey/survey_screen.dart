@@ -28,6 +28,7 @@ class SurveyScreen extends StatelessWidget {
             height: size.height * 0.04,
           ),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Flexible(
                 child: FilledTextField(
@@ -69,7 +70,7 @@ class SurveyScreen extends StatelessWidget {
                           controller: surveyController.jenisSurvey,
                           items: const ["Semua", "Pre", "Post"],
                         ),
-                        SizedBox(height: size.height * 0.03),
+                        SizedBox(height: size.height * 0.01),
                         const Text(
                           "Status Survey",
                           style: TextStyle(

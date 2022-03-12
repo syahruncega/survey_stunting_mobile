@@ -21,7 +21,7 @@ class ProfilScreen extends StatelessWidget {
                 ),
           ),
           Text(
-            "Update profil, username dan password anda.",
+            "Update profil, akun (nama pengguna & kata sandi) anda",
             style: TextStyle(fontSize: 14, color: Theme.of(context).hintColor),
           ),
           SizedBox(height: size.height * 0.04),
@@ -56,8 +56,8 @@ class ProfilScreen extends StatelessWidget {
             ),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            title: const Text("Username & Password"),
-            subtitle: const Text("Ubah username atau password"),
+            title: const Text("Akun"),
+            subtitle: const Text("Ubah informasi akun"),
             onTap: () => Get.toNamed(RouteName.ubahAkun),
             dense: true,
             trailing: SvgPicture.asset(

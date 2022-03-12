@@ -28,55 +28,58 @@ class UbahAkunScreen extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Ubah Akun",
-                style: Theme.of(context).textTheme.headline5!.copyWith(
-                      fontWeight: FontWeight.w700,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Ubah Akun",
+                  style: Theme.of(context).textTheme.headline5!.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+                SizedBox(
+                  height: size.height * 0.04,
+                ),
+                const FilledTextField(
+                  title: "Nama Pengguna",
+                  textInputAction: TextInputAction.next,
+                ),
+                const FilledTextField(
+                  title: "Kata Sandi",
+                  obsecureText: true,
+                  textInputAction: TextInputAction.next,
+                  helperText:
+                      "Biarkan kosong apabila tidak ingin mengubah kata sandi.",
+                ),
+                const FilledTextField(
+                  title: "Konfirmasi Kata Sandi",
+                  obsecureText: true,
+                  textInputAction: TextInputAction.done,
+                  helperText:
+                      "Biarkan kosong apabila tidak ingin mengubah kata sandi.",
+                ),
+                Center(
+                  child: ElevatedButton.icon(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-              ),
-              SizedBox(
-                height: size.height * 0.04,
-              ),
-              const FilledTextField(
-                title: "Nama Pengguna",
-                textInputAction: TextInputAction.next,
-              ),
-              const FilledTextField(
-                title: "Kata Sandi",
-                obsecureText: true,
-                textInputAction: TextInputAction.next,
-                helperText:
-                    "Biarkan kosong apabila tidak ingin mengubah kata sandi.",
-              ),
-              const FilledTextField(
-                title: "Konfirmasi Kata Sandi",
-                obsecureText: true,
-                textInputAction: TextInputAction.done,
-                helperText:
-                    "Biarkan kosong apabila tidak ingin mengubah kata sandi.",
-              ),
-              Center(
-                child: ElevatedButton.icon(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  icon: SvgPicture.asset("assets/icons/outline/tick-square.svg",
-                      color: Theme.of(context).backgroundColor),
-                  label: const Text(
-                    "Simpan",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                    icon: SvgPicture.asset(
+                        "assets/icons/outline/tick-square.svg",
+                        color: Theme.of(context).backgroundColor),
+                    label: const Text(
+                      "Simpan",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
