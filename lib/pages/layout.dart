@@ -55,6 +55,8 @@ class Layout extends StatelessWidget {
           bottomNavigationBar: BottomNavigationBar(
             onTap: controller.changeTabIndex,
             currentIndex: controller.tabIndex,
+            selectedItemColor: Theme.of(context).colorScheme.primary,
+            unselectedItemColor: Theme.of(context).hintColor.withAlpha(150),
             type: BottomNavigationBarType.fixed,
             // showUnselectedLabels: false,
             // showSelectedLabels: false,
@@ -64,44 +66,44 @@ class Layout extends StatelessWidget {
                 label: 'Beranda',
                 icon: SvgPicture.asset(
                   "assets/icons/outline/home.svg",
-                  color: Theme.of(context).hintColor.withAlpha(100),
+                  color: Theme.of(context).hintColor.withAlpha(150),
                 ),
                 activeIcon: SvgPicture.asset(
                   "assets/icons/bold/home.svg",
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               BottomNavigationBarItem(
                 label: 'Survey',
                 icon: SvgPicture.asset(
                   "assets/icons/outline/note.svg",
-                  color: Theme.of(context).hintColor.withAlpha(100),
+                  color: Theme.of(context).hintColor.withAlpha(150),
                 ),
                 activeIcon: SvgPicture.asset(
                   "assets/icons/bold/note.svg",
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               BottomNavigationBarItem(
                 label: 'Export',
                 icon: SvgPicture.asset(
                   "assets/icons/outline/document-download.svg",
-                  color: Theme.of(context).hintColor.withAlpha(100),
+                  color: Theme.of(context).hintColor.withAlpha(150),
                 ),
                 activeIcon: SvgPicture.asset(
                   "assets/icons/bold/document-download.svg",
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               BottomNavigationBarItem(
                 label: 'Profil',
                 icon: SvgPicture.asset(
                   "assets/icons/outline/frame.svg",
-                  color: Theme.of(context).hintColor.withAlpha(100),
+                  color: Theme.of(context).hintColor.withAlpha(150),
                 ),
                 activeIcon: SvgPicture.asset(
                   "assets/icons/bold/frame.svg",
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
             ],

@@ -1,4 +1,3 @@
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,23 +15,31 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  final FlexSchemeColor _myFlexScheme = const FlexSchemeColor(
-    primary: primaryColor,
-    primaryVariant: primaryVariant,
-    secondary: secondary,
-    secondaryVariant: secondaryVariant,
-  );
-
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Survey Stunting',
-      theme: FlexThemeData.light(
-        colors: _myFlexScheme,
+      theme: ThemeData(
+        useMaterial3: true,
+        primaryColor: primaryColor,
+        hintColor: hintColor,
         fontFamily: GoogleFonts.inter().fontFamily,
+        inputDecorationTheme:
+            const InputDecorationTheme(fillColor: Colors.white),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: primaryColor,
+          brightness: Brightness.light,
+          primary: primaryColor,
+          secondary: secondary,
+        ),
         textTheme: const TextTheme(
-          button: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          bodyText1: TextStyle(color: textColor),
+          button: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+          bodyText1: TextStyle(
+            color: textColor,
+          ),
           headline1: TextStyle(
             color: textColor,
             fontSize: 26,
@@ -45,13 +52,38 @@ class MyApp extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        scaffoldBackground: scaffoldBackground,
+        scaffoldBackgroundColor: scaffoldBackground,
       ),
-      darkTheme: FlexThemeData.dark(
-        colors: _myFlexScheme.toDark(),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        primaryColor: primaryColor,
+        hintColor: hintColor,
+        inputDecorationTheme: const InputDecorationTheme(
+          fillColor: Color.fromARGB(255, 30, 35, 53),
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Color.fromARGB(255, 30, 35, 53),
+        ),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: primaryColor,
+          brightness: Brightness.dark,
+          primary: primaryColor,
+          secondary: secondary,
+        ),
         fontFamily: GoogleFonts.inter().fontFamily,
         textTheme: const TextTheme(
-          button: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          button: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+          bodyText1: TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+          ),
+          bodyText2: TextStyle(
+            color: hintColor,
+            fontSize: 12,
+          ),
           headline1: TextStyle(
             color: Colors.white,
             fontSize: 26,
@@ -64,7 +96,7 @@ class MyApp extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        scaffoldBackground: scaffoldBackgroundDark,
+        scaffoldBackgroundColor: scaffoldBackgroundDark,
       ),
       themeMode: ThemeMode.light,
       home: const LoginScreen(),

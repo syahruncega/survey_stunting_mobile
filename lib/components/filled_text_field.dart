@@ -52,8 +52,7 @@ class FilledTextField extends StatelessWidget {
             hintText: hintText,
             helperText: helperText,
             helperMaxLines: 2,
-            hintStyle:
-                TextStyle(color: Theme.of(context).hintColor.withAlpha(75)),
+            hintStyle: TextStyle(color: Theme.of(context).hintColor),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 12,
@@ -71,9 +70,7 @@ class FilledTextField extends StatelessWidget {
               ),
             ),
             filled: true,
-            fillColor: Theme.of(context)
-                .colorScheme
-                .background, // fillColor: Colors.grey.shade300,
+            // fillColor: Colors.grey.shade300,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
             ),

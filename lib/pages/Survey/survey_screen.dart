@@ -33,7 +33,7 @@ class SurveyScreen extends StatelessWidget {
                   hintText: "Cari...",
                   prefixIcon: SvgPicture.asset(
                     "assets/icons/outline/search-2.svg",
-                    color: Theme.of(context).hintColor.withAlpha(75),
+                    color: Theme.of(context).hintColor,
                     height: 22,
                   ),
                 ),
@@ -49,6 +49,8 @@ class SurveyScreen extends StatelessWidget {
                 onTap: () {
                   Get.defaultDialog(
                     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    buttonColor: Theme.of(context).colorScheme.secondary,
+                    confirmTextColor: Colors.white,
                     title: "Filter",
                     onConfirm: () {},
                     onCancel: () {},

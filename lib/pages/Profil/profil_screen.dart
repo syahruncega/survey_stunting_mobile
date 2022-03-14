@@ -35,7 +35,9 @@ class ProfilScreen extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             title: const Text("Profil"),
-            subtitle: const Text("Update informasi profil"),
+            subtitle: const Text(
+              "Update informasi profil",
+            ),
             onTap: () => Get.toNamed(RouteName.ubahProfil),
             dense: true,
             trailing: SvgPicture.asset(
@@ -79,6 +81,7 @@ class ProfilScreen extends StatelessWidget {
             onTap: () {
               Get.defaultDialog(
                 onConfirm: () => Get.offAllNamed(RouteName.login),
+                confirmTextColor: Colors.white,
                 title: "Logout",
                 middleText: "Anda yakin akan logout?",
                 buttonColor: Theme.of(context).errorColor,

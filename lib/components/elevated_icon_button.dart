@@ -13,7 +13,7 @@ class ElevatedIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       borderRadius: BorderRadius.circular(14),
-      color: Theme.of(context).primaryColor,
+      color: Theme.of(context).colorScheme.primary,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),

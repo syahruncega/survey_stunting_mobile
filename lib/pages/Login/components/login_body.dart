@@ -73,7 +73,6 @@ class LoginBody extends StatelessWidget {
                         ),
                       ),
                       filled: true,
-                      fillColor: Theme.of(context).colorScheme.background,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -110,7 +109,6 @@ class LoginBody extends StatelessWidget {
                         ),
                       ),
                       filled: true,
-                      fillColor: Theme.of(context).colorScheme.background,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -126,7 +124,7 @@ class LoginBody extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          shadowColor: Theme.of(context).primaryColor,
+                          shadowColor: Theme.of(context).colorScheme.primary,
                           elevation: 8,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 40, vertical: 14)),

@@ -35,7 +35,6 @@ class FilledAutocomplete extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: hintText,
                 filled: true,
-                fillColor: Theme.of(context).colorScheme.background,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                 ),
