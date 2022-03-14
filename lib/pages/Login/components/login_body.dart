@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:survey_stunting/consts/colors.dart';
 import 'package:survey_stunting/controllers/login_controller.dart';
 import 'package:survey_stunting/routes/route_name.dart';
 
@@ -37,28 +36,30 @@ class LoginBody extends StatelessWidget {
                       style: GoogleFonts.kodchasan(
                         fontWeight: FontWeight.w700,
                         fontSize: 22,
+                        color: Theme.of(context).textTheme.bodyText1!.color,
                       ),
                     ),
                   ),
                   SizedBox(
                     height: size.height * 0.03,
                   ),
-                  const Text(
+                  Text(
                     "Username",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.headline3,
                   ),
                   SizedBox(height: size.height * 0.01),
                   TextFormField(
                     decoration: InputDecoration(
                       hintText: "Username",
-                      hintStyle: const TextStyle(color: kHintColor),
+                      hintStyle: TextStyle(
+                        color: Theme.of(context).hintColor.withAlpha(75),
+                      ),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                       suffixIcon: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: SvgPicture.asset(
                           "assets/icons/bold/sms.svg",
+                          color: Theme.of(context).primaryColor.withAlpha(125),
                         ),
                       ),
                       suffixIconConstraints: const BoxConstraints(
@@ -68,31 +69,33 @@ class LoginBody extends StatelessWidget {
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                         borderSide: BorderSide(
-                            color: Theme.of(context).secondaryHeaderColor),
+                          color: Theme.of(context).primaryColor.withAlpha(0),
+                        ),
                       ),
                       filled: true,
-                      fillColor: Theme.of(context).hintColor.withAlpha(20),
+                      fillColor: Theme.of(context).colorScheme.background,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
                   ),
                   SizedBox(height: size.height * 0.02),
-                  const Text(
+                  Text(
                     "Password",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.headline3,
                   ),
                   SizedBox(height: size.height * 0.01),
                   TextFormField(
                     decoration: InputDecoration(
                       hintText: "Password",
-                      hintStyle: const TextStyle(color: kHintColor),
+                      hintStyle: TextStyle(
+                        color: Theme.of(context).hintColor.withAlpha(75),
+                      ),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                       suffixIcon: IconButton(
                         icon: SvgPicture.asset(
                           "assets/icons/bold/eye.svg",
+                          color: Theme.of(context).primaryColor.withAlpha(125),
                         ),
                         onPressed: () {},
                       ),
@@ -103,10 +106,11 @@ class LoginBody extends StatelessWidget {
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                         borderSide: BorderSide(
-                            color: Theme.of(context).secondaryHeaderColor),
+                          color: Theme.of(context).primaryColor.withAlpha(0),
+                        ),
                       ),
                       filled: true,
-                      fillColor: Theme.of(context).hintColor.withAlpha(20),
+                      fillColor: Theme.of(context).colorScheme.background,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -126,11 +130,9 @@ class LoginBody extends StatelessWidget {
                           elevation: 8,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 40, vertical: 14)),
-                      child: const Text(
+                      child: Text(
                         "Login",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: Theme.of(context).textTheme.button,
                       ),
                     ),
                   )

@@ -24,7 +24,7 @@ class Layout extends StatelessWidget {
               onPressed: controller.openDrawer,
               icon: SvgPicture.asset(
                 "assets/icons/outline/menu.svg",
-                color: Theme.of(context).primaryColorLight,
+                color: Theme.of(context).textTheme.headline1!.color,
               ),
             ),
             systemOverlayStyle: const SystemUiOverlayStyle(

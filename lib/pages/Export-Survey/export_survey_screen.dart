@@ -18,9 +18,7 @@ class ExportSurveyScreen extends StatelessWidget {
         children: [
           Text(
             "Export Survey",
-            style: Theme.of(context).textTheme.headline5!.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+            style: Theme.of(context).textTheme.headline1,
           ),
           // const Text(
           //   "Memorandum Of Agreement",
@@ -38,14 +36,13 @@ class ExportSurveyScreen extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
+              primary: Theme.of(context).colorScheme.secondary,
             ),
             icon: SvgPicture.asset("assets/icons/outline/import.svg",
-                color: Theme.of(context).backgroundColor),
-            label: const Text(
+                color: Colors.white),
+            label: Text(
               "Export",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.button,
             ),
           )
         ],

@@ -20,9 +20,7 @@ class SurveyScreen extends StatelessWidget {
         children: [
           Text(
             "Survey",
-            style: Theme.of(context).textTheme.headline5!.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+            style: Theme.of(context).textTheme.headline1,
           ),
           SizedBox(
             height: size.height * 0.04,
@@ -35,7 +33,7 @@ class SurveyScreen extends StatelessWidget {
                   hintText: "Cari...",
                   prefixIcon: SvgPicture.asset(
                     "assets/icons/outline/search-2.svg",
-                    color: Theme.of(context).hintColor,
+                    color: Theme.of(context).hintColor.withAlpha(75),
                     height: 22,
                   ),
                 ),
@@ -50,35 +48,24 @@ class SurveyScreen extends StatelessWidget {
                 ),
                 onTap: () {
                   Get.defaultDialog(
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     title: "Filter",
                     onConfirm: () {},
                     onCancel: () {},
                     textCancel: "Batal",
                     textConfirm: "Proses",
-                    content: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    content: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      runSpacing: size.height * 0.03,
                       children: [
-                        const Text(
-                          "Jenis Survey",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(height: size.height * 0.01),
                         FilledAutocomplete(
+                          title: "Jenis Survey",
                           hintText: "Pilih jenis survey",
                           controller: surveyController.jenisSurvey,
                           items: const ["Semua", "Pre", "Post"],
                         ),
-                        SizedBox(height: size.height * 0.01),
-                        const Text(
-                          "Status Survey",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: size.height * 0.01),
                         FilledAutocomplete(
+                          title: "Status Survey",
                           hintText: "Pilih status survey",
                           controller: surveyController.statusSurvey,
                           items: const ["Semua", "Selesai", "Belum Selesai"],
@@ -93,17 +80,16 @@ class SurveyScreen extends StatelessWidget {
           ElevatedButton.icon(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
+              primary: Theme.of(context).colorScheme.secondary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
             icon: SvgPicture.asset("assets/icons/outline/add-square.svg",
-                color: Theme.of(context).backgroundColor),
-            label: const Text(
+                color: Colors.white),
+            label: Text(
               "Tambah",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.button,
             ),
           ),
         ],

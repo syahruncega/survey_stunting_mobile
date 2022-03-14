@@ -21,7 +21,7 @@ class UbahProfilScreen extends StatelessWidget {
               onPressed: () => Get.back(),
               icon: SvgPicture.asset(
                 "assets/icons/outline/arrow-left.svg",
-                color: Theme.of(context).primaryColorLight,
+                color: Theme.of(context).textTheme.headline1!.color,
               ),
             ),
             // title: Text(
@@ -33,17 +33,14 @@ class UbahProfilScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.start,
+                  runSpacing: size.height * 0.02,
                   children: [
-                    Text(
-                      "Update Profil",
-                      style: Theme.of(context).textTheme.headline5!.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
-                    ),
+                    Text("Update Profil",
+                        style: Theme.of(context).textTheme.headline1),
                     SizedBox(
-                      height: size.height * 0.04,
+                      height: size.height * 0.06,
                     ),
                     const FilledTextField(
                       title: "Nama Lengkap",
@@ -109,13 +106,12 @@ class UbahProfilScreen extends StatelessWidget {
                           ),
                         ),
                         icon: SvgPicture.asset(
-                            "assets/icons/outline/tick-square.svg",
-                            color: Theme.of(context).backgroundColor),
-                        label: const Text(
+                          "assets/icons/outline/tick-square.svg",
+                          color: Colors.white,
+                        ),
+                        label: Text(
                           "Simpan",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.button,
                         ),
                       ),
                     ),

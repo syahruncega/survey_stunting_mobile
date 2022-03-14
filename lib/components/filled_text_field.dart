@@ -35,7 +35,10 @@ class FilledTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (title != null)
-          Text(title!, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            title!,
+            style: Theme.of(context).textTheme.headline3,
+          ),
         if (title != null) SizedBox(height: size.height * 0.01),
         TextFormField(
           controller: controller,
@@ -49,8 +52,8 @@ class FilledTextField extends StatelessWidget {
             hintText: hintText,
             helperText: helperText,
             helperMaxLines: 2,
-            // hintStyle:
-            //     TextStyle(color: Theme.of(context).hintColor.withAlpha(75)),
+            hintStyle:
+                TextStyle(color: Theme.of(context).hintColor.withAlpha(75)),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 12,
@@ -63,17 +66,19 @@ class FilledTextField extends StatelessWidget {
                 : null,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide:
-                  BorderSide(color: Theme.of(context).secondaryHeaderColor),
+              borderSide: BorderSide(
+                color: Theme.of(context).primaryColor.withAlpha(0),
+              ),
             ),
             filled: true,
-            // fillColor: Colors.grey.shade300,
+            fillColor: Theme.of(context)
+                .colorScheme
+                .background, // fillColor: Colors.grey.shade300,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
             ),
           ),
         ),
-        SizedBox(height: size.height * 0.015)
       ],
     );
   }

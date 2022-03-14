@@ -16,9 +16,7 @@ class ProfilScreen extends StatelessWidget {
         children: [
           Text(
             "Profil",
-            style: Theme.of(context).textTheme.headline5!.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+            style: Theme.of(context).textTheme.headline1,
           ),
           Text(
             "Update profil, akun (nama pengguna & kata sandi) anda",

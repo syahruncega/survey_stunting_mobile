@@ -12,9 +12,7 @@ class BerandaScreen extends StatelessWidget {
         children: [
           Text(
             "Beranda",
-            style: Theme.of(context).textTheme.headline5!.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+            style: Theme.of(context).textTheme.headline1,
           ),
           // const Text(
           //   "Memorandum Of Agreement",

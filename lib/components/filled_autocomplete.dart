@@ -24,13 +24,18 @@ class FilledAutocomplete extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (title != null)
-          Text(title!, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            title!,
+            style: Theme.of(context).textTheme.headline3,
+          ),
         if (title != null) SizedBox(height: size.height * 0.01),
         TypeAheadField(
           textFieldConfiguration: TextFieldConfiguration(
               textInputAction: textInputAction,
               decoration: InputDecoration(
                 hintText: hintText,
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.background,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                 ),
@@ -41,8 +46,9 @@ class FilledAutocomplete extends StatelessWidget {
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide:
-                      BorderSide(color: Theme.of(context).secondaryHeaderColor),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).primaryColor.withAlpha(0),
+                  ),
                 ),
                 suffixIcon: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -69,7 +75,6 @@ class FilledAutocomplete extends StatelessWidget {
           suggestionsBoxDecoration:
               SuggestionsBoxDecoration(borderRadius: BorderRadius.circular(10)),
         ),
-        SizedBox(height: size.height * 0.015)
       ],
     );
   }
