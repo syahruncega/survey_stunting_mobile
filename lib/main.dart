@@ -52,9 +52,21 @@ class MyApp extends StatelessWidget {
         fontFamily: GoogleFonts.inter().fontFamily,
         textTheme: const TextTheme(
           button: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          headline1: TextStyle(
+            color: Colors.white,
+            fontSize: 26,
+            letterSpacing: 0,
+            fontWeight: FontWeight.bold,
+          ),
+          headline3: TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
         ),
+        scaffoldBackground: scaffoldBackgroundDark,
       ),
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
       home: const LoginScreen(),
       initialRoute: RouteName.login,
       getPages: AppPage.pages,
