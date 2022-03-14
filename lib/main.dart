@@ -66,7 +66,7 @@ class MyApp extends StatelessWidget {
         ),
         scaffoldBackground: scaffoldBackgroundDark,
       ),
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
       home: const LoginScreen(),
       initialRoute: RouteName.login,
       getPages: AppPage.pages,
