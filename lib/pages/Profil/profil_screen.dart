@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:survey_stunting/routes/route_name.dart';
 
 class ProfilScreen extends StatelessWidget {
@@ -80,7 +81,10 @@ class ProfilScreen extends StatelessWidget {
             subtitle: const Text("Keluar dari akun anda"),
             onTap: () {
               Get.defaultDialog(
-                onConfirm: () => Get.offAllNamed(RouteName.login),
+                onConfirm: () async {
+                  GetStorage().remove("token");
+                  Get.offAllNamed(RouteName.login);
+                },
                 confirmTextColor: Colors.white,
                 title: "Logout",
                 middleText: "Anda yakin akan logout?",

@@ -80,7 +80,9 @@ class SurveyScreen extends StatelessWidget {
             ],
           ),
           ElevatedButton.icon(
-            onPressed: () {},
+            onPressed: () async {
+              await surveyController.getAllSurvey();
+            },
             style: ElevatedButton.styleFrom(
               primary: Theme.of(context).colorScheme.secondary,
               shape: RoundedRectangleBorder(
@@ -94,6 +96,22 @@ class SurveyScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.button,
             ),
           ),
+          Expanded(
+            child: Obx(
+              () => Visibility(
+                visible: surveyController.isLoaded.value,
+                replacement: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+                child: ListView.builder(
+                  itemCount: surveyController.surveys.value.length,
+                  itemBuilder: (context, index) {
+                    return const Text("Hi");
+                  },
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );
