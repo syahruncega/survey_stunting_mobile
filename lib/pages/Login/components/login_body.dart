@@ -132,8 +132,7 @@ class LoginBody extends StatelessWidget {
                             password: loginController.password.text);
                         Session? session =
                             await _dioClient.login(loginInfo: auth);
-                        log(session!.token);
-                        GetStorage().write("token", session.token);
+                        GetStorage().write("token", session?.token);
                         Get.offAllNamed(RouteName.layout);
                       },
                       style: ElevatedButton.styleFrom(

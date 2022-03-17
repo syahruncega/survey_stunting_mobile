@@ -9,7 +9,13 @@ import 'package:survey_stunting/pages/Profil/profil_screen.dart';
 import 'package:survey_stunting/pages/Survey/survey_screen.dart';
 
 class Layout extends StatelessWidget {
-  const Layout({Key? key}) : super(key: key);
+  Layout({Key? key}) : super(key: key);
+  final screens = [
+    const BerandaScreen(),
+    const SurveyScreen(),
+    ExportSurveyScreen(),
+    const ProfilScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -40,15 +46,7 @@ class Layout extends StatelessWidget {
           body: WillPopScope(
             onWillPop: controller.onWillPop,
             child: SafeArea(
-              child: IndexedStack(
-                index: controller.tabIndex,
-                children: [
-                  const BerandaScreen(),
-                  SurveyScreen(),
-                  ExportSurveyScreen(),
-                  const ProfilScreen(),
-                ],
-              ),
+              child: screens[controller.tabIndex],
             ),
           ),
           drawer: const Drawer(),

@@ -7,12 +7,12 @@ import 'package:survey_stunting/components/filled_text_field.dart';
 import 'package:survey_stunting/controllers/survey_controller.dart';
 
 class SurveyScreen extends StatelessWidget {
-  SurveyScreen({Key? key}) : super(key: key);
-  final surveyController = Get.find<SurveyController>();
+  const SurveyScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    SurveyController surveyController = Get.put(SurveyController());
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(

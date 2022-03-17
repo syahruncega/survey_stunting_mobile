@@ -26,7 +26,7 @@ class DioClient {
 
       session = sessionFromJson(response.data);
     } catch (e) {
-      log('Error creating user: $e');
+      log('Error Login: $e');
     }
     return session;
   }
@@ -42,7 +42,7 @@ class DioClient {
 
       log('${response.data}');
     } catch (e) {
-      log('Error creating user: $e');
+      log('Error Logout: $e');
     }
   }
 
