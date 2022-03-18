@@ -100,6 +100,9 @@ class MyApp extends StatelessWidget {
           ),
         ),
         scaffoldBackgroundColor: scaffoldBackgroundDark,
+        drawerTheme: const DrawerThemeData(
+          backgroundColor: scaffoldBackgroundDark,
+        ),
       ),
       themeMode: ThemeMode.light,
       home: const Wrapper(),

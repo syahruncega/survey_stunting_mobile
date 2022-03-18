@@ -21,12 +21,15 @@ class DioClient {
       Response response = await _dio.post(
         "/login",
         data: loginInfo.toJson(),
-        options: Options(responseType: ResponseType.plain),
+        options: Options(
+          responseType: ResponseType.plain,
+        ),
       );
 
       session = sessionFromJson(response.data);
-    } catch (e) {
+    } on DioError catch (e) {
       log('Error Login: $e');
+      rethrow;
     }
     return session;
   }
@@ -41,8 +44,9 @@ class DioClient {
       );
 
       log('${response.data}');
-    } catch (e) {
+    } on DioError catch (e) {
       log('Error Logout: $e');
+      rethrow;
     }
   }
 
@@ -59,8 +63,9 @@ class DioClient {
 
       log('${response.data}');
       allSurvey = listSurveyFromJson(getData(response.data));
-    } catch (e) {
+    } on DioError catch (e) {
       log('Error get all survey: $e');
+      rethrow;
     }
     return allSurvey;
   }

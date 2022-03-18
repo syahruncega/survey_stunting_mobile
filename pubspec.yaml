@@ -36,12 +36,14 @@ dependencies:
   dio: ^4.0.4
   flutter_dotenv: ^5.0.2
   flutter_hooks: ^0.18.2+1
+  flutter_slidable: ^1.2.0
   flutter_svg: ^1.0.3
   flutter_typeahead: ^3.2.4
   fluttertoast: ^8.0.9
   get: ^4.6.1
   get_storage: ^2.0.3
   google_fonts: ^2.3.1
+  intl: ^0.17.0
   mask_text_input_formatter: ^2.1.0
 
 dev_dependencies:

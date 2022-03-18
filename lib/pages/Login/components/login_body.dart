@@ -1,21 +1,13 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:survey_stunting/controllers/login_controller.dart';
-import 'package:survey_stunting/models/auth.dart';
-import 'package:survey_stunting/models/session.dart';
-import 'package:survey_stunting/routes/route_name.dart';
-import 'package:survey_stunting/services/dio_client.dart';
 
 class LoginBody extends StatelessWidget {
   LoginBody({Key? key}) : super(key: key);
   final loginController = Get.find<LoginController>();
   final _formKey = GlobalKey<FormState>();
-  final DioClient _dioClient = DioClient();
 
   @override
   Widget build(BuildContext context) {
@@ -126,15 +118,7 @@ class LoginBody extends StatelessWidget {
                   SizedBox(height: size.height * 0.03),
                   Center(
                     child: ElevatedButton(
-                      onPressed: () async {
-                        Auth auth = Auth(
-                            username: loginController.username.text,
-                            password: loginController.password.text);
-                        Session? session =
-                            await _dioClient.login(loginInfo: auth);
-                        GetStorage().write("token", session?.token);
-                        Get.offAllNamed(RouteName.layout);
-                      },
+                      onPressed: loginController.login,
                       style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
