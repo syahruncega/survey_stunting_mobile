@@ -112,15 +112,17 @@ class SurveyScreen extends StatelessWidget {
                   replacement: const Center(
                     child: CircularProgressIndicator(),
                   ),
-                  child: ListView.builder(
-                    itemCount: surveyController.surveys.length,
-                    itemBuilder: (context, index) {
-                      return SurveyItem(
-                        key: UniqueKey(),
-                        survey: surveyController.surveys[index],
-                      );
-                    },
-                  ),
+                  child: surveyController.surveys.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: surveyController.surveys.length,
+                          itemBuilder: (context, index) {
+                            return SurveyItem(
+                              key: UniqueKey(),
+                              survey: surveyController.surveys[index],
+                            );
+                          },
+                        )
+                      : const Text("Data Tidak Ditemukan"),
                 ),
               ),
             )

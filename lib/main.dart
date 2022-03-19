@@ -40,12 +40,23 @@ class MyApp extends StatelessWidget {
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
+          bodyText2: TextStyle(
+            color: textColor,
+            fontSize: 14,
+          ),
           bodyText1: TextStyle(
             color: textColor,
+            fontSize: 14,
           ),
           headline1: TextStyle(
             color: textColor,
             fontSize: 26,
+            letterSpacing: 0,
+            fontWeight: FontWeight.bold,
+          ),
+          headline2: TextStyle(
+            color: textColor,
+            fontSize: 18,
             letterSpacing: 0,
             fontWeight: FontWeight.bold,
           ),
@@ -81,15 +92,21 @@ class MyApp extends StatelessWidget {
           ),
           bodyText1: TextStyle(
             color: Colors.white,
-            fontSize: 12,
+            fontSize: 14,
           ),
           bodyText2: TextStyle(
             color: hintColor,
-            fontSize: 12,
+            fontSize: 14,
           ),
           headline1: TextStyle(
             color: Colors.white,
             fontSize: 26,
+            letterSpacing: 0,
+            fontWeight: FontWeight.bold,
+          ),
+          headline2: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
             letterSpacing: 0,
             fontWeight: FontWeight.bold,
           ),

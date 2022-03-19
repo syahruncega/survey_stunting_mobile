@@ -30,6 +30,9 @@ class ExportSurveyScreen extends StatelessWidget {
             hintText: "Pilih jenis survey",
             items: const ["Pre", "Post"],
           ),
+          SizedBox(
+            height: size.height * 0.01,
+          ),
           ElevatedButton.icon(
             onPressed: () {},
             style: ElevatedButton.styleFrom(

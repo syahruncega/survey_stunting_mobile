@@ -5,6 +5,7 @@ import 'package:survey_stunting/models/auth.dart';
 import 'package:survey_stunting/models/raw_response.dart';
 import 'package:survey_stunting/models/session.dart';
 import 'package:survey_stunting/models/survey.dart';
+import 'package:survey_stunting/models/total_survey.dart';
 import 'package:survey_stunting/services/logging.dart';
 
 class DioClient {
@@ -50,9 +51,9 @@ class DioClient {
     }
   }
 
-  Future<List<Survey>?> getAllSurvey({required String token}) async {
-    List<Survey>? allSurvey;
-
+  Future<List<Survey>?> getSurvey({
+    required String token,
+  }) async {
     try {
       Response response = await _dio.get(
         "/surveyor/survey",
@@ -60,13 +61,46 @@ class DioClient {
           "authorization": "Bearer $token",
         }),
       );
-
-      log('${response.data}');
-      allSurvey = listSurveyFromJson(getData(response.data));
+      return listSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error get all survey: $e');
       rethrow;
     }
-    return allSurvey;
+  }
+
+  Future<List<Survey>?> getSurveyByStatus({
+    required String token,
+    required bool isCompleted,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/surveyor/survey?status=${isCompleted ? 'selesai' : 'belum_selesai'}",
+        options: Options(responseType: ResponseType.plain, headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listSurveyFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get all survey: $e');
+      rethrow;
+    }
+  }
+
+  Future<TotalSurvey?> getTotalSurvey({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/surveyor/survey/count",
+        options: Options(responseType: ResponseType.plain, headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      log('${response.data}');
+      return totalSurveyFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get total survey: $e');
+      rethrow;
+    }
   }
 }

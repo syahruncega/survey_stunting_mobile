@@ -8,9 +8,11 @@ import 'package:survey_stunting/models/survey.dart';
 class SurveyItem extends StatelessWidget {
   const SurveyItem({
     required this.survey,
+    this.enabled = true,
     Key? key,
   }) : super(key: key);
   final Survey survey;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +20,7 @@ class SurveyItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Slidable(
+        enabled: enabled,
         key: key,
         closeOnScroll: true,
         endActionPane: ActionPane(
