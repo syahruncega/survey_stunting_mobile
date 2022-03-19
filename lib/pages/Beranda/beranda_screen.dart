@@ -15,6 +15,7 @@ class BerandaScreen extends StatelessWidget {
     BerandaController berandaController = Get.put(BerandaController());
     return RefreshIndicator(
       onRefresh: berandaController.getSurveyByStatus,
+      triggerMode: RefreshIndicatorTriggerMode.anywhere,
       displacement: 0,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -76,7 +77,6 @@ class BerandaScreen extends StatelessWidget {
                 ),
               ),
             ),
-
             SizedBox(
               height: size.height * 0.02,
             ),
@@ -116,14 +116,12 @@ class BerandaScreen extends StatelessWidget {
                             );
                           },
                         )
-                      : const Text("Data tidak ditemukan"),
+                      : ListView(
+                          children: const [Text("Data tidak ditemukan")],
+                        ),
                 ),
               ),
             )
-            // const Text(
-            //   "Memorandum Of Agreement",
-            //   style: TextStyle(fontSize: 14, color: kHintColor),
-            // )
           ],
         ),
       ),

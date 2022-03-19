@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:survey_stunting/components/error_scackbar.dart';
 import 'package:survey_stunting/models/survey.dart';
 import 'package:survey_stunting/models/total_survey.dart';
 import 'package:survey_stunting/services/dio_client.dart';
@@ -19,7 +18,7 @@ class BerandaController extends GetxController {
     isLoadedSurvey.value = false;
     try {
       List<Survey>? response =
-          await DioClient().getSurveyByStatus(token: token, isCompleted: true);
+          await DioClient().getSurveyByStatus(token: token, isCompleted: false);
       surveys.value = response!;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {

@@ -122,7 +122,9 @@ class SurveyScreen extends StatelessWidget {
                             );
                           },
                         )
-                      : const Text("Data Tidak Ditemukan"),
+                      : ListView(
+                          children: const [Text("Data tidak ditemukan")],
+                        ),
                 ),
               ),
             )
