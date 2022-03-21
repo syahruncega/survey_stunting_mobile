@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:survey_stunting/components/filled_text_field.dart';
 import 'package:survey_stunting/controllers/login_controller.dart';
 
 class LoginBody extends StatelessWidget {
@@ -42,19 +43,12 @@ class LoginBody extends StatelessWidget {
                   SizedBox(
                     height: size.height * 0.03,
                   ),
-                  Text(
-                    "Username",
-                    style: Theme.of(context).textTheme.headline3,
-                  ),
-                  SizedBox(height: size.height * 0.01),
-                  TextFormField(
-                    controller: loginController.username,
-                    decoration: InputDecoration(
-                      hintText: "Username",
-                      hintStyle: TextStyle(
-                        color: Theme.of(context).hintColor.withAlpha(75),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                  Obx(
+                    () => FilledTextField(
+                      title: "Nama Pengguna",
+                      hintText: "Nama Pengguna",
+                      errorText: loginController.usernameError.value,
+                      controller: loginController.username,
                       suffixIcon: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: SvgPicture.asset(
@@ -62,56 +56,25 @@ class LoginBody extends StatelessWidget {
                           color: Theme.of(context).primaryColor.withAlpha(125),
                         ),
                       ),
-                      suffixIconConstraints: const BoxConstraints(
-                        minHeight: 12,
-                        minWidth: 12,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide(
-                          color: Theme.of(context).primaryColor.withAlpha(0),
-                        ),
-                      ),
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
                     ),
                   ),
                   SizedBox(height: size.height * 0.02),
-                  Text(
-                    "Password",
-                    style: Theme.of(context).textTheme.headline3,
-                  ),
-                  SizedBox(height: size.height * 0.01),
-                  TextFormField(
-                    controller: loginController.password,
-                    decoration: InputDecoration(
-                      hintText: "Password",
-                      hintStyle: TextStyle(
-                        color: Theme.of(context).hintColor.withAlpha(75),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                  Obx(
+                    () => FilledTextField(
+                      title: "Kata Sandi",
+                      hintText: "Kata Sandi",
+                      errorText: loginController.passwordError.value,
+                      controller: loginController.password,
+                      obsecureText: loginController.showPassword.value,
                       suffixIcon: IconButton(
                         icon: SvgPicture.asset(
-                          "assets/icons/bold/eye.svg",
+                          loginController.showPassword.value
+                              ? "assets/icons/bold/eye.svg"
+                              : "assets/icons/bold/eye-slash.svg",
                           color: Theme.of(context).primaryColor.withAlpha(125),
                         ),
-                        onPressed: () {},
-                      ),
-                      suffixIconConstraints: const BoxConstraints(
-                        minHeight: 12,
-                        minWidth: 12,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide(
-                          color: Theme.of(context).primaryColor.withAlpha(0),
-                        ),
-                      ),
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        onPressed: () => loginController.showPassword.value =
+                            !loginController.showPassword.value,
                       ),
                     ),
                   ),

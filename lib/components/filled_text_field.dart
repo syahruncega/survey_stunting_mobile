@@ -3,9 +3,11 @@ import 'package:flutter/services.dart';
 
 class FilledTextField extends StatelessWidget {
   final Widget? prefixIcon;
+  final Widget? suffixIcon;
   final String? hintText;
   final String? helperText;
   final String? title;
+  final String? errorText;
   final int? minLine;
   final int? maxLine;
   final TextEditingController? controller;
@@ -15,9 +17,11 @@ class FilledTextField extends StatelessWidget {
   final bool? obsecureText;
   const FilledTextField({
     this.prefixIcon,
+    this.suffixIcon,
     this.hintText,
     this.title,
     this.helperText,
+    this.errorText,
     this.controller,
     this.minLine,
     this.maxLine = 1,
@@ -57,12 +61,18 @@ class FilledTextField extends StatelessWidget {
               horizontal: 12,
               vertical: 12,
             ),
+            errorText: errorText == "" ? null : errorText,
             prefixIcon: prefixIcon != null
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     child: prefixIcon,
                   )
                 : null,
+            suffixIcon: suffixIcon,
+            suffixIconConstraints: const BoxConstraints(
+              minHeight: 12,
+              minWidth: 12,
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(

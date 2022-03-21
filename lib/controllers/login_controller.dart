@@ -15,18 +15,17 @@ class LoginController extends GetxController {
   final password = TextEditingController();
   final usernameError = "".obs;
   final passwordError = "".obs;
-  final FocusNode usernameNode = FocusNode();
-  final passwordNode = FocusNode();
+  final showPassword = false.obs;
 
   bool validate() {
     usernameError.value = "";
     passwordError.value = "";
 
     if (username.text.trim().isEmpty) {
-      usernameError.value = 'Username harus diiisi';
+      usernameError.value = 'Nama pengguna harus diiisi';
     }
     if (password.text.trim().isEmpty) {
-      passwordError.value = "Password harus diisi";
+      passwordError.value = "Kata sandi harus diisi";
     }
 
     if (usernameError.value.isNotEmpty || passwordError.value.isNotEmpty) {
@@ -36,17 +35,19 @@ class LoginController extends GetxController {
   }
 
   Future login() async {
-    final DioClient _dioClient = DioClient();
-    Auth auth = Auth(username: username.text, password: password.text);
-    try {
-      Session? session = await _dioClient.login(loginInfo: auth);
-      GetStorage().write("token", session?.token);
-      Get.offAllNamed(RouteName.layout);
-    } on DioError catch (e) {
-      if (e.response?.statusCode == 401) {
-        errorScackbar('Username atau password salah');
-      } else {
-        handleError(error: e);
+    if (validate()) {
+      final DioClient _dioClient = DioClient();
+      Auth auth = Auth(username: username.text, password: password.text);
+      try {
+        Session? session = await _dioClient.login(loginInfo: auth);
+        GetStorage().write("token", session?.token);
+        Get.offAllNamed(RouteName.layout);
+      } on DioError catch (e) {
+        if (e.response?.statusCode == 401) {
+          errorScackbar('Nama pengguna atau kata sandi salah');
+        } else {
+          handleError(error: e);
+        }
       }
     }
   }
