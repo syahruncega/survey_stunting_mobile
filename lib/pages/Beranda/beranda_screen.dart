@@ -14,7 +14,9 @@ class BerandaScreen extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     BerandaController berandaController = Get.put(BerandaController());
     return RefreshIndicator(
-      onRefresh: berandaController.getSurveyByStatus,
+      onRefresh: () async => await berandaController.getSurvey(
+        search: berandaController.searchSurveyEditingController.text,
+      ),
       triggerMode: RefreshIndicatorTriggerMode.anywhere,
       displacement: 0,
       child: Padding(
@@ -89,6 +91,10 @@ class BerandaScreen extends StatelessWidget {
             ),
             FilledTextField(
               hintText: "Cari...",
+              controller: berandaController.searchSurveyEditingController,
+              onEditingComplete: () async => await berandaController.getSurvey(
+                search: berandaController.searchSurveyEditingController.text,
+              ),
               prefixIcon: SvgPicture.asset(
                 "assets/icons/outline/search-2.svg",
                 color: Theme.of(context).hintColor,

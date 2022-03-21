@@ -1,12 +1,15 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:survey_stunting/models/survey.dart';
+import 'package:survey_stunting/models/survey_parameters.dart';
 import 'package:survey_stunting/models/total_survey.dart';
 import 'package:survey_stunting/services/dio_client.dart';
 import 'package:survey_stunting/services/handle_errors.dart';
 
 class BerandaController extends GetxController {
+  final searchSurveyEditingController = TextEditingController();
   var isLoadedSurvey = false.obs;
   var isLoadedTotalSurvey = false.obs;
   var surveys = [].obs;
@@ -14,11 +17,16 @@ class BerandaController extends GetxController {
 
   String token = GetStorage().read("token");
 
-  Future getSurveyByStatus() async {
+  Future getSurvey({String? search}) async {
     isLoadedSurvey.value = false;
     try {
-      List<Survey>? response =
-          await DioClient().getSurveyByStatus(token: token, isCompleted: false);
+      List<Survey>? response = await DioClient().getSurvey(
+        token: token,
+        queryParameters: SurveyParameters(
+          status: "belum_selesai",
+          search: search,
+        ),
+      );
       surveys.value = response!;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
@@ -43,7 +51,7 @@ class BerandaController extends GetxController {
 
   @override
   void onInit() async {
-    await getSurveyByStatus();
+    await getSurvey();
     await getTotalSurvey();
     super.onInit();
   }

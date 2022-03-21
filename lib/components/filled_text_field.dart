@@ -15,6 +15,7 @@ class FilledTextField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final List<TextInputFormatter>? inputFormatters;
   final bool? obsecureText;
+  final void Function()? onEditingComplete;
   const FilledTextField({
     this.prefixIcon,
     this.suffixIcon,
@@ -29,6 +30,7 @@ class FilledTextField extends StatelessWidget {
     this.textInputAction,
     this.inputFormatters,
     this.obsecureText = false,
+    this.onEditingComplete,
     Key? key,
   }) : super(key: key);
 
@@ -52,6 +54,7 @@ class FilledTextField extends StatelessWidget {
           textInputAction: textInputAction,
           inputFormatters: inputFormatters,
           obscureText: obsecureText!,
+          onEditingComplete: onEditingComplete,
           decoration: InputDecoration(
             hintText: hintText,
             helperText: helperText,

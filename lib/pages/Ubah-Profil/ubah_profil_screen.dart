@@ -66,26 +66,54 @@ class UbahProfilScreen extends StatelessWidget {
                     FilledAutocomplete(
                       controller: controller.provinsi,
                       title: "Provisi",
-                      items: const ["1", "2"],
+                      items: const [
+                        {"label": "1", "value": "1"},
+                        {"label": "2", "value": "2"},
+                        {"label": "3", "value": "3"}
+                      ],
                       textInputAction: TextInputAction.next,
+                      onSuggestionSelected: (Map<String, dynamic> suggestion) {
+                        controller.provinsi.text = suggestion["value"];
+                      },
                     ),
                     FilledAutocomplete(
                       controller: controller.kabupatan,
                       title: "Kabupaten / Kota",
-                      items: const ["1", "2"],
+                      items: const [
+                        {"label": "1", "value": "1"},
+                        {"label": "2", "value": "2"},
+                        {"label": "3", "value": "3"}
+                      ],
                       textInputAction: TextInputAction.next,
+                      onSuggestionSelected: (Map<String, dynamic> suggestion) {
+                        controller.kabupatan.text = suggestion["value"];
+                      },
                     ),
                     FilledAutocomplete(
                       controller: controller.kecamatan,
                       title: "Kecamatan",
-                      items: const ["1", "2"],
+                      items: const [
+                        {"label": "1", "value": "1"},
+                        {"label": "2", "value": "2"},
+                        {"label": "3", "value": "3"}
+                      ],
                       textInputAction: TextInputAction.next,
+                      onSuggestionSelected: (Map<String, dynamic> suggestion) {
+                        controller.kecamatan.text = suggestion["value"];
+                      },
                     ),
                     FilledAutocomplete(
                       controller: controller.kelurahan,
                       title: "Desa / Kelurahan",
-                      items: const ["1", "2"],
+                      items: const [
+                        {"label": "1", "value": "1"},
+                        {"label": "2", "value": "2"},
+                        {"label": "3", "value": "3"}
+                      ],
                       textInputAction: TextInputAction.next,
+                      onSuggestionSelected: (Map<String, dynamic> suggestion) {
+                        controller.kelurahan.text = suggestion["value"];
+                      },
                     ),
                     const FilledTextField(
                       title: "Nomor HP",

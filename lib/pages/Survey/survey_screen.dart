@@ -6,6 +6,7 @@ import 'package:survey_stunting/components/filled_autocomplete.dart';
 import 'package:survey_stunting/components/filled_text_field.dart';
 import 'package:survey_stunting/components/survey_item.dart';
 import 'package:survey_stunting/controllers/survey_controller.dart';
+import 'package:survey_stunting/models/survey_parameters.dart';
 
 class SurveyScreen extends StatelessWidget {
   const SurveyScreen({Key? key}) : super(key: key);
@@ -15,7 +16,13 @@ class SurveyScreen extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     SurveyController surveyController = Get.put(SurveyController());
     return RefreshIndicator(
-      onRefresh: surveyController.getAllSurvey,
+      onRefresh: () async => await surveyController.getSurvey(
+        queryParameters: SurveyParameters(
+          search: surveyController.searchSurveyEditingController.text,
+          status: surveyController.statusSurvey,
+          typeSurveyId: surveyController.typeSurvey,
+        ),
+      ),
       displacement: 0,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -34,7 +41,17 @@ class SurveyScreen extends StatelessWidget {
               children: [
                 Flexible(
                   child: FilledTextField(
+                    controller: surveyController.searchSurveyEditingController,
                     hintText: "Cari...",
+                    onEditingComplete: () async =>
+                        await surveyController.getSurvey(
+                      queryParameters: SurveyParameters(
+                        search:
+                            surveyController.searchSurveyEditingController.text,
+                        status: surveyController.statusSurvey,
+                        typeSurveyId: surveyController.typeSurvey,
+                      ),
+                    ),
                     prefixIcon: SvgPicture.asset(
                       "assets/icons/outline/search-2.svg",
                       color: Theme.of(context).hintColor,
@@ -57,7 +74,17 @@ class SurveyScreen extends StatelessWidget {
                       buttonColor: Theme.of(context).colorScheme.secondary,
                       confirmTextColor: Colors.white,
                       title: "Filter",
-                      onConfirm: () {},
+                      onConfirm: () async {
+                        await surveyController.getSurvey(
+                          queryParameters: SurveyParameters(
+                            search: surveyController
+                                .searchSurveyEditingController.text,
+                            status: surveyController.statusSurvey,
+                            typeSurveyId: surveyController.typeSurvey,
+                          ),
+                        );
+                        Get.back();
+                      },
                       onCancel: () {},
                       textCancel: "Batal",
                       textConfirm: "Proses",
@@ -68,14 +95,40 @@ class SurveyScreen extends StatelessWidget {
                           FilledAutocomplete(
                             title: "Jenis Survey",
                             hintText: "Pilih jenis survey",
-                            controller: surveyController.jenisSurvey,
-                            items: const ["Semua", "Pre", "Post"],
+                            controller:
+                                surveyController.typeSurveyEditingController,
+                            items: const [
+                              {"label": "Semua", "value": ""},
+                              {"label": "Post", "value": 1},
+                              {"label": "Pre", "value": 2},
+                            ],
+                            onSuggestionSelected:
+                                (Map<String, dynamic> suggestion) {
+                              surveyController.typeSurveyEditingController
+                                  .text = suggestion["label"];
+                              surveyController.typeSurvey = suggestion["value"];
+                            },
                           ),
                           FilledAutocomplete(
                             title: "Status Survey",
                             hintText: "Pilih status survey",
-                            controller: surveyController.statusSurvey,
-                            items: const ["Semua", "Selesai", "Belum Selesai"],
+                            controller:
+                                surveyController.statusSurveyEditingController,
+                            items: const [
+                              {"label": "Semua", "value": ""},
+                              {"label": "Selesai", "value": "selesai"},
+                              {
+                                "label": "Belum Selesai",
+                                "value": "belum_selesai"
+                              }
+                            ],
+                            onSuggestionSelected:
+                                (Map<String, dynamic> suggestion) {
+                              surveyController.statusSurveyEditingController
+                                  .text = suggestion["label"];
+                              surveyController.statusSurvey =
+                                  suggestion["value"];
+                            },
                           ),
                         ],
                       ),

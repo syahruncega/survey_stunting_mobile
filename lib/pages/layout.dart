@@ -13,7 +13,7 @@ class Layout extends StatelessWidget {
   final screens = [
     const BerandaScreen(),
     const SurveyScreen(),
-    ExportSurveyScreen(),
+    const ExportSurveyScreen(),
     const ProfilScreen(),
   ];
 

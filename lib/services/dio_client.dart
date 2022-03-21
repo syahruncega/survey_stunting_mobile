@@ -5,6 +5,7 @@ import 'package:survey_stunting/models/auth.dart';
 import 'package:survey_stunting/models/raw_response.dart';
 import 'package:survey_stunting/models/session.dart';
 import 'package:survey_stunting/models/survey.dart';
+import 'package:survey_stunting/models/survey_parameters.dart';
 import 'package:survey_stunting/models/total_survey.dart';
 import 'package:survey_stunting/services/logging.dart';
 
@@ -53,10 +54,12 @@ class DioClient {
 
   Future<List<Survey>?> getSurvey({
     required String token,
+    SurveyParameters? queryParameters,
   }) async {
     try {
       Response response = await _dio.get(
         "/surveyor/survey",
+        queryParameters: queryParameters?.toJson(),
         options: Options(responseType: ResponseType.plain, headers: {
           "authorization": "Bearer $token",
         }),
