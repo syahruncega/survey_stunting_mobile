@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:survey_stunting/consts/colors.dart';
-import 'package:survey_stunting/pages/Login/login_screen.dart';
 import 'package:survey_stunting/routes/app_page.dart';
 import 'package:survey_stunting/routes/route_name.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
+  await GetStorage.init();
+  Get.put<GetStorage>(GetStorage());
+  // WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -37,12 +40,23 @@ class MyApp extends StatelessWidget {
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
+          bodyText2: TextStyle(
+            color: textColor,
+            fontSize: 14,
+          ),
           bodyText1: TextStyle(
             color: textColor,
+            fontSize: 14,
           ),
           headline1: TextStyle(
             color: textColor,
             fontSize: 26,
+            letterSpacing: 0,
+            fontWeight: FontWeight.bold,
+          ),
+          headline2: TextStyle(
+            color: textColor,
+            fontSize: 18,
             letterSpacing: 0,
             fontWeight: FontWeight.bold,
           ),
@@ -78,15 +92,21 @@ class MyApp extends StatelessWidget {
           ),
           bodyText1: TextStyle(
             color: Colors.white,
-            fontSize: 12,
+            fontSize: 14,
           ),
           bodyText2: TextStyle(
             color: hintColor,
-            fontSize: 12,
+            fontSize: 14,
           ),
           headline1: TextStyle(
             color: Colors.white,
             fontSize: 26,
+            letterSpacing: 0,
+            fontWeight: FontWeight.bold,
+          ),
+          headline2: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
             letterSpacing: 0,
             fontWeight: FontWeight.bold,
           ),
@@ -97,11 +117,48 @@ class MyApp extends StatelessWidget {
           ),
         ),
         scaffoldBackgroundColor: scaffoldBackgroundDark,
+        drawerTheme: const DrawerThemeData(
+          backgroundColor: scaffoldBackgroundDark,
+        ),
       ),
       themeMode: ThemeMode.light,
-      home: const LoginScreen(),
-      initialRoute: RouteName.login,
+      home: const Wrapper(),
+      // initialRoute: RouteName.login,
       getPages: AppPage.pages,
+    );
+  }
+}
+
+class Wrapper extends StatefulWidget {
+  const Wrapper({Key? key}) : super(key: key);
+  @override
+  WrapperState createState() => WrapperState();
+}
+
+class WrapperState extends State<Wrapper> {
+  @override
+  void initState() {
+    super.initState();
+    sessionCheck();
+  }
+
+  void sessionCheck() async {
+    await GetStorage.init();
+    final box = Get.find<GetStorage>();
+    final session = box.read('token');
+    if (session == null) {
+      Get.offAllNamed(RouteName.login);
+    } else {
+      Get.offAllNamed(RouteName.layout);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }

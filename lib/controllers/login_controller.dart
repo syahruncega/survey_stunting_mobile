@@ -1,23 +1,31 @@
-import 'package:flutter/cupertino.dart';
-import 'package:get/state_manager.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:survey_stunting/components/error_scackbar.dart';
+import 'package:survey_stunting/models/auth.dart';
+import 'package:survey_stunting/models/session.dart';
+import 'package:survey_stunting/routes/route_name.dart';
+
+import 'package:survey_stunting/services/dio_client.dart';
+import 'package:survey_stunting/services/handle_errors.dart';
 
 class LoginController extends GetxController {
   final username = TextEditingController();
   final password = TextEditingController();
   final usernameError = "".obs;
   final passwordError = "".obs;
-  final FocusNode usernameNode = FocusNode();
-  final passwordNode = FocusNode();
+  final showPassword = false.obs;
 
   bool validate() {
     usernameError.value = "";
     passwordError.value = "";
 
     if (username.text.trim().isEmpty) {
-      usernameError.value = 'Username harus diiisi';
+      usernameError.value = 'Nama pengguna harus diiisi';
     }
     if (password.text.trim().isEmpty) {
-      passwordError.value = "Password harus diisi";
+      passwordError.value = "Kata sandi harus diisi";
     }
 
     if (usernameError.value.isNotEmpty || passwordError.value.isNotEmpty) {
@@ -26,14 +34,21 @@ class LoginController extends GetxController {
     return true;
   }
 
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  // }
-
-  // @override
-  // onClose() {
-  //   usernameNode.dispose();
-  //   super.onClose();
-  // }
+  Future login() async {
+    if (validate()) {
+      final DioClient _dioClient = DioClient();
+      Auth auth = Auth(username: username.text, password: password.text);
+      try {
+        Session? session = await _dioClient.login(loginInfo: auth);
+        GetStorage().write("token", session?.token);
+        Get.offAllNamed(RouteName.layout);
+      } on DioError catch (e) {
+        if (e.response?.statusCode == 401) {
+          errorScackbar('Nama pengguna atau kata sandi salah');
+        } else {
+          handleError(error: e);
+        }
+      }
+    }
+  }
 }
