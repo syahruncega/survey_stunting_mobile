@@ -11,33 +11,65 @@ class SurveyController extends GetxController {
   final typeSurveyEditingController = TextEditingController();
   final statusSurveyEditingController = TextEditingController();
   final searchSurveyEditingController = TextEditingController();
-  dynamic typeSurvey = "".obs;
-  dynamic statusSurvey = "".obs;
-  var isLoaded = false.obs;
-  var surveys = [].obs;
+  var isLoading = false.obs;
+  String typeSurvey = "";
+  String statusSurvey = "";
+  List<Survey> surveys = [];
   String token = GetStorage().read("token");
 
   Future getSurvey({SurveyParameters? queryParameters}) async {
-    isLoaded.value = false;
+    isLoading.value = true;
     try {
       List<Survey>? response = await DioClient().getSurvey(
         token: token,
         queryParameters: queryParameters,
       );
-      surveys.value = response!;
+      surveys = response!;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
-        surveys.value = [];
+        surveys = [];
       } else {
         handleError(error: e);
       }
     }
-    isLoaded.value = true;
+    isLoading.value = false;
+  }
+
+  Future deleteSurvey({required int id}) async {
+    isLoading.value = true;
+    try {
+      await DioClient().deleteSurvey(
+        token: token,
+        id: id,
+      );
+      surveys.removeWhere((element) => element.id == id);
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
+    isLoading.value = false;
+  }
+
+  void _setToEmpty() {
+    if (statusSurveyEditingController.text == "") {
+      statusSurvey = statusSurveyEditingController.text;
+    }
+    if (typeSurveyEditingController.text == "") {
+      typeSurvey = "";
+    }
   }
 
   @override
   void onInit() async {
     await getSurvey();
+    statusSurveyEditingController.addListener(_setToEmpty);
+    typeSurveyEditingController.addListener(_setToEmpty);
     super.onInit();
+  }
+
+  @override
+  void dispose() {
+    statusSurveyEditingController.dispose();
+    typeSurveyEditingController.dispose();
+    super.dispose();
   }
 }

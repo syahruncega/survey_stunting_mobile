@@ -9,9 +9,9 @@ import 'package:survey_stunting/services/handle_errors.dart';
 
 class ExportSurveyController extends GetxController {
   final jenisSurveyEditingController = TextEditingController(text: "Pre");
-  dynamic jenisSurvey = 2.obs;
   var isLoaded = false.obs;
-  var surveys = [].obs;
+  String jenisSurvey = "2";
+  List<Survey> surveys = [];
   String token = GetStorage().read("token");
 
   Future getSurvey({required dynamic typeSurveyId}) async {
@@ -24,10 +24,10 @@ class ExportSurveyController extends GetxController {
           status: "selesai",
         ),
       );
-      surveys.value = response!;
+      surveys = response!;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
-        surveys.value = [];
+        surveys = [];
       } else {
         handleError(error: e);
       }
@@ -39,5 +39,11 @@ class ExportSurveyController extends GetxController {
   void onInit() async {
     await getSurvey(typeSurveyId: jenisSurvey);
     super.onInit();
+  }
+
+  @override
+  void dispose() {
+    jenisSurveyEditingController.dispose();
+    super.dispose();
   }
 }
