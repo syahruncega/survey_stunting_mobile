@@ -43,8 +43,7 @@ class BerandaScreen extends StatelessWidget {
                         color: Theme.of(context).primaryColor,
                       ),
                       title: "Total Responden Anda",
-                      subTitle: berandaController
-                          .totalSurvey.value.totalResponden
+                      subTitle: berandaController.totalSurvey.totalResponden
                           .toString(),
                       isLoaded: berandaController.isLoadedTotalSurvey.value,
                     ),
@@ -57,8 +56,8 @@ class BerandaScreen extends StatelessWidget {
                         color: Colors.blue.shade300,
                       ),
                       title: "Responden Survey Pre",
-                      subTitle: berandaController.totalSurvey.value.respondenPre
-                          .toString(),
+                      subTitle:
+                          berandaController.totalSurvey.respondenPre.toString(),
                       isLoaded: berandaController.isLoadedTotalSurvey.value,
                     ),
                     const SizedBox(
@@ -70,8 +69,7 @@ class BerandaScreen extends StatelessWidget {
                         color: Colors.indigo.shade300,
                       ),
                       title: "Responden Survey Post",
-                      subTitle: berandaController
-                          .totalSurvey.value.respondenPost
+                      subTitle: berandaController.totalSurvey.respondenPost
                           .toString(),
                       isLoaded: berandaController.isLoadedTotalSurvey.value,
                     )

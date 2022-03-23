@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:survey_stunting/components/elevated_icon_button.dart';
 import 'package:survey_stunting/components/filled_autocomplete.dart';
 import 'package:survey_stunting/components/filled_text_field.dart';
+import 'package:survey_stunting/components/rounded_button.dart';
 import 'package:survey_stunting/components/survey_item.dart';
 import 'package:survey_stunting/controllers/survey_controller.dart';
 import 'package:survey_stunting/models/survey_parameters.dart';
@@ -99,8 +100,8 @@ class SurveyScreen extends StatelessWidget {
                                 surveyController.typeSurveyEditingController,
                             items: const [
                               {"label": "Semua", "value": ""},
-                              {"label": "Post", "value": 1},
-                              {"label": "Pre", "value": 2},
+                              {"label": "Post", "value": "1"},
+                              {"label": "Pre", "value": "2"},
                             ],
                             onSuggestionSelected:
                                 (Map<String, dynamic> suggestion) {
@@ -161,7 +162,7 @@ class SurveyScreen extends StatelessWidget {
             Expanded(
               child: Obx(
                 () => Visibility(
-                  visible: surveyController.isLoaded.value,
+                  visible: !surveyController.isLoading.value,
                   replacement: const Center(
                     child: CircularProgressIndicator(),
                   ),
@@ -171,6 +172,30 @@ class SurveyScreen extends StatelessWidget {
                           itemBuilder: (context, index) {
                             return SurveyItem(
                               key: UniqueKey(),
+                              onDelete: () async {
+                                Get.defaultDialog(
+                                  title: "Hapus",
+                                  backgroundColor:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  confirm: RoundedButton(
+                                    title: "Hapus",
+                                    backgroundColor: Colors.red.shade400,
+                                    onPressed: () async {
+                                      await surveyController.deleteSurvey(
+                                        id: surveyController.surveys[index].id,
+                                      );
+                                      Get.back();
+                                    },
+                                  ),
+                                  cancel: RoundedButton.outline(
+                                    title: "Batal",
+                                    onPressed: () => Get.back(),
+                                  ),
+                                  content: const Text(
+                                      "Anda yakin akan menghapus data ini?"),
+                                );
+                              },
+                              onEdit: () {},
                               survey: surveyController.surveys[index],
                             );
                           },

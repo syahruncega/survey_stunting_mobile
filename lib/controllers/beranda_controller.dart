@@ -12,8 +12,8 @@ class BerandaController extends GetxController {
   final searchSurveyEditingController = TextEditingController();
   var isLoadedSurvey = false.obs;
   var isLoadedTotalSurvey = false.obs;
-  var surveys = [].obs;
-  Rx<TotalSurvey> totalSurvey = TotalSurvey().obs;
+  List<Survey> surveys = [];
+  TotalSurvey totalSurvey = TotalSurvey();
 
   String token = GetStorage().read("token");
 
@@ -27,10 +27,10 @@ class BerandaController extends GetxController {
           search: search,
         ),
       );
-      surveys.value = response!;
+      surveys = response!;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
-        surveys.value = [];
+        surveys = [];
       } else {
         handleError(error: e);
       }
@@ -42,7 +42,7 @@ class BerandaController extends GetxController {
     isLoadedTotalSurvey.value = false;
     try {
       TotalSurvey? response = await DioClient().getTotalSurvey(token: token);
-      totalSurvey.value = response!;
+      totalSurvey = response!;
     } on DioError catch (e) {
       handleError(error: e);
     }
@@ -54,5 +54,11 @@ class BerandaController extends GetxController {
     await getSurvey();
     await getTotalSurvey();
     super.onInit();
+  }
+
+  @override
+  void dispose() {
+    searchSurveyEditingController.dispose();
+    super.dispose();
   }
 }

@@ -8,11 +8,15 @@ import 'package:survey_stunting/models/survey.dart';
 class SurveyItem extends StatelessWidget {
   const SurveyItem({
     required this.survey,
+    this.onDelete,
+    this.onEdit,
     this.enabled = true,
     Key? key,
   }) : super(key: key);
   final Survey survey;
   final bool enabled;
+  final dynamic Function()? onDelete;
+  final dynamic Function()? onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +35,7 @@ class SurveyItem extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: ElevatedIconButton(
-                onTap: () {},
+                onTap: onDelete ?? () {},
                 color: Colors.red.shade400,
                 icon: SvgPicture.asset(
                   "assets/icons/bold/delete.svg",
@@ -40,7 +44,7 @@ class SurveyItem extends StatelessWidget {
               ),
             ),
             ElevatedIconButton(
-              onTap: () {},
+              onTap: onEdit ?? () {},
               color: Theme.of(context).colorScheme.secondary,
               icon: SvgPicture.asset(
                 "assets/icons/bold/edit.svg",
