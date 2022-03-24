@@ -7,6 +7,7 @@ import 'package:survey_stunting/models/session.dart';
 import 'package:survey_stunting/models/survey.dart';
 import 'package:survey_stunting/models/survey_parameters.dart';
 import 'package:survey_stunting/models/total_survey.dart';
+import 'package:survey_stunting/models/user_profile.dart';
 import 'package:survey_stunting/services/logging.dart';
 
 class DioClient {
@@ -103,6 +104,19 @@ class DioClient {
       return totalSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error get total survey: $e');
+      rethrow;
+    }
+  }
+
+  Future getProfile({required String token}) async {
+    try {
+      Response response = await _dio.get("/dashboard/profile",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }));
+      return profileFromJson(response.data);
+    } on DioError catch (e) {
+      log('failed to get profile data, $e');
       rethrow;
     }
   }
