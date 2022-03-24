@@ -2,6 +2,10 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:survey_stunting/models/auth.dart';
+import 'package:survey_stunting/models/kabupaten.dart';
+import 'package:survey_stunting/models/kecamatan.dart';
+import 'package:survey_stunting/models/kelurahan.dart';
+import 'package:survey_stunting/models/provinsi.dart';
 import 'package:survey_stunting/models/raw_response.dart';
 import 'package:survey_stunting/models/session.dart';
 import 'package:survey_stunting/models/survey.dart';
@@ -117,6 +121,58 @@ class DioClient {
       return profileFromJson(response.data);
     } on DioError catch (e) {
       log('failed to get profile data, $e');
+      rethrow;
+    }
+  }
+
+  Future<Provinsi> getProvinsi({required String token}) async {
+    try {
+      Response response = await _dio.get("/provinsi",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }));
+      return provinsiFromJson(response.data);
+    } on DioError catch (e) {
+      log('failed to get data provinsi : $e');
+      rethrow;
+    }
+  }
+
+  Future<Kabupaten> getKabupaten({required String token}) async {
+    try {
+      Response response = await _dio.get("/kabupaten_kota",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }));
+      return kabupatenFromJson(response.data);
+    } on DioError catch (e) {
+      log('failed to get data kabupaten $e');
+      rethrow;
+    }
+  }
+
+  Future<Kecamatan> getKecamatan({required String token}) async {
+    try {
+      Response response = await _dio.get("/kecamatan",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }));
+      return kecamatanFromJson(response.data);
+    } on DioError catch (e) {
+      log('failed to get data kecamatan $e');
+      rethrow;
+    }
+  }
+
+  Future<Kelurahan> getKelurahan({required String token}) async {
+    try {
+      Response response = await _dio.get("/desa_kelurahan",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }));
+      return kelurahanFromJson(response.data);
+    } on DioError catch (e) {
+      log('failed to get kelurahan data $e');
       rethrow;
     }
   }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -51,126 +53,111 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                         height: size.height * 0.06,
                       ),
                       FilledTextField(
-                        controller: TextEditingController(
-                            text: ubahProfilController
-                                .profileData.value.data?.namaLengkap),
+                        controller: controller.namaLengkapTextController.value,
                         title: "Nama Lengkap",
                         textInputAction: TextInputAction.next,
                       ),
                       FilledAutocomplete(
-                        controller: controller.jenisKelamin,
+                        controller: controller.jenisKelaminTextController.value,
                         title: "Jenis Kelamin",
                         items: const [
-                          {"label": "1", "value": "Laki - laki"},
-                          {"label": "2", "value": "Perempuan"}
+                          {"label": "Laki - laki", "value": "Laki - laki"},
+                          {"label": "Perempuan", "value": "Perempuan"}
                         ],
                         textInputAction: TextInputAction.next,
                         onSuggestionSelected:
                             (Map<String, dynamic> suggestion) {
-                          controller.jenisKelamin.text = suggestion["value"];
+                          controller.jenisKelaminTextController.value.text =
+                              suggestion["value"];
                         },
                       ),
                       FilledTextField(
-                        controller: TextEditingController(
-                            text: ubahProfilController
-                                .profileData.value.data?.tempatLahir),
+                        controller: controller.tempatLahirTextController.value,
                         title: "Tempat Lahir",
                         textInputAction: TextInputAction.next,
                       ),
                       FilledTextField(
-                        controller: TextEditingController(
-                            text: ubahProfilController
-                                .profileData.value.data?.tanggalLahir),
+                        controller: controller.tglLahirTextController.value,
                         title: "Tanggal Lahir",
                         keyboardType: TextInputType.datetime,
                         textInputAction: TextInputAction.next,
                         inputFormatters: [controller.maskFormatter],
-                        helperText: "Contoh: 14-01-1998",
+                        helperText: "Contoh: 1998-06-26",
                       ),
                       FilledTextField(
-                        controller: TextEditingController(
-                            text: ubahProfilController
-                                .profileData.value.data?.alamat),
+                        controller: controller.alamatTextController.value,
                         title: "Alamat",
                         minLine: 2,
                         maxLine: null,
                         textInputAction: TextInputAction.next,
                       ),
                       FilledAutocomplete(
-                        controller: controller.provinsi,
+                        controller: controller.provinsiTextController,
                         title: "Provisi",
-                        items: const [
-                          {"label": "1", "value": "1"},
-                          {"label": "2", "value": "2"},
-                          {"label": "3", "value": "3"}
-                        ],
+                        items: ubahProfilController.listProvinsi,
                         textInputAction: TextInputAction.next,
                         onSuggestionSelected:
                             (Map<String, dynamic> suggestion) {
-                          controller.provinsi.text = suggestion["value"];
+                          controller.provinsiTextController.text =
+                              suggestion["label"];
+                          log('provinsi selected id : ' + suggestion['value']);
                         },
                       ),
                       FilledAutocomplete(
-                        controller: controller.kabupatan,
+                        controller: controller.kabupatenTextController,
                         title: "Kabupaten / Kota",
-                        items: const [
-                          {"label": "1", "value": "1"},
-                          {"label": "2", "value": "2"},
-                          {"label": "3", "value": "3"}
-                        ],
+                        items: ubahProfilController.listKabupaten,
                         textInputAction: TextInputAction.next,
                         onSuggestionSelected:
                             (Map<String, dynamic> suggestion) {
-                          controller.kabupatan.text = suggestion["value"];
+                          controller.kabupatenTextController.text =
+                              suggestion["label"];
+                          log('kabupaten selected id : ' + suggestion['value']);
                         },
                       ),
                       FilledAutocomplete(
-                        controller: controller.kecamatan,
+                        controller: controller.kecamatanTextController,
                         title: "Kecamatan",
-                        items: const [
-                          {"label": "1", "value": "1"},
-                          {"label": "2", "value": "2"},
-                          {"label": "3", "value": "3"}
-                        ],
+                        items: ubahProfilController.listKecamatan,
                         textInputAction: TextInputAction.next,
                         onSuggestionSelected:
                             (Map<String, dynamic> suggestion) {
-                          controller.kecamatan.text = suggestion["value"];
+                          controller.kecamatanTextController.text =
+                              suggestion["label"];
+                          log('kecamatan selected id : ' + suggestion['value']);
                         },
                       ),
                       FilledAutocomplete(
-                        controller: controller.kelurahan,
+                        controller: controller.kelurahanTextController,
                         title: "Desa / Kelurahan",
-                        items: const [
-                          {"label": "1", "value": "1"},
-                          {"label": "2", "value": "2"},
-                          {"label": "3", "value": "3"}
-                        ],
+                        items: ubahProfilController.listKelurahan,
                         textInputAction: TextInputAction.next,
                         onSuggestionSelected:
                             (Map<String, dynamic> suggestion) {
-                          controller.kelurahan.text = suggestion["value"];
+                          controller.kelurahanTextController.text =
+                              suggestion["label"];
+                          log('kelurahan selected id : ' + suggestion['value']);
                         },
                       ),
                       FilledTextField(
-                        controller: TextEditingController(
-                            text: ubahProfilController
-                                .profileData.value.data?.nomorHp),
+                        controller: controller.nomorHpTextController.value,
                         title: "Nomor HP",
                         keyboardType: TextInputType.phone,
                         textInputAction: TextInputAction.next,
                       ),
                       FilledTextField(
-                        controller: TextEditingController(
-                            text: ubahProfilController
-                                .profileData.value.data?.email),
+                        controller: controller.emailTextController.value,
                         title: "Email",
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.done,
                       ),
                       Center(
                         child: ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: () {
+                            log(ubahProfilController
+                                .namaLengkapTextController.value.text
+                                .toString());
+                          },
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
