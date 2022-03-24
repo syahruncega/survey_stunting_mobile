@@ -93,7 +93,9 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                               title: "Tanggal Lahir",
                               keyboardType: TextInputType.datetime,
                               textInputAction: TextInputAction.next,
-                              inputFormatters: [controller.maskFormatter],
+                              inputFormatters: [
+                                controller.tglLahirMaskFormatter
+                              ],
                               helperText: "Contoh: 1998-06-26",
                             ),
                             FilledTextField(
@@ -167,6 +169,9 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                               title: "Nomor HP",
                               keyboardType: TextInputType.phone,
                               textInputAction: TextInputAction.next,
+                              inputFormatters: [
+                                controller.nomorHpMaskFormatter
+                              ],
                             ),
                             FilledTextField(
                               controller: controller.emailTextController.value,

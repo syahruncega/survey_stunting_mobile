@@ -39,8 +39,14 @@ class UbahProfilController extends GetxController {
 
   var isLoaded = false.obs;
 
-  final maskFormatter = MaskTextInputFormatter(
+  final tglLahirMaskFormatter = MaskTextInputFormatter(
     mask: '####-##-##',
+    filter: {"#": RegExp(r'[0-9]')},
+    type: MaskAutoCompletionType.lazy,
+  );
+
+  final nomorHpMaskFormatter = MaskTextInputFormatter(
+    mask: '############',
     filter: {"#": RegExp(r'[0-9]')},
     type: MaskAutoCompletionType.lazy,
   );
