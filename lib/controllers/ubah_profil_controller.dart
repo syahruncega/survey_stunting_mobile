@@ -37,6 +37,8 @@ class UbahProfilController extends GetxController {
   final List<Map<String, dynamic>> listKecamatan = [];
   final List<Map<String, dynamic>> listKelurahan = [];
 
+  var isLoaded = false.obs;
+
   final maskFormatter = MaskTextInputFormatter(
     mask: '####-##-##',
     filter: {"#": RegExp(r'[0-9]')},
@@ -118,6 +120,8 @@ class UbahProfilController extends GetxController {
     String userKecamatan;
     String userKelurahan;
 
+    isLoaded.value = false;
+
     if (profileData.value.data != null) {
       namaLengkapTextController.value.text =
           profileData.value.data!.namaLengkap;
@@ -158,6 +162,8 @@ class UbahProfilController extends GetxController {
           .nama
           .toString();
       kelurahanTextController.text = userKelurahan;
+
+      isLoaded.value = true;
     }
   }
 
