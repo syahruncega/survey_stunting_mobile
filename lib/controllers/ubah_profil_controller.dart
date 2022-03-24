@@ -114,6 +114,52 @@ class UbahProfilController extends GetxController {
     }
   }
 
+  getKabupatenByProvinsiId({required int provinsiId}) {}
+  getKecamatanByKabupatenId({required int kabupatenId}) {}
+  getKelurahanByKecamatanId({required int kecamatanId}) {}
+
+  void updateUserAddressUi(
+      {String? provinsiId, String? kabupatenId, String? kecamatanId}) {
+    if (provinsiId != null) {
+      listKabupaten.clear();
+      for (var i in kabupatenData.value.data!) {
+        if (i.provinsiId == provinsiId) {
+          listKabupaten.add({
+            'label': i.nama,
+            'value': i.id.toString(),
+          });
+        }
+      }
+      kabupatenTextController.text = "--- Pilih Kabupaten ---";
+    }
+
+    if (kabupatenId != null) {
+      listKecamatan.clear();
+      for (var i in kecamatanData.value.data!) {
+        if (i.kabupatenKotaId == kabupatenId) {
+          listKecamatan.add({
+            'label': i.nama,
+            'value': i.id.toString(),
+          });
+        }
+      }
+      kecamatanTextController.text = "--- Pilih Kecamatan ---";
+    }
+
+    if (kecamatanId != null) {
+      listKelurahan.clear();
+      for (var i in kelurahanData.value.data!) {
+        if (i.kecamatanId == kecamatanId) {
+          listKelurahan.add({
+            'label': i.nama,
+            'value': i.id.toString(),
+          });
+        }
+      }
+      kelurahanTextController.text = "--- Pilih Kelurahan";
+    }
+  }
+
   void displayUserData() {
     String userProvinsi;
     String userKabupaten;

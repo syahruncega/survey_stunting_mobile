@@ -114,6 +114,8 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                                     suggestion["label"];
                                 log('provinsi selected id : ' +
                                     suggestion['value']);
+                                controller.updateUserAddressUi(
+                                    provinsiId: suggestion['value']);
                               },
                             ),
                             FilledAutocomplete(
@@ -127,6 +129,8 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                                     suggestion["label"];
                                 log('kabupaten selected id : ' +
                                     suggestion['value']);
+                                controller.updateUserAddressUi(
+                                    kabupatenId: suggestion['value']);
                               },
                             ),
                             FilledAutocomplete(
@@ -140,6 +144,8 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                                     suggestion["label"];
                                 log('kecamatan selected id : ' +
                                     suggestion['value']);
+                                controller.updateUserAddressUi(
+                                    kecamatanId: suggestion['value']);
                               },
                             ),
                             FilledAutocomplete(
