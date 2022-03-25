@@ -77,24 +77,6 @@ class DioClient {
     }
   }
 
-  Future<List<Survey>?> getSurveyByStatus({
-    required String token,
-    required bool isCompleted,
-  }) async {
-    try {
-      Response response = await _dio.get(
-        "/surveyor/survey?status=${isCompleted ? 'selesai' : 'belum_selesai'}",
-        options: Options(responseType: ResponseType.plain, headers: {
-          "authorization": "Bearer $token",
-        }),
-      );
-      return listSurveyFromJson(getData(response.data));
-    } on DioError catch (e) {
-      log('Error get all survey: $e');
-      rethrow;
-    }
-  }
-
   Future<TotalSurvey?> getTotalSurvey({
     required String token,
   }) async {
@@ -109,6 +91,25 @@ class DioClient {
       return totalSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error get total survey: $e');
+      rethrow;
+    }
+  }
+
+  Future deleteSurvey({
+    required String token,
+    required int id,
+  }) async {
+    try {
+      await _dio.delete(
+        "/surveyor/survey",
+        data: {"id": id},
+        options: Options(responseType: ResponseType.plain, headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      // return listSurveyFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get all survey: $e');
       rethrow;
     }
   }

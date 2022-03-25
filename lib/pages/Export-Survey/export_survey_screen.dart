@@ -32,12 +32,13 @@ class ExportSurveyScreen extends StatelessWidget {
               controller: exportSurveyController.jenisSurveyEditingController,
               hintText: "Pilih jenis survey",
               items: const [
-                {"label": "Post", "value": 1},
-                {"label": "Pre", "value": 2},
+                {"label": "Post", "value": "1"},
+                {"label": "Pre", "value": "2"},
               ],
               onSuggestionSelected: (Map<String, dynamic> suggestion) async {
                 exportSurveyController.jenisSurveyEditingController.text =
                     suggestion["label"];
+                exportSurveyController.jenisSurvey = suggestion["value"];
                 await exportSurveyController.getSurvey(
                   typeSurveyId: suggestion["value"],
                 );
