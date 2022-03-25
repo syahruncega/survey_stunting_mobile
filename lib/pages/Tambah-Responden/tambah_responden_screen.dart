@@ -121,10 +121,11 @@ class TambahRespondenScreen extends StatelessWidget {
                       },
                     ),
                   ),
-                  const FilledTextField(
+                  FilledTextField(
                     title: "Nomor HP (Optional)",
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.done,
+                    controller: controller.nomorHPTEC,
                   ),
                   Center(
                     child: CustomElevatedButtonIcon(
