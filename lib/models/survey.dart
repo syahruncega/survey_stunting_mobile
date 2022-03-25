@@ -4,6 +4,9 @@
 
 import 'dart:convert';
 
+import 'package:survey_stunting/models/nama_survey.dart';
+import 'package:survey_stunting/models/responden.dart';
+
 List<Survey> listSurveyFromJson(String str) =>
     List<Survey>.from(json.decode(str).map((x) => Survey.fromJson(x)));
 
@@ -71,48 +74,6 @@ class Survey {
         "responden": responden.toJson(),
         "nama_survey": namaSurvey.toJson(),
         "profile": profile.toJson(),
-      };
-}
-
-class NamaSurvey {
-  NamaSurvey({
-    required this.id,
-    required this.nama,
-    required this.tipe,
-    this.deletedAt,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  int id;
-  String nama;
-  String tipe;
-  DateTime? deletedAt;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-
-  factory NamaSurvey.fromJson(Map<String, dynamic> json) => NamaSurvey(
-        id: json["id"],
-        nama: json["nama"],
-        tipe: json["tipe"],
-        deletedAt: json["deleted_at"] != null
-            ? DateTime.parse(json["deleted_at"])
-            : null,
-        createdAt: json["created_at"] != null
-            ? DateTime.parse(json["created_at"])
-            : null,
-        updatedAt: json["updated_at"] != null
-            ? DateTime.parse(json["updated_at"])
-            : null,
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "nama": nama,
-        "tipe": tipe,
-        "deleted_at": deletedAt?.toIso8601String(),
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
       };
 }
 
@@ -193,68 +154,6 @@ class Profile {
         "desa_kelurahan": desaKelurahan,
         "nomor_hp": nomorHp,
         "email": email,
-        "deleted_at": deletedAt?.toIso8601String(),
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
-      };
-}
-
-class Responden {
-  Responden({
-    required this.id,
-    required this.kartuKeluarga,
-    required this.alamat,
-    required this.provinsiId,
-    required this.kabupatenKotaId,
-    required this.kecamatanId,
-    required this.desaKelurahanId,
-    required this.nomorHp,
-    this.deletedAt,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  int id;
-  String kartuKeluarga;
-  String alamat;
-  String provinsiId;
-  String kabupatenKotaId;
-  String kecamatanId;
-  String desaKelurahanId;
-  String nomorHp;
-  DateTime? deletedAt;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-
-  factory Responden.fromJson(Map<String, dynamic> json) => Responden(
-        id: json["id"],
-        kartuKeluarga: json["kartu_keluarga"],
-        alamat: json["alamat"],
-        provinsiId: json["provinsi_id"],
-        kabupatenKotaId: json["kabupaten_kota_id"],
-        kecamatanId: json["kecamatan_id"],
-        desaKelurahanId: json["desa_kelurahan_id"],
-        nomorHp: json["nomor_hp"],
-        deletedAt: json["deleted_at"] != null
-            ? DateTime.parse(json["deleted_at"])
-            : null,
-        createdAt: json["created_at"] != null
-            ? DateTime.parse(json["created_at"])
-            : null,
-        updatedAt: json["updated_at"] != null
-            ? DateTime.parse(json["updated_at"])
-            : null,
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "kartu_keluarga": kartuKeluarga,
-        "alamat": alamat,
-        "provinsi_id": provinsiId,
-        "kabupaten_kota_id": kabupatenKotaId,
-        "kecamatan_id": kecamatanId,
-        "desa_kelurahan_id": desaKelurahanId,
-        "nomor_hp": nomorHp,
         "deleted_at": deletedAt?.toIso8601String(),
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),

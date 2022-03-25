@@ -1,8 +1,15 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:survey_stunting/models/auth.dart';
+import 'package:survey_stunting/models/kabupaten.dart';
+import 'package:survey_stunting/models/kecamatan.dart';
+import 'package:survey_stunting/models/kelurahan.dart';
+import 'package:survey_stunting/models/nama_survey.dart';
+import 'package:survey_stunting/models/provinsi.dart';
 import 'package:survey_stunting/models/raw_response.dart';
+import 'package:survey_stunting/models/responden.dart';
 import 'package:survey_stunting/models/session.dart';
 import 'package:survey_stunting/models/survey.dart';
 import 'package:survey_stunting/models/survey_parameters.dart';
@@ -10,9 +17,11 @@ import 'package:survey_stunting/models/total_survey.dart';
 import 'package:survey_stunting/services/logging.dart';
 
 class DioClient {
+  final String token = GetStorage().read("token");
   final Dio _dio = Dio(
     BaseOptions(
       baseUrl: "${dotenv.env['BASE_URL']!}/api",
+      responseType: ResponseType.plain,
     ),
   )..interceptors.add(Logging());
 
@@ -23,9 +32,6 @@ class DioClient {
       Response response = await _dio.post(
         "/login",
         data: loginInfo.toJson(),
-        options: Options(
-          responseType: ResponseType.plain,
-        ),
       );
 
       session = sessionFromJson(response.data);
@@ -40,7 +46,7 @@ class DioClient {
     try {
       Response response = await _dio.get(
         "/logout",
-        options: Options(responseType: ResponseType.plain, headers: {
+        options: Options(headers: {
           "authorization": "Bearer $token",
         }),
       );
@@ -60,13 +66,47 @@ class DioClient {
       Response response = await _dio.get(
         "/surveyor/survey",
         queryParameters: queryParameters?.toJson(),
-        options: Options(responseType: ResponseType.plain, headers: {
+        options: Options(headers: {
           "authorization": "Bearer $token",
         }),
       );
       return listSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
-      log('Error get all survey: $e');
+      log('Error get survey: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<NamaSurvey>?> getNamaSurvey({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/surveyor/survey/nama",
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listNamaSurveyFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get nama survey: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Responden>?> getResponden({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/responden",
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listRespondenFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get responden: $e');
       rethrow;
     }
   }
@@ -77,7 +117,7 @@ class DioClient {
     try {
       Response response = await _dio.get(
         "/surveyor/survey/count",
-        options: Options(responseType: ResponseType.plain, headers: {
+        options: Options(headers: {
           "authorization": "Bearer $token",
         }),
       );
@@ -97,13 +137,87 @@ class DioClient {
       await _dio.delete(
         "/surveyor/survey",
         data: {"id": id},
-        options: Options(responseType: ResponseType.plain, headers: {
+        options: Options(headers: {
           "authorization": "Bearer $token",
         }),
       );
       // return listSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error get all survey: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Provinsi>?> getProvinsi({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/provinsi",
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listProvinsiFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get provinsi: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Kabupaten>?> getKabupaten({
+    required String token,
+    required String idProvinsi,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/kabupaten_kota",
+        queryParameters: {"provinsi_id": idProvinsi},
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listKabupatenFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get kabupaten kota: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Kecamatan>?> getKecamatan({
+    required String token,
+    required String idKabupaten,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/kecamatan",
+        queryParameters: {"kabupaten_id": idKabupaten},
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listKecamatanFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get kecamatan: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Kelurahan>?> getKelurahan({
+    required String token,
+    required String idKecamatan,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/desa_kelurahan",
+        queryParameters: {"kecamatan_id": idKecamatan},
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listKelurahanFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get kelurahan: $e');
       rethrow;
     }
   }

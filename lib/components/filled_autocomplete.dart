@@ -8,6 +8,8 @@ class FilledAutocomplete extends StatelessWidget {
   final String? hintText;
   final String? title;
   final TextInputAction? textInputAction;
+  final TextInputType? keyboardType;
+  final bool enabled;
   final void Function(Map<String, dynamic>) onSuggestionSelected;
 
   const FilledAutocomplete({
@@ -17,6 +19,8 @@ class FilledAutocomplete extends StatelessWidget {
     this.title,
     this.hintText,
     this.textInputAction,
+    this.keyboardType,
+    this.enabled = true,
     Key? key,
   }) : super(key: key);
 
@@ -35,6 +39,8 @@ class FilledAutocomplete extends StatelessWidget {
         TypeAheadField(
           textFieldConfiguration: TextFieldConfiguration(
             textInputAction: textInputAction,
+            enabled: enabled,
+            keyboardType: keyboardType ?? TextInputType.text,
             decoration: InputDecoration(
               hintText: hintText,
               filled: true,
@@ -80,10 +86,13 @@ class FilledAutocomplete extends StatelessWidget {
           ),
           suggestionsCallback: (pattern) => items.where((element) =>
               element["label"].toLowerCase().contains(pattern.toLowerCase())),
-          itemBuilder: (_, Map<String, dynamic> suggestion) => ListTile(
-            title: Text(suggestion["label"]),
+          itemBuilder: (_, Map<String, dynamic> suggestion) => InkWell(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              child: Text(suggestion["label"]),
+            ),
           ),
-          getImmediateSuggestions: true,
+          getImmediateSuggestions: false,
           onSuggestionSelected: onSuggestionSelected,
           noItemsFoundBuilder: (context) => const Padding(
             padding: EdgeInsets.all(20),

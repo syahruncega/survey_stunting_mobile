@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:survey_stunting/components/elevated_icon_button.dart';
+import 'package:survey_stunting/components/custom_icon_button.dart';
 import 'package:survey_stunting/models/survey.dart';
 
 class SurveyItem extends StatelessWidget {
@@ -34,7 +34,7 @@ class SurveyItem extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: ElevatedIconButton(
+              child: CustomIconButton(
                 onTap: onDelete ?? () {},
                 color: Colors.red.shade400,
                 icon: SvgPicture.asset(
@@ -43,7 +43,7 @@ class SurveyItem extends StatelessWidget {
                 ),
               ),
             ),
-            ElevatedIconButton(
+            CustomIconButton(
               onTap: onEdit ?? () {},
               color: Theme.of(context).colorScheme.secondary,
               icon: SvgPicture.asset(

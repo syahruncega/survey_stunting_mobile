@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
 import 'package:survey_stunting/bindings/layout_binding.dart';
 import 'package:survey_stunting/bindings/login_binding.dart';
+import 'package:survey_stunting/bindings/tambah_responden_binding.dart';
 import 'package:survey_stunting/bindings/ubah_profil_binding.dart';
 import 'package:survey_stunting/pages/Login/login_screen.dart';
+import 'package:survey_stunting/pages/Tambah-Responden/tambah_responden_screen.dart';
 import 'package:survey_stunting/pages/Ubah-Akun/ubah_akun_screen.dart';
 import 'package:survey_stunting/pages/Ubah-Profil/ubah_profil_screen.dart';
 import 'package:survey_stunting/pages/layout.dart';
@@ -19,6 +21,11 @@ class AppPage {
       name: RouteName.layout,
       page: () => Layout(),
       binding: LayoutBinding(),
+    ),
+    GetPage(
+      name: RouteName.tambahResponden,
+      page: () => const TambahRespondenScreen(),
+      binding: TambahRespondenBinding(),
     ),
     GetPage(
       name: RouteName.ubahProfil,

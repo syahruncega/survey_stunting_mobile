@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:survey_stunting/components/elevated_icon_button.dart';
+import 'package:survey_stunting/components/custom_elevated_button.dart';
+import 'package:survey_stunting/components/custom_elevated_button_icon.dart';
+import 'package:survey_stunting/components/custom_icon_button.dart';
 import 'package:survey_stunting/components/filled_autocomplete.dart';
 import 'package:survey_stunting/components/filled_text_field.dart';
 import 'package:survey_stunting/components/rounded_button.dart';
 import 'package:survey_stunting/components/survey_item.dart';
 import 'package:survey_stunting/controllers/survey_controller.dart';
 import 'package:survey_stunting/models/survey_parameters.dart';
+import 'package:survey_stunting/routes/route_name.dart';
 
 class SurveyScreen extends StatelessWidget {
   const SurveyScreen({Key? key}) : super(key: key);
@@ -63,7 +66,7 @@ class SurveyScreen extends StatelessWidget {
                 SizedBox(
                   width: size.width * 0.03,
                 ),
-                ElevatedIconButton(
+                CustomIconButton(
                   icon: SvgPicture.asset(
                     "assets/icons/outline/setting-4.svg",
                     color: Colors.white,
@@ -141,19 +144,79 @@ class SurveyScreen extends StatelessWidget {
             SizedBox(
               height: size.height * 0.01,
             ),
-            ElevatedButton.icon(
-              onPressed: () async {},
-              style: ElevatedButton.styleFrom(
-                primary: Theme.of(context).colorScheme.secondary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              icon: SvgPicture.asset("assets/icons/outline/add-square.svg",
-                  color: Colors.white),
-              label: Text(
-                "Tambah",
-                style: Theme.of(context).textTheme.button,
+            Obx(
+              () => CustomElevatedButtonIcon(
+                isLoading: surveyController.isLoadingFilter.value,
+                label: "Tambah",
+                icon: SvgPicture.asset("assets/icons/outline/add-square.svg",
+                    color: Colors.white),
+                onPressed: () async {
+                  surveyController.isLoadingFilter.value = true;
+                  await surveyController.getResponden();
+                  await surveyController.getNamaSurvey();
+                  surveyController.isLoadingFilter.value = false;
+                  Get.defaultDialog(
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    buttonColor: Theme.of(context).colorScheme.primary,
+                    confirmTextColor: Colors.white,
+                    title: "Filter",
+                    onConfirm: () async {
+                      Get.back();
+                    },
+                    onCancel: () {},
+                    textCancel: "Batal",
+                    cancelTextColor: Theme.of(context).colorScheme.primary,
+                    textConfirm: "Proses",
+                    content: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      runSpacing: size.height * 0.03,
+                      children: [
+                        FilledAutocomplete(
+                          title: "Responden",
+                          hintText: "Pilih responden",
+                          keyboardType: TextInputType.number,
+                          controller:
+                              surveyController.respondenEditingController,
+                          items: surveyController.responden
+                              .map((e) =>
+                                  {"label": e.kartuKeluarga, "value": e.id})
+                              .toList(),
+                          onSuggestionSelected:
+                              (Map<String, dynamic> suggestion) {
+                            surveyController.respondenEditingController.text =
+                                suggestion["label"];
+                            surveyController.idResponden = suggestion["value"];
+                          },
+                        ),
+                        FilledAutocomplete(
+                          title: "Nama Survey",
+                          hintText: "Pilih nama survey",
+                          controller:
+                              surveyController.namaSurveyEditingController,
+                          items: surveyController.namaSurvey
+                              .map((e) => {
+                                    "label": "${e.nama} | ${e.tipe}",
+                                    "value": e.id
+                                  })
+                              .toList(),
+                          onSuggestionSelected:
+                              (Map<String, dynamic> suggestion) {
+                            surveyController.namaSurveyEditingController.text =
+                                suggestion["label"];
+                            surveyController.idNamaSurvey = suggestion["value"];
+                          },
+                        ),
+                        Center(
+                          child: CustomElevatedButton(
+                            label: "Tambah Responden",
+                            onPressed: () =>
+                                Get.toNamed(RouteName.tambahResponden),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
             SizedBox(
