@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:survey_stunting/components/error_scackbar.dart';
+import 'package:survey_stunting/components/success_snackbar.dart';
 import 'package:survey_stunting/models/kabupaten.dart';
 import 'package:survey_stunting/models/kecamatan.dart';
 import 'package:survey_stunting/models/kelurahan.dart';
@@ -37,7 +39,13 @@ class UbahProfilController extends GetxController {
   final List<Map<String, dynamic>> listKecamatan = [];
   final List<Map<String, dynamic>> listKelurahan = [];
 
+  var currentProvinsiId = ''.obs;
+  var currentKabupatenId = ''.obs;
+  var currentKecamatanId = ''.obs;
+  var currentKelurahanId = ''.obs;
+
   var isLoaded = false.obs;
+  var profileUpdateStatus = ''.obs;
 
   final tglLahirMaskFormatter = MaskTextInputFormatter(
     mask: '####-##-##',
@@ -120,13 +128,59 @@ class UbahProfilController extends GetxController {
     }
   }
 
+  Future updateUserProfile({
+    required String nama,
+    required String jenisKelamin,
+    required String tempatLahir,
+    required String tglLahir,
+    required String alamat,
+    required String nomorHp,
+    required String email,
+  }) async {
+    if (validate()) {
+      try {
+        profileUpdateStatus.value = 'waiting';
+        bool response = await DioClient().updateProfile(
+            token: token,
+            nama: nama,
+            jenisKelamin: jenisKelamin,
+            tempatLahir: tempatLahir,
+            tglLahir: tglLahir,
+            alamat: alamat,
+            provinsi: currentProvinsiId.value,
+            kabupaten: currentKabupatenId.value,
+            kecamatan: currentKecamatanId.value,
+            kelurahan: currentKelurahanId.value,
+            nomorHp: nomorHp,
+            email: email);
+        if (response) {
+          profileUpdateStatus.value = 'successful';
+          successSnackbar('Profile berhasil diupdate.');
+        } else {
+          profileUpdateStatus.value = 'failed';
+          errorScackbar('Update profile gagal.');
+        }
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    }
+  }
+
+  bool validate() {
+    return true;
+  }
+
   getKabupatenByProvinsiId({required int provinsiId}) {}
   getKecamatanByKabupatenId({required int kabupatenId}) {}
   getKelurahanByKecamatanId({required int kecamatanId}) {}
 
   void updateUserAddressUi(
-      {String? provinsiId, String? kabupatenId, String? kecamatanId}) {
+      {String? provinsiId,
+      String? kabupatenId,
+      String? kecamatanId,
+      String? kelurahanId}) {
     if (provinsiId != null) {
+      currentProvinsiId.value = provinsiId;
       listKabupaten.clear();
       for (var i in kabupatenData.value.data!) {
         if (i.provinsiId == provinsiId) {
@@ -137,9 +191,12 @@ class UbahProfilController extends GetxController {
         }
       }
       kabupatenTextController.text = "--- Pilih Kabupaten ---";
+      kecamatanTextController.text = "--- Pilih Kecamatan ---";
+      kelurahanTextController.text = "--- Pilih Kelurahan ---";
     }
 
     if (kabupatenId != null) {
+      currentKabupatenId.value = kabupatenId;
       listKecamatan.clear();
       for (var i in kecamatanData.value.data!) {
         if (i.kabupatenKotaId == kabupatenId) {
@@ -150,9 +207,11 @@ class UbahProfilController extends GetxController {
         }
       }
       kecamatanTextController.text = "--- Pilih Kecamatan ---";
+      kelurahanTextController.text = "--- Pilih Kelurahan ---";
     }
 
     if (kecamatanId != null) {
+      currentKecamatanId.value = kecamatanId;
       listKelurahan.clear();
       for (var i in kelurahanData.value.data!) {
         if (i.kecamatanId == kecamatanId) {
@@ -162,7 +221,11 @@ class UbahProfilController extends GetxController {
           });
         }
       }
-      kelurahanTextController.text = "--- Pilih Kelurahan";
+      kelurahanTextController.text = "--- Pilih Kelurahan ---";
+    }
+
+    if (kelurahanId != null) {
+      currentKelurahanId.value = kelurahanId;
     }
   }
 
@@ -214,6 +277,12 @@ class UbahProfilController extends GetxController {
           .nama
           .toString();
       kelurahanTextController.text = userKelurahan;
+
+      //set initial value of user address
+      currentProvinsiId.value = profileData.value.data!.provinsi;
+      currentKabupatenId.value = profileData.value.data!.kabupatenKota;
+      currentKecamatanId.value = profileData.value.data!.kecamatan;
+      currentKelurahanId.value = profileData.value.data!.desaKelurahan;
 
       isLoaded.value = true;
     }

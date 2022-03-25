@@ -161,6 +161,8 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                                     suggestion["label"];
                                 log('kelurahan selected id : ' +
                                     suggestion['value']);
+                                controller.updateUserAddressUi(
+                                    kelurahanId: suggestion['value']);
                               },
                             ),
                             FilledTextField(
@@ -182,19 +184,61 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                             Center(
                               child: ElevatedButton.icon(
                                 onPressed: () {
-                                  log(ubahProfilController
-                                      .namaLengkapTextController.value.text
-                                      .toString());
+                                  String namaLengkap = ubahProfilController
+                                      .namaLengkapTextController.value.text;
+                                  String jenisKelamin = ubahProfilController
+                                      .jenisKelaminTextController.value.text;
+                                  String tempatLahir = ubahProfilController
+                                      .tempatLahirTextController.value.text;
+                                  String tglLahir = ubahProfilController
+                                      .tglLahirTextController.value.text;
+                                  String alamat = ubahProfilController
+                                      .alamatTextController.value.text;
+                                  String nomorHp = ubahProfilController
+                                      .nomorHpTextController.value.text;
+                                  String email = ubahProfilController
+                                      .emailTextController.value.text;
+
+                                  ubahProfilController
+                                              .profileUpdateStatus.value ==
+                                          'waiting'
+                                      ? null
+                                      : ubahProfilController.updateUserProfile(
+                                          nama: namaLengkap,
+                                          jenisKelamin: jenisKelamin,
+                                          tempatLahir: tempatLahir,
+                                          tglLahir: tglLahir,
+                                          alamat: alamat,
+                                          nomorHp: nomorHp,
+                                          email: email);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
-                                icon: SvgPicture.asset(
-                                  "assets/icons/outline/tick-square.svg",
-                                  color: Colors.white,
-                                ),
+                                icon: ubahProfilController
+                                                .profileUpdateStatus.value ==
+                                            '' ||
+                                        ubahProfilController
+                                                .profileUpdateStatus.value ==
+                                            'failed' ||
+                                        ubahProfilController
+                                                .profileUpdateStatus.value ==
+                                            'successful'
+                                    ? SvgPicture.asset(
+                                        "assets/icons/outline/tick-square.svg",
+                                        color: Colors.white,
+                                      )
+                                    : Container(
+                                        width: 24,
+                                        height: 24,
+                                        padding: const EdgeInsets.all(2.0),
+                                        child: const CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 3,
+                                        ),
+                                      ),
                                 label: Text(
                                   "Simpan",
                                   style: Theme.of(context).textTheme.button,

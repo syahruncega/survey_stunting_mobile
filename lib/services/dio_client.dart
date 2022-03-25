@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -121,6 +122,48 @@ class DioClient {
       return profileFromJson(response.data);
     } on DioError catch (e) {
       log('failed to get profile data, $e');
+      rethrow;
+    }
+  }
+
+  Future updateProfile(
+      {required String token,
+      required String nama,
+      required String jenisKelamin,
+      required String tempatLahir,
+      required String tglLahir,
+      required String alamat,
+      required String provinsi,
+      required String kabupaten,
+      required String kecamatan,
+      required String kelurahan,
+      required String nomorHp,
+      required String email}) async {
+    try {
+      Response response = await _dio.put("/dashboard/profile",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }),
+          data: jsonEncode({
+            'nama_lengkap': nama,
+            'jenis_kelamin': jenisKelamin,
+            'tempat_lahir': tempatLahir,
+            'tanggal_lahir': tglLahir,
+            'alamat': alamat,
+            'provinsi': provinsi,
+            'kabupaten_kota': kabupaten,
+            'kecamatan': kecamatan,
+            'desa_kelurahan': kelurahan,
+            'nomor_hp': nomorHp,
+            'email': email
+          }));
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } on DioError catch (e) {
+      log('failed to update profile data : $e');
       rethrow;
     }
   }
