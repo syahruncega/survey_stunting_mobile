@@ -83,6 +83,7 @@ class SurveyScreen extends StatelessWidget {
                         confirmTextColor: Colors.white,
                         title: "Filter",
                         onConfirm: () async {
+                          Get.back();
                           await surveyController.getSurvey(
                             queryParameters: SurveyParameters(
                               search: surveyController
@@ -91,7 +92,6 @@ class SurveyScreen extends StatelessWidget {
                               typeSurveyId: surveyController.typeSurvey,
                             ),
                           );
-                          Get.back();
                         },
                         onCancel: () {},
                         textCancel: "Batal",
@@ -253,10 +253,10 @@ class SurveyScreen extends StatelessWidget {
                                     title: "Hapus",
                                     backgroundColor: Colors.red.shade400,
                                     onPressed: () async {
+                                      Get.back();
                                       await surveyController.deleteSurvey(
                                         id: surveyController.surveys[index].id,
                                       );
-                                      Get.back();
                                     },
                                   ),
                                   cancel: RoundedButton.outline(
