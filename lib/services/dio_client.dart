@@ -167,12 +167,12 @@ class DioClient {
 
   Future<List<Kabupaten>?> getKabupaten({
     required String token,
-    required String idProvinsi,
+    required String provinsiId,
   }) async {
     try {
       Response response = await _dio.get(
         "/kabupaten_kota",
-        queryParameters: {"provinsi_id": idProvinsi},
+        queryParameters: {"provinsi_id": provinsiId},
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
@@ -186,12 +186,12 @@ class DioClient {
 
   Future<List<Kecamatan>?> getKecamatan({
     required String token,
-    required String idKabupaten,
+    required String kabupatenId,
   }) async {
     try {
       Response response = await _dio.get(
         "/kecamatan",
-        queryParameters: {"kabupaten_id": idKabupaten},
+        queryParameters: {"kabupaten_id": kabupatenId},
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
@@ -205,12 +205,12 @@ class DioClient {
 
   Future<List<Kelurahan>?> getKelurahan({
     required String token,
-    required String idKecamatan,
+    required String kecamatanId,
   }) async {
     try {
       Response response = await _dio.get(
         "/desa_kelurahan",
-        queryParameters: {"kecamatan_id": idKecamatan},
+        queryParameters: {"kecamatan_id": kecamatanId},
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
@@ -218,6 +218,25 @@ class DioClient {
       return listKelurahanFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error get kelurahan: $e');
+      rethrow;
+    }
+  }
+
+  Future<Responden>? createResponden({
+    required String token,
+    required String data,
+  }) async {
+    try {
+      Response response = await _dio.post(
+        "/responden",
+        data: data,
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return respondenFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error create responden: $e');
       rethrow;
     }
   }

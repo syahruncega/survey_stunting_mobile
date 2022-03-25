@@ -12,27 +12,27 @@ String respondenToJson(Responden data) => json.encode(data.toJson());
 
 class Responden {
   Responden({
-    required this.id,
+    this.id,
     required this.kartuKeluarga,
     required this.alamat,
     required this.provinsiId,
     required this.kabupatenKotaId,
     required this.kecamatanId,
     required this.desaKelurahanId,
-    required this.nomorHp,
+    this.nomorHp,
     this.deletedAt,
     this.createdAt,
     this.updatedAt,
   });
 
-  int id;
+  int? id;
   String kartuKeluarga;
   String alamat;
   String provinsiId;
   String kabupatenKotaId;
   String kecamatanId;
   String desaKelurahanId;
-  String nomorHp;
+  String? nomorHp;
   DateTime? deletedAt;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -48,13 +48,13 @@ class Responden {
         nomorHp: json["nomor_hp"],
         deletedAt: json["deleted_at"] != null
             ? DateTime.parse(json["deleted_at"])
-            : null,
+            : json["deleted_at"],
         createdAt: json["created_at"] != null
             ? DateTime.parse(json["created_at"])
-            : null,
+            : json["created_at"],
         updatedAt: json["updated_at"] != null
             ? DateTime.parse(json["updated_at"])
-            : null,
+            : json["updated_at"],
       );
 
   Map<String, dynamic> toJson() => {

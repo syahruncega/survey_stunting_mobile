@@ -40,28 +40,37 @@ class TambahRespondenScreen extends StatelessWidget {
                   SizedBox(
                     height: size.height * 0.06,
                   ),
-                  const FilledTextField(
-                    title: "Nomor Kartu Keluarga",
-                    textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.number,
+                  Obx(
+                    () => FilledTextField(
+                      title: "Nomor Kartu Keluarga",
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
+                      controller: controller.kartuKeluargaTEC,
+                      errorText: controller.kartuKeluargaError.value,
+                    ),
                   ),
-                  const FilledTextField(
-                    title: "Alamat",
-                    minLine: 2,
-                    maxLine: null,
-                    textInputAction: TextInputAction.newline,
+                  Obx(
+                    () => FilledTextField(
+                      title: "Alamat",
+                      minLine: 2,
+                      maxLine: null,
+                      textInputAction: TextInputAction.newline,
+                      controller: controller.alamatTEC,
+                      errorText: controller.alamatError.value,
+                    ),
                   ),
                   Obx(
                     () => FilledAutocomplete(
                       title: "Provinsi",
                       controller: controller.provinsiTEC,
+                      errorText: controller.provinsiError.value,
                       items: controller.provinsi
                           .map((e) => {"label": e.nama, "value": e.id})
                           .toList(),
                       onSuggestionSelected:
                           (Map<String, dynamic> suggestion) async {
                         controller.provinsiTEC.text = suggestion["label"];
-                        controller.idProvinsi = suggestion["value"];
+                        controller.provinsiId = suggestion["value"];
                         await controller.getKabupaten();
                       },
                     ),
@@ -70,13 +79,14 @@ class TambahRespondenScreen extends StatelessWidget {
                     () => FilledAutocomplete(
                       title: "Kabupaten / Kota",
                       controller: controller.kabupatenTEC,
+                      errorText: controller.kabupatenError.value,
                       items: controller.kabupaten
                           .map((e) => {"label": e.nama, "value": e.id})
                           .toList(),
                       onSuggestionSelected:
                           (Map<String, dynamic> suggestion) async {
                         controller.kabupatenTEC.text = suggestion["label"];
-                        controller.idKabupaten = suggestion["value"];
+                        controller.kabupatenId = suggestion["value"];
                         await controller.getKecamatan();
                       },
                     ),
@@ -85,13 +95,14 @@ class TambahRespondenScreen extends StatelessWidget {
                     () => FilledAutocomplete(
                       title: "Kecamatan",
                       controller: controller.kecamatanTEC,
+                      errorText: controller.kecamatanError.value,
                       items: controller.kecamatan
                           .map((e) => {"label": e.nama, "value": e.id})
                           .toList(),
                       onSuggestionSelected:
                           (Map<String, dynamic> suggestion) async {
                         controller.kecamatanTEC.text = suggestion["label"];
-                        controller.idKecamatan = suggestion["value"];
+                        controller.kecamatanId = suggestion["value"];
                         await controller.getKelurahan();
                       },
                     ),
@@ -100,12 +111,13 @@ class TambahRespondenScreen extends StatelessWidget {
                     () => FilledAutocomplete(
                       title: "Desa / Kelurahan",
                       controller: controller.kelurahanTEC,
+                      errorText: controller.kelurahanError.value,
                       items: controller.kelurahan
                           .map((e) => {"label": e.nama, "value": e.id})
                           .toList(),
                       onSuggestionSelected: (Map<String, dynamic> suggestion) {
                         controller.kelurahanTEC.text = suggestion["label"];
-                        controller.idKelurahan = suggestion["value"];
+                        controller.kelurahanId = suggestion["value"];
                       },
                     ),
                   ),
@@ -121,7 +133,7 @@ class TambahRespondenScreen extends StatelessWidget {
                         "assets/icons/outline/tick-square.svg",
                         color: Colors.white,
                       ),
-                      onPressed: () {},
+                      onPressed: controller.submitForm,
                     ),
                   )
                 ],

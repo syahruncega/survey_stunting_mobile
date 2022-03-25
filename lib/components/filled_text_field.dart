@@ -58,13 +58,13 @@ class FilledTextField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hintText,
             helperText: helperText,
+            errorText: errorText == "" ? null : errorText,
             helperMaxLines: 2,
             hintStyle: TextStyle(color: Theme.of(context).hintColor),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 12,
             ),
-            errorText: errorText == "" ? null : errorText,
             prefixIcon: prefixIcon != null
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 14),

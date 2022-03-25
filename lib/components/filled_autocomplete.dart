@@ -10,6 +10,7 @@ class FilledAutocomplete extends StatelessWidget {
   final TextInputAction? textInputAction;
   final TextInputType? keyboardType;
   final bool enabled;
+  final String? errorText;
   final void Function(Map<String, dynamic>) onSuggestionSelected;
 
   const FilledAutocomplete({
@@ -21,6 +22,7 @@ class FilledAutocomplete extends StatelessWidget {
     this.textInputAction,
     this.keyboardType,
     this.enabled = true,
+    this.errorText,
     Key? key,
   }) : super(key: key);
 
@@ -43,6 +45,7 @@ class FilledAutocomplete extends StatelessWidget {
             keyboardType: keyboardType ?? TextInputType.text,
             decoration: InputDecoration(
               hintText: hintText,
+              errorText: errorText == "" ? null : errorText,
               filled: true,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
