@@ -21,10 +21,10 @@ class UbahProfilController extends GetxController {
   final tempatLahirTextController = TextEditingController().obs;
   final tglLahirTextController = TextEditingController().obs;
   final alamatTextController = TextEditingController().obs;
-  final provinsiTextController = TextEditingController();
-  final kabupatenTextController = TextEditingController();
-  final kecamatanTextController = TextEditingController();
-  final kelurahanTextController = TextEditingController();
+  final provinsiTextController = TextEditingController().obs;
+  final kabupatenTextController = TextEditingController().obs;
+  final kecamatanTextController = TextEditingController().obs;
+  final kelurahanTextController = TextEditingController().obs;
   final nomorHpTextController = TextEditingController().obs;
   final emailTextController = TextEditingController().obs;
 
@@ -47,7 +47,17 @@ class UbahProfilController extends GetxController {
   var isLoaded = false.obs;
   var profileUpdateStatus = ''.obs;
 
+  var namaLengkapError = ''.obs;
+  var jenisKelaminError = ''.obs;
+  var tempatLahirError = ''.obs;
+  var tglLahirError = ''.obs;
+  var alamatError = ''.obs;
   var provinsiError = ''.obs;
+  var kabupatenError = ''.obs;
+  var kecamatanError = ''.obs;
+  var kelurahanError = ''.obs;
+  var nomorHpError = ''.obs;
+  var emailError = ''.obs;
 
   final tglLahirMaskFormatter = MaskTextInputFormatter(
     mask: '####-##-##',
@@ -165,16 +175,95 @@ class UbahProfilController extends GetxController {
       } on DioError catch (e) {
         handleError(error: e);
       }
+    } else {
+      debugPrint('validation failed');
     }
   }
 
   bool validate() {
+    namaLengkapError.value = '';
+    jenisKelaminError.value = '';
+    tempatLahirError.value = '';
+    tglLahirError.value = '';
+    alamatError.value = '';
     provinsiError.value = '';
-    if (provinsiTextController.text.trim().isEmpty) {
-      provinsiError.value = 'Provinsi harus diiisi';
+    kabupatenError.value = '';
+    kecamatanError.value = '';
+    kelurahanError.value = '';
+    nomorHpError.value = '';
+    emailError.value = '';
+
+    if (namaLengkapTextController.value.text.trim().isEmpty) {
+      namaLengkapError.value = 'Nama wajib diisi';
     }
 
-    if (provinsiError.value.isNotEmpty) {
+    if (jenisKelaminTextController.value.text.trim().isEmpty) {
+      jenisKelaminError.value = 'Jenis Kelamin wajib diisi';
+    }
+
+    if (tempatLahirTextController.value.text.trim().isEmpty) {
+      tempatLahirError.value = 'Tempat lahir wajib diisi';
+    }
+
+    if (tglLahirTextController.value.text.trim().isEmpty) {
+      tglLahirError.value = 'Tanggal lahir wajib diisi';
+    }
+
+    if (alamatTextController.value.text.trim().isEmpty) {
+      alamatError.value = 'Alamat wajib diisi';
+    }
+
+    if (provinsiTextController.value.text.trim().isEmpty) {
+      provinsiError.value = 'Provinsi wajib diisi';
+    }
+
+    if (provinsiTextController.value.text.trim().contains('-')) {
+      provinsiError.value = 'Provinsi tidak valid';
+    }
+
+    if (kabupatenTextController.value.text.trim().isEmpty) {
+      kabupatenError.value = 'Kabupaten wajib diisi';
+    }
+
+    if (kabupatenTextController.value.text.trim().contains('-')) {
+      kabupatenError.value = 'Kabupaten tidak valid';
+    }
+
+    if (kecamatanTextController.value.text.trim().isEmpty) {
+      kecamatanError.value = 'Kecamatan wajib diisi';
+    }
+
+    if (kecamatanTextController.value.text.trim().contains('-')) {
+      kecamatanError.value = 'Kecamatan tidak valid';
+    }
+
+    if (kelurahanTextController.value.text.trim().isEmpty) {
+      kelurahanError.value = 'Kelurahan wajib diisi';
+    }
+
+    if (kelurahanTextController.value.text.trim().contains('-')) {
+      kelurahanError.value = 'Kelurahan tidak valid';
+    }
+
+    if (nomorHpTextController.value.text.trim().isEmpty) {
+      nomorHpError.value = 'Nomor Hp wajib diisi';
+    }
+
+    if (emailTextController.value.text.trim().isEmpty) {
+      emailError.value = 'E-mail wajib diisi';
+    }
+
+    if (namaLengkapError.value.isNotEmpty ||
+        jenisKelaminError.value.isNotEmpty ||
+        tempatLahirError.value.isNotEmpty ||
+        tglLahirError.value.isNotEmpty ||
+        alamatError.value.isNotEmpty ||
+        provinsiError.value.isNotEmpty ||
+        kabupatenError.value.isNotEmpty ||
+        kecamatanError.value.isNotEmpty ||
+        kelurahanError.value.isNotEmpty ||
+        nomorHpError.value.isNotEmpty ||
+        emailError.value.isNotEmpty) {
       return false;
     }
     return true;
@@ -200,9 +289,9 @@ class UbahProfilController extends GetxController {
           });
         }
       }
-      kabupatenTextController.text = "--- Pilih Kabupaten ---";
-      kecamatanTextController.text = "--- Pilih Kecamatan ---";
-      kelurahanTextController.text = "--- Pilih Kelurahan ---";
+      kabupatenTextController.value.text = "--- Pilih Kabupaten ---";
+      kecamatanTextController.value.text = "--- Pilih Kecamatan ---";
+      kelurahanTextController.value.text = "--- Pilih Kelurahan ---";
     }
 
     if (kabupatenId != null) {
@@ -216,8 +305,8 @@ class UbahProfilController extends GetxController {
           });
         }
       }
-      kecamatanTextController.text = "--- Pilih Kecamatan ---";
-      kelurahanTextController.text = "--- Pilih Kelurahan ---";
+      kecamatanTextController.value.text = "--- Pilih Kecamatan ---";
+      kelurahanTextController.value.text = "--- Pilih Kelurahan ---";
     }
 
     if (kecamatanId != null) {
@@ -231,7 +320,7 @@ class UbahProfilController extends GetxController {
           });
         }
       }
-      kelurahanTextController.text = "--- Pilih Kelurahan ---";
+      kelurahanTextController.value.text = "--- Pilih Kelurahan ---";
     }
 
     if (kelurahanId != null) {
@@ -268,25 +357,25 @@ class UbahProfilController extends GetxController {
           .singleWhere((element) => element.id == userProvinsiId)
           .nama
           .toString();
-      provinsiTextController.text = userProvinsi.toString();
+      provinsiTextController.value.text = userProvinsi.toString();
 
       userKabupaten = kabupatenData.value.data!
           .singleWhere((element) => element.id == userKabupatenId)
           .nama
           .toString();
-      kabupatenTextController.text = userKabupaten;
+      kabupatenTextController.value.text = userKabupaten;
 
       userKecamatan = kecamatanData.value.data!
           .singleWhere((element) => element.id == userKecamatanId)
           .nama
           .toString();
-      kecamatanTextController.text = userKecamatan;
+      kecamatanTextController.value.text = userKecamatan;
 
       userKelurahan = kelurahanData.value.data!
           .singleWhere((element) => element.id == userKelurahanId)
           .nama
           .toString();
-      kelurahanTextController.text = userKelurahan;
+      kelurahanTextController.value.text = userKelurahan;
 
       //set initial value of user address
       currentProvinsiId.value = profileData.value.data!.provinsi;
