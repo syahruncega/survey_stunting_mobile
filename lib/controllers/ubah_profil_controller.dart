@@ -47,6 +47,8 @@ class UbahProfilController extends GetxController {
   var isLoaded = false.obs;
   var profileUpdateStatus = ''.obs;
 
+  var provinsiError = ''.obs;
+
   final tglLahirMaskFormatter = MaskTextInputFormatter(
     mask: '####-##-##',
     filter: {"#": RegExp(r'[0-9]')},
@@ -167,6 +169,14 @@ class UbahProfilController extends GetxController {
   }
 
   bool validate() {
+    provinsiError.value = '';
+    if (provinsiTextController.text.trim().isEmpty) {
+      provinsiError.value = 'Provinsi harus diiisi';
+    }
+
+    if (provinsiError.value.isNotEmpty) {
+      return false;
+    }
     return true;
   }
 

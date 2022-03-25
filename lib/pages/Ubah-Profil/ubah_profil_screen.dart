@@ -108,6 +108,8 @@ class _UbahProfilScreenState extends State<UbahProfilScreen> {
                             FilledAutocomplete(
                               controller: controller.provinsiTextController,
                               title: "Provisi",
+                              errorText:
+                                  ubahProfilController.provinsiError.value,
                               items: ubahProfilController.listProvinsi,
                               textInputAction: TextInputAction.next,
                               onSuggestionSelected:
