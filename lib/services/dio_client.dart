@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:survey_stunting/models/auth.dart';
+import 'package:survey_stunting/models/jawaban_survey.dart';
 import 'package:survey_stunting/models/kabupaten.dart';
 import 'package:survey_stunting/models/kecamatan.dart';
 import 'package:survey_stunting/models/kelurahan.dart';
@@ -224,12 +225,12 @@ class DioClient {
 
   Future<Responden>? createResponden({
     required String token,
-    required String data,
+    required Responden data,
   }) async {
     try {
       Response response = await _dio.post(
         "/responden",
-        data: data,
+        data: respondenToJson(data),
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
@@ -237,6 +238,63 @@ class DioClient {
       return respondenFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error create responden: $e');
+      rethrow;
+    }
+  }
+
+  Future<Survey>? createSurvey({
+    required String token,
+    required Survey data,
+  }) async {
+    try {
+      Response response = await _dio.post(
+        "/surveyor/survey",
+        data: surveyToJson(data),
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return surveyFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error create survey: $e');
+      rethrow;
+    }
+  }
+
+  Future<JawabanSurvey>? createJawabanSurvey({
+    required String token,
+    required JawabanSurvey data,
+  }) async {
+    try {
+      Response response = await _dio.post(
+        "/surveyor/survey/jawaban",
+        data: jawabanSurveyToJson(data),
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return jawabanSurveyFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error create jawaban survey: $e');
+      rethrow;
+    }
+  }
+
+  Future<JawabanSurvey>? updateJawabanSurvey({
+    required String token,
+    required JawabanSurvey data,
+  }) async {
+    try {
+      Response response = await _dio.put(
+        "/surveyor/survey",
+        data: jawabanSurveyToJson(data),
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return jawabanSurveyFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error create jawaban survey: $e');
       rethrow;
     }
   }

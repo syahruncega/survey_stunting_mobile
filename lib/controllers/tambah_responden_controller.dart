@@ -101,8 +101,7 @@ class TambahRespondenController extends GetxController {
           desaKelurahanId: kelurahanId.toString(),
           nomorHp: nomorHPTEC.text,
         );
-        await DioClient()
-            .createResponden(token: token, data: respondenToJson(responden));
+        await DioClient().createResponden(token: token, data: responden);
         Get.back();
         successScackbar("Data berhasil disimpan");
       } on DioError catch (e) {
