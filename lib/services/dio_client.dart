@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:survey_stunting/models/akun.dart';
 import 'package:survey_stunting/models/auth.dart';
 import 'package:survey_stunting/models/kabupaten.dart';
 import 'package:survey_stunting/models/kecamatan.dart';
@@ -123,6 +124,40 @@ class DioClient {
       return profileFromJson(response.data);
     } on DioError catch (e) {
       log('failed to get profile data, $e');
+      rethrow;
+    }
+  }
+
+  Future getAkun({required String token}) async {
+    try {
+      Response response = await _dio.get("/dashboard/akun",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }));
+      return akunFromJson(response.data);
+    } on DioError catch (e) {
+      log('failed to get account data $e');
+      rethrow;
+    }
+  }
+
+  Future updateAkun(
+      {required String token,
+      required String username,
+      String? password}) async {
+    try {
+      Response response = await _dio.put("/dashboard/akun",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }),
+          data: jsonEncode({'username': username, 'password': password}));
+      if (response.statusCode == 200) {
+        return true;
+      } else if (response.statusCode == 422) {
+        return false;
+      }
+    } on DioError catch (e) {
+      log('failed to update akun : $e');
       rethrow;
     }
   }
