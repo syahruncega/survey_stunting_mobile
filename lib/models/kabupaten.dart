@@ -4,33 +4,18 @@
 
 import 'dart:convert';
 
+List<Kabupaten> listKabupatenFromJson(String str) =>
+    List<Kabupaten>.from(json.decode(str).map((x) => Kabupaten.fromJson(x)));
+
+String listKabupatenToJson(List<Kabupaten> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
 Kabupaten kabupatenFromJson(String str) => Kabupaten.fromJson(json.decode(str));
 
 String kabupatenToJson(Kabupaten data) => json.encode(data.toJson());
 
 class Kabupaten {
   Kabupaten({
-    this.message,
-    this.data,
-  });
-
-  String? message;
-  List<DataKabupaten>? data;
-
-  factory Kabupaten.fromJson(Map<String, dynamic> json) => Kabupaten(
-        message: json["message"],
-        data: List<DataKabupaten>.from(
-            json["data"].map((x) => DataKabupaten.fromJson(x))),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "message": message,
-        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
-      };
-}
-
-class DataKabupaten {
-  DataKabupaten({
     required this.id,
     required this.provinsiId,
     required this.nama,
@@ -41,22 +26,26 @@ class DataKabupaten {
   int id;
   String provinsiId;
   String nama;
-  dynamic createdAt;
-  dynamic updatedAt;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
-  factory DataKabupaten.fromJson(Map<String, dynamic> json) => DataKabupaten(
+  factory Kabupaten.fromJson(Map<String, dynamic> json) => Kabupaten(
         id: json["id"],
         provinsiId: json["provinsi_id"],
         nama: json["nama"],
-        createdAt: json["created_at"],
-        updatedAt: json["updated_at"],
+        createdAt: json["created_at"] != null
+            ? DateTime.parse(json["created_at"])
+            : null,
+        updatedAt: json["updated_at"] != null
+            ? DateTime.parse(json["updated_at"])
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "provinsi_id": provinsiId,
         "nama": nama,
-        "created_at": createdAt,
-        "updated_at": updatedAt,
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
       };
 }

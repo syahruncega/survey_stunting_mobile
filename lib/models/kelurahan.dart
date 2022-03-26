@@ -4,33 +4,18 @@
 
 import 'dart:convert';
 
+List<Kelurahan> listKelurahanFromJson(String str) =>
+    List<Kelurahan>.from(json.decode(str).map((x) => Kelurahan.fromJson(x)));
+
+String listKelurahanToJson(List<Kelurahan> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
 Kelurahan kelurahanFromJson(String str) => Kelurahan.fromJson(json.decode(str));
 
 String kelurahanToJson(Kelurahan data) => json.encode(data.toJson());
 
 class Kelurahan {
   Kelurahan({
-    this.message,
-    this.data,
-  });
-
-  String? message;
-  List<DataKelurahan>? data;
-
-  factory Kelurahan.fromJson(Map<String, dynamic> json) => Kelurahan(
-        message: json["message"],
-        data: List<DataKelurahan>.from(
-            json["data"].map((x) => DataKelurahan.fromJson(x))),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "message": message,
-        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
-      };
-}
-
-class DataKelurahan {
-  DataKelurahan({
     required this.id,
     required this.kecamatanId,
     required this.nama,
@@ -41,22 +26,26 @@ class DataKelurahan {
   int id;
   String kecamatanId;
   String nama;
-  dynamic createdAt;
-  dynamic updatedAt;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
-  factory DataKelurahan.fromJson(Map<String, dynamic> json) => DataKelurahan(
+  factory Kelurahan.fromJson(Map<String, dynamic> json) => Kelurahan(
         id: json["id"],
         kecamatanId: json["kecamatan_id"],
         nama: json["nama"],
-        createdAt: json["created_at"],
-        updatedAt: json["updated_at"],
+        createdAt: json["created_at"] != null
+            ? DateTime.parse(json["created_at"])
+            : null,
+        updatedAt: json["updated_at"] != null
+            ? DateTime.parse(json["updated_at"])
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "kecamatan_id": kecamatanId,
         "nama": nama,
-        "created_at": createdAt,
-        "updated_at": updatedAt,
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
       };
 }

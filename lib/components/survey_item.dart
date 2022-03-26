@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:survey_stunting/components/elevated_icon_button.dart';
+import 'package:survey_stunting/components/custom_icon_button.dart';
 import 'package:survey_stunting/models/survey.dart';
 
 class SurveyItem extends StatelessWidget {
@@ -34,7 +34,7 @@ class SurveyItem extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: ElevatedIconButton(
+              child: CustomIconButton(
                 onTap: onDelete ?? () {},
                 color: Colors.red.shade400,
                 icon: SvgPicture.asset(
@@ -43,7 +43,7 @@ class SurveyItem extends StatelessWidget {
                 ),
               ),
             ),
-            ElevatedIconButton(
+            CustomIconButton(
               onTap: onEdit ?? () {},
               color: Theme.of(context).colorScheme.secondary,
               icon: SvgPicture.asset(
@@ -70,7 +70,7 @@ class SurveyItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        survey.responden.kartuKeluarga,
+                        survey.responden!.kartuKeluarga,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -87,7 +87,7 @@ class SurveyItem extends StatelessWidget {
                             vertical: 2,
                           ),
                           child: Text(
-                            survey.namaSurvey.tipe,
+                            survey.namaSurvey!.tipe,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
@@ -102,7 +102,7 @@ class SurveyItem extends StatelessWidget {
                     height: size.height * 0.005,
                   ),
                   Text(
-                    survey.profile.namaLengkap,
+                    survey.profile!.namaLengkap,
                     style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context).hintColor,
@@ -110,7 +110,7 @@ class SurveyItem extends StatelessWidget {
                   ),
                   SizedBox(height: size.height * 0.005),
                   Text(
-                    survey.namaSurvey.nama,
+                    survey.namaSurvey!.nama,
                     style: TextStyle(
                         fontSize: 12, color: Theme.of(context).hintColor),
                   ),

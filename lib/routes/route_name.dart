@@ -4,4 +4,6 @@ abstract class RouteName {
   static const ubahProfil = "/ubah-profil";
   static const ubahAkun = "/ubah-akun";
   static const layout = "/layout";
+  static const tambahResponden = "/tambah-responden";
+  static const isiSurvey = "/isi-survey";
 }

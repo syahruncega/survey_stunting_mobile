@@ -5,18 +5,12 @@ import 'package:survey_stunting/components/filled_text_field.dart';
 import 'package:survey_stunting/consts/colors.dart';
 import 'package:survey_stunting/controllers/ubah_akun_controller.dart';
 
-class UbahAkunScreen extends StatefulWidget {
+class UbahAkunScreen extends StatelessWidget {
   const UbahAkunScreen({Key? key}) : super(key: key);
 
   @override
-  State<UbahAkunScreen> createState() => _UbahAkunScreenState();
-}
-
-class _UbahAkunScreenState extends State<UbahAkunScreen> {
-  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    UbahAkunController ubahAkunController = Get.put(UbahAkunController());
     return GetBuilder<UbahAkunController>(builder: (controller) {
       return Scaffold(
         appBar: AppBar(

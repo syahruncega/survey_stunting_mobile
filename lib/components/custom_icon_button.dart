@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class ElevatedIconButton extends StatelessWidget {
+class CustomIconButton extends StatelessWidget {
   final Widget icon;
   final Function() onTap;
   final Color? color;
-  const ElevatedIconButton({
+  const CustomIconButton({
     required this.icon,
     required this.onTap,
     this.color,

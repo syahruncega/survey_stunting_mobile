@@ -6,6 +6,7 @@ class RoundedButton extends StatelessWidget {
     this.onPressed,
     this.color,
     this.backgroundColor,
+    this.disabled = false,
     Key? key,
   })  : outline = false,
         super(key: key);
@@ -14,6 +15,7 @@ class RoundedButton extends StatelessWidget {
     required this.title,
     this.onPressed,
     this.color,
+    this.disabled = false,
     Key? key,
   })  : outline = true,
         backgroundColor = null,
@@ -24,11 +26,12 @@ class RoundedButton extends StatelessWidget {
   final Color? color;
   final Color? backgroundColor;
   final bool outline;
+  final bool disabled;
 
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
-      onPressed: onPressed,
+      onPressed: disabled ? () {} : onPressed,
       child: Text(
         title,
         style: TextStyle(

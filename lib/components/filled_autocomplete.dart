@@ -7,8 +7,10 @@ class FilledAutocomplete extends StatelessWidget {
   final List<Map<String, dynamic>> items;
   final String? hintText;
   final String? title;
-  final String? errorText;
   final TextInputAction? textInputAction;
+  final TextInputType? keyboardType;
+  final bool enabled;
+  final String? errorText;
   final void Function(Map<String, dynamic>) onSuggestionSelected;
 
   const FilledAutocomplete({
@@ -17,8 +19,10 @@ class FilledAutocomplete extends StatelessWidget {
     required this.onSuggestionSelected,
     this.title,
     this.hintText,
-    this.errorText,
     this.textInputAction,
+    this.keyboardType,
+    this.enabled = true,
+    this.errorText,
     Key? key,
   }) : super(key: key);
 
@@ -37,9 +41,11 @@ class FilledAutocomplete extends StatelessWidget {
         TypeAheadField(
           textFieldConfiguration: TextFieldConfiguration(
             textInputAction: textInputAction,
+            enabled: enabled,
+            keyboardType: keyboardType ?? TextInputType.text,
             decoration: InputDecoration(
               hintText: hintText,
-              errorText: errorText == '' ? null : errorText,
+              errorText: errorText == "" ? null : errorText,
               filled: true,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -83,10 +89,13 @@ class FilledAutocomplete extends StatelessWidget {
           ),
           suggestionsCallback: (pattern) => items.where((element) =>
               element["label"].toLowerCase().contains(pattern.toLowerCase())),
-          itemBuilder: (_, Map<String, dynamic> suggestion) => ListTile(
-            title: Text(suggestion["label"]),
+          itemBuilder: (_, Map<String, dynamic> suggestion) => InkWell(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              child: Text(suggestion["label"]),
+            ),
           ),
-          getImmediateSuggestions: true,
+          getImmediateSuggestions: false,
           onSuggestionSelected: onSuggestionSelected,
           noItemsFoundBuilder: (context) => const Padding(
             padding: EdgeInsets.all(20),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:survey_stunting/components/error_scackbar.dart';
-import 'package:survey_stunting/components/success_snackbar.dart';
+import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/akun.dart';
 import 'package:survey_stunting/services/dio_client.dart';
 import 'package:survey_stunting/services/handle_errors.dart';
@@ -58,7 +58,7 @@ class UbahAkunController extends GetxController {
             .updateAkun(token: token, username: username, password: password);
         if (response) {
           akunUpdateStatus.value = 'successful';
-          successSnackbar('Akun berhasil diupdate');
+          successScackbar("Akun berhasil diupdate");
         } else {
           akunUpdateStatus.value = 'failed';
           errorScackbar('Update akun gagal, Username sudah ada.');
