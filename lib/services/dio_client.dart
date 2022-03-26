@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:survey_stunting/models/akun.dart';
 import 'package:survey_stunting/models/auth.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
 import 'package:survey_stunting/models/jawaban_survey.dart';
@@ -18,6 +20,7 @@ import 'package:survey_stunting/models/soal.dart';
 import 'package:survey_stunting/models/survey.dart';
 import 'package:survey_stunting/models/survey_parameters.dart';
 import 'package:survey_stunting/models/total_survey.dart';
+import 'package:survey_stunting/models/user_profile.dart';
 import 'package:survey_stunting/services/logging.dart';
 
 class DioClient {
@@ -381,6 +384,95 @@ class DioClient {
       return jawabanSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error create jawaban survey: $e');
+      rethrow;
+    }
+  }
+
+  Future getProfile({required String token}) async {
+    try {
+      Response response = await _dio.get("/dashboard/profile",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }));
+      return profileFromJson(response.data);
+    } on DioError catch (e) {
+      log('failed to get profile data, $e');
+      rethrow;
+    }
+  }
+
+  Future getAkun({required String token}) async {
+    try {
+      Response response = await _dio.get("/dashboard/akun",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }));
+      return akunFromJson(response.data);
+    } on DioError catch (e) {
+      log('failed to get account data $e');
+      rethrow;
+    }
+  }
+
+  Future updateAkun(
+      {required String token,
+      required String username,
+      String? password}) async {
+    try {
+      Response response = await _dio.put("/dashboard/akun",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }),
+          data: jsonEncode({'username': username, 'password': password}));
+      if (response.statusCode == 200) {
+        return true;
+      } else if (response.statusCode == 422) {
+        return false;
+      }
+    } on DioError catch (e) {
+      log('failed to update akun : $e');
+      rethrow;
+    }
+  }
+
+  Future updateProfile(
+      {required String token,
+      required String nama,
+      required String jenisKelamin,
+      required String tempatLahir,
+      required String tglLahir,
+      required String alamat,
+      required String provinsi,
+      required String kabupaten,
+      required String kecamatan,
+      required String kelurahan,
+      required String nomorHp,
+      required String email}) async {
+    try {
+      Response response = await _dio.put("/dashboard/profile",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }),
+          data: jsonEncode({
+            'nama_lengkap': nama,
+            'jenis_kelamin': jenisKelamin,
+            'tempat_lahir': tempatLahir,
+            'tanggal_lahir': tglLahir,
+            'alamat': alamat,
+            'provinsi': provinsi,
+            'kabupaten_kota': kabupaten,
+            'kecamatan': kecamatan,
+            'desa_kelurahan': kelurahan,
+            'nomor_hp': nomorHp,
+            'email': email
+          }));
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } on DioError catch (e) {
+      log('failed to update profile data : $e');
       rethrow;
     }
   }
