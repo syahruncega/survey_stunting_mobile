@@ -1,12 +1,19 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:survey_stunting/models/akun.dart';
 import 'package:survey_stunting/models/auth.dart';
+import 'package:survey_stunting/models/kabupaten.dart';
+import 'package:survey_stunting/models/kecamatan.dart';
+import 'package:survey_stunting/models/kelurahan.dart';
+import 'package:survey_stunting/models/provinsi.dart';
 import 'package:survey_stunting/models/raw_response.dart';
 import 'package:survey_stunting/models/session.dart';
 import 'package:survey_stunting/models/survey.dart';
 import 'package:survey_stunting/models/survey_parameters.dart';
 import 'package:survey_stunting/models/total_survey.dart';
+import 'package:survey_stunting/models/user_profile.dart';
 import 'package:survey_stunting/services/logging.dart';
 
 class DioClient {
@@ -104,6 +111,147 @@ class DioClient {
       // return listSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error get all survey: $e');
+      rethrow;
+    }
+  }
+
+  Future getProfile({required String token}) async {
+    try {
+      Response response = await _dio.get("/dashboard/profile",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }));
+      return profileFromJson(response.data);
+    } on DioError catch (e) {
+      log('failed to get profile data, $e');
+      rethrow;
+    }
+  }
+
+  Future getAkun({required String token}) async {
+    try {
+      Response response = await _dio.get("/dashboard/akun",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }));
+      return akunFromJson(response.data);
+    } on DioError catch (e) {
+      log('failed to get account data $e');
+      rethrow;
+    }
+  }
+
+  Future updateAkun(
+      {required String token,
+      required String username,
+      String? password}) async {
+    try {
+      Response response = await _dio.put("/dashboard/akun",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }),
+          data: jsonEncode({'username': username, 'password': password}));
+      if (response.statusCode == 200) {
+        return true;
+      } else if (response.statusCode == 422) {
+        return false;
+      }
+    } on DioError catch (e) {
+      log('failed to update akun : $e');
+      rethrow;
+    }
+  }
+
+  Future updateProfile(
+      {required String token,
+      required String nama,
+      required String jenisKelamin,
+      required String tempatLahir,
+      required String tglLahir,
+      required String alamat,
+      required String provinsi,
+      required String kabupaten,
+      required String kecamatan,
+      required String kelurahan,
+      required String nomorHp,
+      required String email}) async {
+    try {
+      Response response = await _dio.put("/dashboard/profile",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }),
+          data: jsonEncode({
+            'nama_lengkap': nama,
+            'jenis_kelamin': jenisKelamin,
+            'tempat_lahir': tempatLahir,
+            'tanggal_lahir': tglLahir,
+            'alamat': alamat,
+            'provinsi': provinsi,
+            'kabupaten_kota': kabupaten,
+            'kecamatan': kecamatan,
+            'desa_kelurahan': kelurahan,
+            'nomor_hp': nomorHp,
+            'email': email
+          }));
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } on DioError catch (e) {
+      log('failed to update profile data : $e');
+      rethrow;
+    }
+  }
+
+  Future<Provinsi> getProvinsi({required String token}) async {
+    try {
+      Response response = await _dio.get("/provinsi",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }));
+      return provinsiFromJson(response.data);
+    } on DioError catch (e) {
+      log('failed to get data provinsi : $e');
+      rethrow;
+    }
+  }
+
+  Future<Kabupaten> getKabupaten({required String token}) async {
+    try {
+      Response response = await _dio.get("/kabupaten_kota",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }));
+      return kabupatenFromJson(response.data);
+    } on DioError catch (e) {
+      log('failed to get data kabupaten $e');
+      rethrow;
+    }
+  }
+
+  Future<Kecamatan> getKecamatan({required String token}) async {
+    try {
+      Response response = await _dio.get("/kecamatan",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }));
+      return kecamatanFromJson(response.data);
+    } on DioError catch (e) {
+      log('failed to get data kecamatan $e');
+      rethrow;
+    }
+  }
+
+  Future<Kelurahan> getKelurahan({required String token}) async {
+    try {
+      Response response = await _dio.get("/desa_kelurahan",
+          options: Options(responseType: ResponseType.plain, headers: {
+            "authorization": "Bearer $token",
+          }));
+      return kelurahanFromJson(response.data);
+    } on DioError catch (e) {
+      log('failed to get kelurahan data $e');
       rethrow;
     }
   }

@@ -7,6 +7,7 @@ class FilledAutocomplete extends StatelessWidget {
   final List<Map<String, dynamic>> items;
   final String? hintText;
   final String? title;
+  final String? errorText;
   final TextInputAction? textInputAction;
   final void Function(Map<String, dynamic>) onSuggestionSelected;
 
@@ -16,6 +17,7 @@ class FilledAutocomplete extends StatelessWidget {
     required this.onSuggestionSelected,
     this.title,
     this.hintText,
+    this.errorText,
     this.textInputAction,
     Key? key,
   }) : super(key: key);
@@ -37,6 +39,7 @@ class FilledAutocomplete extends StatelessWidget {
             textInputAction: textInputAction,
             decoration: InputDecoration(
               hintText: hintText,
+              errorText: errorText == '' ? null : errorText,
               filled: true,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
