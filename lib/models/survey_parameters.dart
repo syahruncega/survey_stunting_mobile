@@ -13,24 +13,24 @@ String surveyParametersToJson(SurveyParameters data) =>
 class SurveyParameters {
   SurveyParameters({
     this.status,
-    this.typeSurveyId,
+    this.namaSurveyId,
     this.search,
   });
 
   dynamic status;
-  dynamic typeSurveyId;
+  dynamic namaSurveyId;
   dynamic search;
 
   factory SurveyParameters.fromJson(Map<String, dynamic> json) =>
       SurveyParameters(
         status: json["status"],
-        typeSurveyId: json["typeSurveyId"],
+        namaSurveyId: json["namaSurveyId"],
         search: json["search"],
       );
 
   Map<String, dynamic> toJson() => {
         "status": status,
-        "typeSurveyId": typeSurveyId,
+        "namaSurveyId": namaSurveyId,
         "search": search,
       };
 }

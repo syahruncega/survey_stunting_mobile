@@ -16,7 +16,7 @@ class ExportSurveyScreen extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return RefreshIndicator(
       onRefresh: () async => await exportSurveyController.getSurvey(
-        typeSurveyId: exportSurveyController.jenisSurvey,
+        namaSurveyId: exportSurveyController.namaSurveyId,
       ),
       displacement: 0,
       child: SingleChildScrollView(
@@ -41,9 +41,9 @@ class ExportSurveyScreen extends StatelessWidget {
                 onSuggestionSelected: (Map<String, dynamic> suggestion) async {
                   exportSurveyController.jenisSurveyEditingController.text =
                       suggestion["label"];
-                  exportSurveyController.jenisSurvey = suggestion["value"];
+                  exportSurveyController.namaSurveyId = suggestion["value"];
                   await exportSurveyController.getSurvey(
-                    typeSurveyId: suggestion["value"],
+                    namaSurveyId: suggestion["value"],
                   );
                 },
               ),
