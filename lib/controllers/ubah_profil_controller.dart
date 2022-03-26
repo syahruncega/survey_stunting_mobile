@@ -16,17 +16,17 @@ import 'package:survey_stunting/services/handle_errors.dart';
 class UbahProfilController extends GetxController {
   String token = GetStorage().read("token");
 
-  final namaLengkapTextController = TextEditingController().obs;
-  final jenisKelaminTextController = TextEditingController().obs;
-  final tempatLahirTextController = TextEditingController().obs;
-  final tglLahirTextController = TextEditingController().obs;
-  final alamatTextController = TextEditingController().obs;
+  final namaLengkapTextController = TextEditingController();
+  final jenisKelaminTextController = TextEditingController();
+  final tempatLahirTextController = TextEditingController();
+  final tglLahirTextController = TextEditingController();
+  final alamatTextController = TextEditingController();
   final provinsiTEC = TextEditingController();
   final kabupatenTEC = TextEditingController();
   final kecamatanTEC = TextEditingController();
   final kelurahanTEC = TextEditingController();
-  final nomorHpTextController = TextEditingController().obs;
-  final emailTextController = TextEditingController().obs;
+  final nomorHpTextController = TextEditingController();
+  final emailTextController = TextEditingController();
 
   Rx<UserProfile> profileData = UserProfile().obs;
   var provinsi = [].obs;
@@ -280,16 +280,13 @@ class UbahProfilController extends GetxController {
   void displayUserData() {
     isLoaded.value = false;
     if (profileData.value.data != null) {
-      namaLengkapTextController.value.text =
-          profileData.value.data!.namaLengkap;
-      jenisKelaminTextController.value.text =
-          profileData.value.data!.jenisKelamin;
-      tempatLahirTextController.value.text =
-          profileData.value.data!.tempatLahir;
-      tglLahirTextController.value.text = profileData.value.data!.tanggalLahir;
-      alamatTextController.value.text = profileData.value.data!.alamat;
-      nomorHpTextController.value.text = profileData.value.data!.nomorHp;
-      emailTextController.value.text = profileData.value.data!.email;
+      namaLengkapTextController.text = profileData.value.data!.namaLengkap;
+      jenisKelaminTextController.text = profileData.value.data!.jenisKelamin;
+      tempatLahirTextController.text = profileData.value.data!.tempatLahir;
+      tglLahirTextController.text = profileData.value.data!.tanggalLahir;
+      alamatTextController.text = profileData.value.data!.alamat;
+      nomorHpTextController.text = profileData.value.data!.nomorHp;
+      emailTextController.text = profileData.value.data!.email;
       provinsiTEC.text =
           provinsi.firstWhere((element) => element.id == provinsiId).nama;
       kabupatenTEC.text =

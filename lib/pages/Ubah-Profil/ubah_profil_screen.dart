@@ -50,15 +50,13 @@ class UbahProfilScreen extends StatelessWidget {
                               height: size.height * 0.06,
                             ),
                             FilledTextField(
-                              controller:
-                                  controller.namaLengkapTextController.value,
+                              controller: controller.namaLengkapTextController,
                               title: "Nama Lengkap",
                               errorText: controller.namaLengkapError.value,
                               textInputAction: TextInputAction.next,
                             ),
                             FilledAutocomplete(
-                              controller:
-                                  controller.jenisKelaminTextController.value,
+                              controller: controller.jenisKelaminTextController,
                               title: "Jenis Kelamin",
                               errorText: controller.jenisKelaminError.value,
                               items: const [
@@ -71,20 +69,18 @@ class UbahProfilScreen extends StatelessWidget {
                               textInputAction: TextInputAction.next,
                               onSuggestionSelected:
                                   (Map<String, dynamic> suggestion) {
-                                controller.jenisKelaminTextController.value
-                                    .text = suggestion["value"];
+                                controller.jenisKelaminTextController.text =
+                                    suggestion["value"];
                               },
                             ),
                             FilledTextField(
-                              controller:
-                                  controller.tempatLahirTextController.value,
+                              controller: controller.tempatLahirTextController,
                               title: "Tempat Lahir",
                               errorText: controller.tempatLahirError.value,
                               textInputAction: TextInputAction.next,
                             ),
                             FilledTextField(
-                              controller:
-                                  controller.tglLahirTextController.value,
+                              controller: controller.tglLahirTextController,
                               title: "Tanggal Lahir",
                               errorText: controller.tglLahirError.value,
                               keyboardType: TextInputType.datetime,
@@ -95,7 +91,7 @@ class UbahProfilScreen extends StatelessWidget {
                               helperText: "Contoh: 1998-06-26",
                             ),
                             FilledTextField(
-                              controller: controller.alamatTextController.value,
+                              controller: controller.alamatTextController,
                               title: "Alamat",
                               errorText: controller.alamatError.value,
                               minLine: 2,
@@ -182,8 +178,7 @@ class UbahProfilScreen extends StatelessWidget {
                               ),
                             ),
                             FilledTextField(
-                              controller:
-                                  controller.nomorHpTextController.value,
+                              controller: controller.nomorHpTextController,
                               title: "Nomor HP",
                               errorText: controller.nomorHpError.value,
                               keyboardType: TextInputType.phone,
@@ -193,7 +188,7 @@ class UbahProfilScreen extends StatelessWidget {
                               ],
                             ),
                             FilledTextField(
-                              controller: controller.emailTextController.value,
+                              controller: controller.emailTextController,
                               title: "Email",
                               errorText: controller.emailError.value,
                               keyboardType: TextInputType.emailAddress,
