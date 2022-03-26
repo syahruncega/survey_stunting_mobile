@@ -255,7 +255,7 @@ class SurveyScreen extends StatelessWidget {
                                     onPressed: () async {
                                       Get.back();
                                       await surveyController.deleteSurvey(
-                                        id: surveyController.surveys[index].id,
+                                        id: surveyController.surveys[index].id!,
                                       );
                                     },
                                   ),

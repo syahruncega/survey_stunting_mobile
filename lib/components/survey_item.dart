@@ -70,7 +70,7 @@ class SurveyItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        survey.responden.kartuKeluarga,
+                        survey.responden!.kartuKeluarga,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -87,7 +87,7 @@ class SurveyItem extends StatelessWidget {
                             vertical: 2,
                           ),
                           child: Text(
-                            survey.namaSurvey.tipe,
+                            survey.namaSurvey!.tipe,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
@@ -102,7 +102,7 @@ class SurveyItem extends StatelessWidget {
                     height: size.height * 0.005,
                   ),
                   Text(
-                    survey.profile.namaLengkap,
+                    survey.profile!.namaLengkap,
                     style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context).hintColor,
@@ -110,7 +110,7 @@ class SurveyItem extends StatelessWidget {
                   ),
                   SizedBox(height: size.height * 0.005),
                   Text(
-                    survey.namaSurvey.nama,
+                    survey.namaSurvey!.nama,
                     style: TextStyle(
                         fontSize: 12, color: Theme.of(context).hintColor),
                   ),

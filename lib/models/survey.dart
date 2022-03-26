@@ -19,7 +19,7 @@ String surveyToJson(Survey data) => json.encode(data.toJson());
 
 class Survey {
   Survey({
-    required this.id,
+    this.id,
     required this.respondenId,
     required this.namaSurveyId,
     required this.profileId,
@@ -27,12 +27,12 @@ class Survey {
     required this.isSelesai,
     this.createdAt,
     this.updatedAt,
-    required this.responden,
-    required this.namaSurvey,
-    required this.profile,
+    this.responden,
+    this.namaSurvey,
+    this.profile,
   });
 
-  int id;
+  int? id;
   String respondenId;
   String namaSurveyId;
   String profileId;
@@ -40,9 +40,9 @@ class Survey {
   String isSelesai;
   DateTime? createdAt;
   DateTime? updatedAt;
-  Responden responden;
-  NamaSurvey namaSurvey;
-  Profile profile;
+  Responden? responden;
+  NamaSurvey? namaSurvey;
+  Profile? profile;
 
   factory Survey.fromJson(Map<String, dynamic> json) => Survey(
         id: json["id"],
@@ -71,9 +71,9 @@ class Survey {
         "is_selesai": isSelesai,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
-        "responden": responden.toJson(),
-        "nama_survey": namaSurvey.toJson(),
-        "profile": profile.toJson(),
+        "responden": responden?.toJson(),
+        "nama_survey": namaSurvey?.toJson(),
+        "profile": profile?.toJson(),
       };
 }
 
