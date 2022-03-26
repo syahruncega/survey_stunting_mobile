@@ -135,7 +135,7 @@ class DioClient {
           }));
       return akunFromJson(response.data);
     } on DioError catch (e) {
-      log('failed to get account data');
+      log('failed to get account data $e');
       rethrow;
     }
   }
