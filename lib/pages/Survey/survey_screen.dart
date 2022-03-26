@@ -21,7 +21,7 @@ class SurveyScreen extends StatelessWidget {
         queryParameters: SurveyParameters(
           search: surveyController.searchSurveyEditingController.text,
           status: surveyController.statusSurvey,
-          typeSurveyId: surveyController.typeSurvey,
+          namaSurveyId: surveyController.typeSurvey,
         ),
       ),
       displacement: 0,
@@ -50,7 +50,7 @@ class SurveyScreen extends StatelessWidget {
                         search:
                             surveyController.searchSurveyEditingController.text,
                         status: surveyController.statusSurvey,
-                        typeSurveyId: surveyController.typeSurvey,
+                        namaSurveyId: surveyController.typeSurvey,
                       ),
                     ),
                     prefixIcon: SvgPicture.asset(
@@ -81,7 +81,7 @@ class SurveyScreen extends StatelessWidget {
                             search: surveyController
                                 .searchSurveyEditingController.text,
                             status: surveyController.statusSurvey,
-                            typeSurveyId: surveyController.typeSurvey,
+                            namaSurveyId: surveyController.typeSurvey,
                           ),
                         );
                         Get.back();

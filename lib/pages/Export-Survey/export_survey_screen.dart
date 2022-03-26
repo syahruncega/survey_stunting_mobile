@@ -15,7 +15,7 @@ class ExportSurveyScreen extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return RefreshIndicator(
       onRefresh: () async => await exportSurveyController.getSurvey(
-        typeSurveyId: exportSurveyController.jenisSurvey,
+        namaSurveyId: exportSurveyController.namaSurveyId,
       ),
       displacement: 0,
       child: Padding(
@@ -38,9 +38,9 @@ class ExportSurveyScreen extends StatelessWidget {
               onSuggestionSelected: (Map<String, dynamic> suggestion) async {
                 exportSurveyController.jenisSurveyEditingController.text =
                     suggestion["label"];
-                exportSurveyController.jenisSurvey = suggestion["value"];
+                exportSurveyController.namaSurveyId = suggestion["value"];
                 await exportSurveyController.getSurvey(
-                  typeSurveyId: suggestion["value"],
+                  namaSurveyId: suggestion["value"],
                 );
               },
             ),
@@ -48,7 +48,9 @@ class ExportSurveyScreen extends StatelessWidget {
               height: size.height * 0.01,
             ),
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                exportSurveyController.exportToExcel();
+              },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
