@@ -3,8 +3,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:survey_stunting/models/auth.dart';
+import 'package:survey_stunting/models/jawaban_soal.dart';
 import 'package:survey_stunting/models/jawaban_survey.dart';
 import 'package:survey_stunting/models/kabupaten.dart';
+import 'package:survey_stunting/models/kategori_soal.dart';
 import 'package:survey_stunting/models/kecamatan.dart';
 import 'package:survey_stunting/models/kelurahan.dart';
 import 'package:survey_stunting/models/nama_survey.dart';
@@ -12,6 +14,7 @@ import 'package:survey_stunting/models/provinsi.dart';
 import 'package:survey_stunting/models/raw_response.dart';
 import 'package:survey_stunting/models/responden.dart';
 import 'package:survey_stunting/models/session.dart';
+import 'package:survey_stunting/models/soal.dart';
 import 'package:survey_stunting/models/survey.dart';
 import 'package:survey_stunting/models/survey_parameters.dart';
 import 'package:survey_stunting/models/total_survey.dart';
@@ -78,6 +81,44 @@ class DioClient {
     }
   }
 
+  Future<Survey>? createSurvey({
+    required String token,
+    required Survey data,
+  }) async {
+    try {
+      Response response = await _dio.post(
+        "/surveyor/survey",
+        data: surveyToJson(data),
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return surveyFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error create survey: $e');
+      rethrow;
+    }
+  }
+
+  Future deleteSurvey({
+    required String token,
+    required int id,
+  }) async {
+    try {
+      await _dio.delete(
+        "/surveyor/survey",
+        data: {"id": id},
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      // return listSurveyFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get all survey: $e');
+      rethrow;
+    }
+  }
+
   Future<List<NamaSurvey>?> getNamaSurvey({
     required String token,
   }) async {
@@ -112,6 +153,25 @@ class DioClient {
     }
   }
 
+  Future<Responden>? createResponden({
+    required String token,
+    required Responden data,
+  }) async {
+    try {
+      Response response = await _dio.post(
+        "/responden",
+        data: respondenToJson(data),
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return respondenFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error create responden: $e');
+      rethrow;
+    }
+  }
+
   Future<TotalSurvey?> getTotalSurvey({
     required String token,
   }) async {
@@ -126,25 +186,6 @@ class DioClient {
       return totalSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error get total survey: $e');
-      rethrow;
-    }
-  }
-
-  Future deleteSurvey({
-    required String token,
-    required int id,
-  }) async {
-    try {
-      await _dio.delete(
-        "/surveyor/survey",
-        data: {"id": id},
-        options: Options(headers: {
-          "authorization": "Bearer $token",
-        }),
-      );
-      // return listSurveyFromJson(getData(response.data));
-    } on DioError catch (e) {
-      log('Error get all survey: $e');
       rethrow;
     }
   }
@@ -223,40 +264,84 @@ class DioClient {
     }
   }
 
-  Future<Responden>? createResponden({
+  Future<List<KategoriSoal>?> getKategoriSoal({
     required String token,
-    required Responden data,
+    required String namaSurveyId,
   }) async {
     try {
-      Response response = await _dio.post(
-        "/responden",
-        data: respondenToJson(data),
+      Response response = await _dio.get(
+        "/kategori_soal",
+        queryParameters: {"nama_survey_id": int.parse(namaSurveyId)},
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
       );
-      return respondenFromJson(getData(response.data));
+      return listKategoriSoalFromJson(getData(response.data));
     } on DioError catch (e) {
-      log('Error create responden: $e');
+      log('Error get kategori soal: $e');
       rethrow;
     }
   }
 
-  Future<Survey>? createSurvey({
+  Future<List<Soal>?> getSoal({
     required String token,
-    required Survey data,
+    required String kategoriSoalId,
   }) async {
     try {
-      Response response = await _dio.post(
-        "/surveyor/survey",
-        data: surveyToJson(data),
+      Response response = await _dio.get(
+        "/soal",
+        queryParameters: {"kategori_soal_id": int.parse(kategoriSoalId)},
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
       );
-      return surveyFromJson(getData(response.data));
+      return listSoalFromJson(getData(response.data));
     } on DioError catch (e) {
-      log('Error create survey: $e');
+      log('Error get soal: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<JawabanSoal>?> getJawabanSoal({
+    required String token,
+    required String soalId,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/jawaban_soal",
+        queryParameters: {"soal_id": int.parse(soalId)},
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listJawabanSoalFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get jawaban soal: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<JawabanSurvey>?> getJawabanSurvey(
+      {required String token,
+      required String surveyId,
+      required String soalId,
+      String? kategoriSoalId}) async {
+    try {
+      Response response = await _dio.get(
+        "/jawaban_survey",
+        queryParameters: {
+          "survey_id": int.parse(surveyId),
+          "kategori_soal_id":
+              kategoriSoalId != null ? int.parse(kategoriSoalId) : null,
+          "soal_id": int.parse(soalId),
+        },
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listJawabanSurveyFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get jawaban survey: $e');
       rethrow;
     }
   }
