@@ -127,7 +127,7 @@ class DioClient {
   }) async {
     try {
       Response response = await _dio.get(
-        "/surveyor/survey/nama",
+        "/nama_survey",
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
@@ -356,7 +356,7 @@ class DioClient {
   }) async {
     try {
       Response response = await _dio.post(
-        "/surveyor/survey/jawaban",
+        "/jawaban_survey",
         data: jawabanSurveyToJson(data),
         options: Options(headers: {
           "authorization": "Bearer $token",
@@ -375,7 +375,7 @@ class DioClient {
   }) async {
     try {
       Response response = await _dio.put(
-        "/surveyor/survey",
+        "/jawaban_survey",
         data: jawabanSurveyToJson(data),
         options: Options(headers: {
           "authorization": "Bearer $token",
