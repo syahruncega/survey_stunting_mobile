@@ -167,7 +167,7 @@ class SurveyScreen extends StatelessWidget {
                       confirmTextColor: Colors.white,
                       title: "Filter",
                       onConfirm: () async {
-                        Get.back();
+                        Get.toNamed(RouteName.isiSurvey);
                       },
                       onCancel: () {},
                       textCancel: "Batal",
@@ -217,8 +217,10 @@ class SurveyScreen extends StatelessWidget {
                           Center(
                             child: CustomElevatedButton(
                               label: "Tambah Responden",
-                              onPressed: () =>
-                                  Get.toNamed(RouteName.tambahResponden),
+                              onPressed: () {
+                                Get.back();
+                                Get.toNamed(RouteName.tambahResponden);
+                              },
                             ),
                           )
                         ],

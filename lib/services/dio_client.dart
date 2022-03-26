@@ -165,6 +165,7 @@ class DioClient {
           "authorization": "Bearer $token",
         }),
       );
+      log("${response.data}");
       return respondenFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error create responden: $e');
