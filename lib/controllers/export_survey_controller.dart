@@ -1,19 +1,36 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:survey_stunting/models/jawaban_soal.dart';
+import 'package:survey_stunting/models/jawaban_survey.dart';
+import 'package:survey_stunting/models/kategori_soal.dart';
+import 'package:survey_stunting/models/nama_survey.dart';
+import 'package:survey_stunting/models/soal.dart';
 import 'package:survey_stunting/models/survey.dart';
 import 'package:survey_stunting/models/survey_parameters.dart';
 import 'package:survey_stunting/services/dio_client.dart';
 import 'package:survey_stunting/services/handle_errors.dart';
 
 class ExportSurveyController extends GetxController {
-  final jenisSurveyEditingController = TextEditingController(text: "Pre");
+  final namaSurveyTEC = TextEditingController();
   var isLoaded = false.obs;
-  String namaSurveyId = "2";
+  var exportStatus = 'completed'.obs;
+  String namaSurveyId = "";
   List<Survey> surveys = [];
+  var namaSurvey = [].obs;
+  List<KategoriSoal> kategoriSoal = [];
+  List<Soal> soal = [];
+  List<JawabanSurvey> jawabanSurvey = [];
+  List<JawabanSoal> jawabanSoal = [];
   String token = GetStorage().read("token");
+
+  final namaSurveyIdError = "".obs;
 
   Future getSurvey({required dynamic namaSurveyId}) async {
     isLoaded.value = false;
@@ -36,55 +53,223 @@ class ExportSurveyController extends GetxController {
     isLoaded.value = true;
   }
 
-  Future exportToExcel() async {
-    var excel = Excel.createExcel();
-
-    Sheet sheetObject = excel['Survey Stunting'];
-    excel.setDefaultSheet('Survey Stunting');
-
-    // get nama survey (Params nama_survey_id)
-    if (surveys.isNotEmpty) {
-      String namaSurvey = surveys[0].namaSurvey!.nama;
-      sheetObject.cell(CellIndex.indexByString("B2")).value = "Nama Survey :";
-      sheetObject.cell(CellIndex.indexByString("D2")).value = namaSurvey;
+  bool validate() {
+    namaSurveyIdError.value = "";
+    if (namaSurveyTEC.text.trim().isEmpty) {
+      namaSurveyIdError.value = "Pilih survey yang ingin di Export";
     }
 
-    // looping kategori soal by nama_survey_id
+    if (namaSurveyIdError.value.isNotEmpty) {
+      return false;
+    }
+    return true;
+  }
 
-    //print kategori soal to excel
+  Future exportToExcel() async {
+    if (validate()) {
+      var excel = Excel.createExcel();
 
-    // looping soal berdasarkan kategori_soal_id
-    // looping jawaban soal
+      String sheetName = namaSurveyTEC.text;
 
-    sheetObject.cell(CellIndex.indexByString("B4")).value = "No.";
-    sheetObject.cell(CellIndex.indexByString("C4")).value = "Tanggal";
-    sheetObject.cell(CellIndex.indexByString("D4")).value = "Desa";
-    sheetObject.cell(CellIndex.indexByString("E4")).value = "Kecamatan";
-    sheetObject.cell(CellIndex.indexByString("F4")).value = "Kabupaten";
-    sheetObject.cell(CellIndex.indexByString("G4")).value = "Kartu Keluarga";
-    sheetObject.cell(CellIndex.indexByString("H4")).value = "Demografi";
-    sheetObject.cell(CellIndex.indexByString("H5")).value = "Nama Responden";
-    sheetObject.cell(CellIndex.indexByString("I5")).value =
-        "Nomor Telepon/Handphone";
-    sheetObject.cell(CellIndex.indexByString("J5")).value = "Nama Ayah";
+      Sheet sheetObject = excel[sheetName];
+      excel.setDefaultSheet(sheetName);
 
-    // var namaSurvey1 = sheetObject
-    //     .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 2))
-    //     .value = 'cell value';
+      // get nama survey (Params nama_survey_id)
+      if (surveys.isNotEmpty) {
+        exportStatus.value = '';
+        await getKategoriSoal();
+        // await getJawabanSurvey();
+        await getJawabanSoal();
+        await getSoal();
 
-    String filename = DateTime.now().toString();
-    excel.save(fileName: filename + ".xlsx");
+        // print header table
+        sheetObject
+            .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 4))
+            .value = 'No.';
+        sheetObject
+            .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 4))
+            .value = 'Tanggal';
+        sheetObject
+            .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 4))
+            .value = 'Desa';
+        sheetObject
+            .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 4))
+            .value = 'Kecamatan';
+        sheetObject
+            .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 4))
+            .value = 'Kabupaten';
+        sheetObject
+            .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 4))
+            .value = 'Provinsi';
+        sheetObject
+            .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: 4))
+            .value = 'Kartu Keluarga';
+
+        // print kategori soal dan soal dari setiap kategori
+        int i = 0;
+        int j = 0;
+        for (var kategori in kategoriSoal) {
+          // print kategori soal to excel
+          sheetObject
+              .cell(CellIndex.indexByColumnRow(columnIndex: 9 + i, rowIndex: 4))
+              .value = kategori.nama;
+
+          // count soal by kategori
+          List<Soal> _soal = soal
+              .where(
+                  (element) => int.parse(element.kategoriSoalId) == kategori.id)
+              .toList();
+
+          for (var soal in _soal) {
+            sheetObject
+                .cell(
+                    CellIndex.indexByColumnRow(columnIndex: 9 + j, rowIndex: 5))
+                .value = soal.soal;
+            j++;
+          }
+          i += _soal.length;
+        }
+
+        // print nama survey
+        String namaSurvey = surveys[0].namaSurvey!.nama;
+        sheetObject.cell(CellIndex.indexByString("B2")).value = "Nama Survey :";
+        sheetObject.cell(CellIndex.indexByString("D2")).value = namaSurvey;
+
+        // print data responden
+        int y = 0;
+        for (var s in surveys) {
+          sheetObject
+              .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 6 + y))
+              .value = y + 1;
+
+          sheetObject
+              .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 6 + y))
+              .value = s.responden!.createdAt;
+
+          sheetObject
+              .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 6 + y))
+              .value = s.responden!.desaKelurahanId;
+
+          sheetObject
+              .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 6 + y))
+              .value = s.responden!.kecamatanId;
+
+          sheetObject
+              .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 6 + y))
+              .value = s.responden!.kecamatanId;
+
+          sheetObject
+              .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 6 + y))
+              .value = s.responden!.provinsiId;
+
+          sheetObject
+              .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: 6 + y))
+              .value = s.responden!.kartuKeluarga;
+
+          await getJawabanSurvey(surveyId: s.id.toString());
+          //print jawaban survey
+          int x = 0;
+          for (var jawaban in jawabanSurvey) {
+            String? currentJawaban = '';
+            if (jawaban.jawabanLainnya != null) {
+              currentJawaban = jawaban.jawabanLainnya;
+            } else {
+              currentJawaban = jawabanSoal
+                  .singleWhere((element) =>
+                      element.id == int.parse(jawaban.jawabanSoalId!))
+                  .jawaban
+                  .toString();
+            }
+            sheetObject
+                .cell(CellIndex.indexByColumnRow(
+                    columnIndex: 9 + x, rowIndex: 6 + y))
+                .value = currentJawaban;
+            x++;
+          }
+
+          y++;
+        }
+        final String path = (await getApplicationSupportDirectory()).path;
+        final String filename = '$path/$namaSurvey.xlsx';
+        final File file = File(filename);
+        final List<int>? bytes = excel.save(fileName: filename);
+        await file.writeAsBytes(bytes!, flush: true);
+        exportStatus.value = 'completed';
+        OpenFile.open(filename);
+      }
+    } else {
+      debugPrint('Export validation failed');
+    }
+  }
+
+  Future getKategoriSoal() async {
+    try {
+      List<KategoriSoal>? response = await DioClient()
+          .getKategoriSoal(token: token, namaSurveyId: namaSurveyId);
+      kategoriSoal = response!;
+      debugPrint(response.toString());
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        kategoriSoal = [];
+      } else {
+        handleError(error: e);
+      }
+    }
+  }
+
+  Future getSoal() async {
+    try {
+      List<Soal>? response = await DioClient().getSoal(token: token);
+      soal = response!;
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
+  }
+
+  Future getJawabanSurvey({required String surveyId}) async {
+    if (jawabanSurvey.isNotEmpty) {
+      jawabanSurvey.clear();
+    }
+    try {
+      List<JawabanSurvey>? response =
+          await DioClient().getJawabanSurvey(token: token, surveyId: surveyId);
+      jawabanSurvey = response!;
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
+  }
+
+  Future getJawabanSoal() async {
+    try {
+      List<JawabanSoal>? response =
+          await DioClient().getJawabanSoal(token: token);
+      jawabanSoal = response!;
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
+  }
+
+  Future getNamaSurvey() async {
+    namaSurvey.value = [];
+    try {
+      List<NamaSurvey>? response =
+          await DioClient().getNamaSurvey(token: token);
+      namaSurvey.value = response!;
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
   }
 
   @override
   void onInit() async {
     await getSurvey(namaSurveyId: namaSurveyId);
+    await getNamaSurvey();
     super.onInit();
   }
 
   @override
   void dispose() {
-    jenisSurveyEditingController.dispose();
+    namaSurveyTEC.dispose();
     super.dispose();
   }
 }
