@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:survey_stunting/models/akun.dart';
 import 'package:survey_stunting/models/auth.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';

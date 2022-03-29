@@ -1,14 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:survey_stunting/components/custom_elevated_button_icon.dart';
-import 'package:survey_stunting/components/filled_autocomplete.dart';
-import 'package:survey_stunting/components/filled_text_field.dart';
 import 'package:survey_stunting/controllers/isi_survey.controller.dart';
-import 'package:survey_stunting/models/soal.dart';
-import 'package:survey_stunting/models/survey.dart';
 
 class IsiSurveyScreen extends StatelessWidget {
   const IsiSurveyScreen({Key? key}) : super(key: key);
@@ -50,7 +44,8 @@ class IsiSurveyScreen extends StatelessWidget {
                       replacement: const Center(
                         child: CircularProgressIndicator(),
                       ),
-                      child: Column(
+                      child: Wrap(
+                        runSpacing: 20,
                         children: [
                           ...controller.soalAndJawaban.map((value) {
                             return controller.generateSoalUI(
