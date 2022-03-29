@@ -54,10 +54,11 @@ class IsiSurveyScreen extends StatelessWidget {
                         children: [
                           ...controller.soalAndJawaban.map((value) {
                             return controller.generateSoalUI(
-                              soal: value["soal"].soal,
-                              soalId: value["soal"].id,
-                              typeJawaban: value["soal"].tipeJawaban,
-                              jawaban: value["jawaban"],
+                              context: context,
+                              soal: value.soal.soal,
+                              soalId: value.soal.id,
+                              typeJawaban: value.soal.tipeJawaban,
+                              jawaban: value.jawabanSoal,
                             );
                           }).toList(),
                           Center(

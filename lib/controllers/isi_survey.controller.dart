@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:survey_stunting/components/custom_combo_box.dart';
@@ -9,6 +10,7 @@ import 'package:survey_stunting/components/filled_text_field.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
 import 'package:survey_stunting/models/kategori_soal.dart';
 import 'package:survey_stunting/models/soal.dart';
+import 'package:survey_stunting/models/soal_and_jawaban.dart';
 import 'package:survey_stunting/models/survey.dart';
 import 'package:survey_stunting/services/dio_client.dart';
 import 'package:survey_stunting/services/handle_errors.dart';
@@ -19,7 +21,7 @@ class IsiSurveyController extends GetxController {
   late List<Survey> survey;
   late List<KategoriSoal> kategoriSoal;
   final soal = RxList<Soal>();
-  var soalAndJawaban = [].obs;
+  final soalAndJawaban = RxList<SoalAndJawaban>();
   var isLoading = true.obs;
 
   Future getKategoriSoal() async {
@@ -44,17 +46,13 @@ class IsiSurveyController extends GetxController {
 
   Future getJawabanSoal() async {
     try {
-      log("$soal");
-
       for (var item in soal) {
-        if (item.tipeJawaban == "Pilihan Ganda") {
+        if (item.tipeJawaban == "Jawaban Singkat") {
+          soalAndJawaban.add(SoalAndJawaban(soal: item));
+        } else {
           List<JawabanSoal>? response = await DioClient()
               .getJawabanSoal(token: token, soalId: item.id.toString());
-          log(response.toString());
-          soalAndJawaban.add({"soal": item, "jawaban": response});
-          log(item.toString());
-        } else {
-          soalAndJawaban.add({"soal": item, "jawaban": null});
+          soalAndJawaban.add(SoalAndJawaban(soal: item, jawabanSoal: response));
         }
       }
     } on DioError catch (e) {
@@ -66,20 +64,33 @@ class IsiSurveyController extends GetxController {
     required String soal,
     required String typeJawaban,
     required int soalId,
-    required dynamic jawaban,
+    List<JawabanSoal>? jawaban,
+    required BuildContext context,
   }) {
+    Rx<String> groupValue = "".obs;
     switch (typeJawaban) {
       case "Pilihan Ganda":
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(soal),
-          ...jawaban.map(
-            (value) => CustomComboBox(
-              title: value.jawaban,
-              value: value.id.toString(),
-              groupValue: "1",
-              onChanged: (_) {},
-            ),
-          )
+          Text(
+            soal,
+            style: Theme.of(context).textTheme.headline3,
+          ),
+          ...jawaban!.map((value) {
+            var index = jawaban.indexOf(value);
+            if (index == 0) {
+              groupValue.value = value.id.toString();
+            }
+            return Obx(
+              () => CustomComboBox(
+                label: value.jawaban,
+                value: value.id.toString(),
+                groupValue: groupValue.value,
+                onChanged: (x) {
+                  groupValue.value = x!;
+                },
+              ),
+            );
+          })
         ]);
       case "Kotak Centang":
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
