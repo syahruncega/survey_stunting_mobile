@@ -83,6 +83,7 @@ class ProfilScreen extends StatelessWidget {
               Get.defaultDialog(
                 onConfirm: () async {
                   GetStorage().remove("token");
+                  GetStorage().remove("session");
                   Get.offAllNamed(RouteName.login);
                 },
                 confirmTextColor: Colors.white,

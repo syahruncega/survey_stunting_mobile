@@ -60,22 +60,22 @@ class TambahRespondenController extends GetxController {
     kelurahanError.value = "";
 
     if (kartuKeluargaTEC.text.trim().isEmpty) {
-      kartuKeluargaError.value = 'Nomor Kartu Keluarga tidak boleh kosong';
+      kartuKeluargaError.value = 'Nomor Kartu Keluarga wajib diisi';
     }
     if (alamatTEC.text.trim().isEmpty) {
-      alamatError.value = "Alamat tidak boleh kosong";
+      alamatError.value = "Alamat wajib diisi";
     }
     if (provinsiTEC.text.trim().isEmpty) {
-      provinsiError.value = "Provinsi tidak boleh kosong";
+      provinsiError.value = "Provinsi wajib diisi";
     }
     if (kabupatenTEC.text.trim().isEmpty) {
-      kabupatenError.value = "Kabupaten tidak boleh kosong";
+      kabupatenError.value = "Kabupaten wajib diisi";
     }
     if (kecamatanTEC.text.trim().isEmpty) {
-      kecamatanError.value = "Kecamatan tidak boleh kosong";
+      kecamatanError.value = "Kecamatan wajib diisi";
     }
     if (kelurahanTEC.text.trim().isEmpty) {
-      kelurahanError.value = "Kelurahan tidak boleh kosong";
+      kelurahanError.value = "Kelurahan wajib diisi";
     }
 
     if (kartuKeluargaError.value.isNotEmpty ||

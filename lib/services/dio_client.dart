@@ -24,7 +24,6 @@ import 'package:survey_stunting/models/user_profile.dart';
 import 'package:survey_stunting/services/logging.dart';
 
 class DioClient {
-  final String token = GetStorage().read("token");
   final Dio _dio = Dio(
     BaseOptions(
       baseUrl: "${dotenv.env['BASE_URL']!}/api",
@@ -84,7 +83,7 @@ class DioClient {
     }
   }
 
-  Future<Survey>? createSurvey({
+  Future<List<Survey>?> createSurvey({
     required String token,
     required Survey data,
   }) async {
@@ -96,7 +95,7 @@ class DioClient {
           "authorization": "Bearer $token",
         }),
       );
-      return surveyFromJson(getData(response.data));
+      return listSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error create survey: $e');
       rethrow;
@@ -127,7 +126,7 @@ class DioClient {
   }) async {
     try {
       Response response = await _dio.get(
-        "/surveyor/survey/nama",
+        "/nama_survey",
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
