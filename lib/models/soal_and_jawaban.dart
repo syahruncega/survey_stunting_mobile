@@ -1,35 +1,36 @@
 // To parse this JSON data, do
 //
-//     final soalJawaban = soalJawabanFromJson(jsonString);
+//     final soalAndJawaban = soalAndJawabanFromJson(jsonString);
 
 import 'dart:convert';
 
 import 'package:survey_stunting/models/jawaban_soal.dart';
 import 'package:survey_stunting/models/soal.dart';
 
-List<SoalJawaban> soalJawabanFromJson(String str) => List<SoalJawaban>.from(
-    json.decode(str).map((x) => SoalJawaban.fromJson(x)));
+List<SoalAndJawaban> soalAndJawabanFromJson(String str) =>
+    List<SoalAndJawaban>.from(
+        json.decode(str).map((x) => SoalAndJawaban.fromJson(x)));
 
-String soalJawabanToJson(List<SoalJawaban> data) =>
+String soalAndJawabanToJson(List<SoalAndJawaban> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class SoalJawaban {
-  SoalJawaban({
+class SoalAndJawaban {
+  SoalAndJawaban({
     required this.soal,
-    this.jawaban,
+    this.jawabanSoal,
   });
 
   Soal soal;
-  List<JawabanSoal>? jawaban;
+  List<JawabanSoal>? jawabanSoal;
 
-  factory SoalJawaban.fromJson(Map<String, dynamic> json) => SoalJawaban(
+  factory SoalAndJawaban.fromJson(Map<String, dynamic> json) => SoalAndJawaban(
         soal: Soal.fromJson(json["soal"]),
-        jawaban: List<JawabanSoal>.from(
+        jawabanSoal: List<JawabanSoal>.from(
             json["jawaban_soal"].map((x) => JawabanSoal.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "soal": soal.toJson(),
-        "jawaban_soal": List<dynamic>.from(jawaban!.map((x) => x.toJson())),
+        "jawaban_soal": List<dynamic>.from(jawabanSoal!.map((x) => x.toJson())),
       };
 }
