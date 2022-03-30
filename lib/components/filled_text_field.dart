@@ -16,6 +16,8 @@ class FilledTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final bool? obsecureText;
   final void Function()? onEditingComplete;
+  final double? height;
+  final BorderRadius? borderRadius;
   const FilledTextField({
     this.prefixIcon,
     this.suffixIcon,
@@ -31,6 +33,8 @@ class FilledTextField extends StatelessWidget {
     this.inputFormatters,
     this.obsecureText = false,
     this.onEditingComplete,
+    this.height,
+    this.borderRadius,
     Key? key,
   }) : super(key: key);
 
@@ -63,8 +67,8 @@ class FilledTextField extends StatelessWidget {
             hintStyle: TextStyle(color: Theme.of(context).hintColor),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
-              vertical: 12,
             ),
+            constraints: BoxConstraints(maxHeight: height ?? double.infinity),
             prefixIcon: prefixIcon != null
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -77,7 +81,7 @@ class FilledTextField extends StatelessWidget {
               minWidth: 12,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: borderRadius ?? BorderRadius.circular(14),
               borderSide: BorderSide(
                 color: Theme.of(context).primaryColor.withAlpha(0),
               ),
@@ -85,7 +89,7 @@ class FilledTextField extends StatelessWidget {
             filled: true,
             // fillColor: Colors.grey.shade300,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: borderRadius ?? BorderRadius.circular(14),
             ),
           ),
         ),

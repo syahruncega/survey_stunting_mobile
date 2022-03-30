@@ -166,53 +166,55 @@ class SurveyScreen extends StatelessWidget {
                       buttonColor: Theme.of(context).colorScheme.primary,
                       confirmTextColor: Colors.white,
                       title: "Filter",
-                      onConfirm: () async {
-                        Get.toNamed(RouteName.isiSurvey);
-                      },
+                      onConfirm: surveyController.submitForm,
                       onCancel: () {},
                       textCancel: "Batal",
                       cancelTextColor: Theme.of(context).colorScheme.primary,
-                      textConfirm: "Proses",
+                      textConfirm: "Tambah Survey",
                       content: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.start,
                         runSpacing: size.height * 0.03,
                         children: [
-                          FilledAutocomplete(
-                            title: "Responden",
-                            hintText: "Pilih responden",
-                            keyboardType: TextInputType.number,
-                            controller:
-                                surveyController.respondenEditingController,
-                            items: surveyController.responden
-                                .map((e) =>
-                                    {"label": e.kartuKeluarga, "value": e.id})
-                                .toList(),
-                            onSuggestionSelected:
-                                (Map<String, dynamic> suggestion) {
-                              surveyController.respondenEditingController.text =
-                                  suggestion["label"];
-                              surveyController.idResponden =
-                                  suggestion["value"];
-                            },
+                          Obx(
+                            () => FilledAutocomplete(
+                              title: "Responden",
+                              hintText: "Pilih responden",
+                              errorText: surveyController.respondenError.value,
+                              keyboardType: TextInputType.number,
+                              controller: surveyController.respondenTEC,
+                              items: surveyController.responden
+                                  .map((e) =>
+                                      {"label": e.kartuKeluarga, "value": e.id})
+                                  .toList(),
+                              onSuggestionSelected:
+                                  (Map<String, dynamic> suggestion) {
+                                surveyController.respondenTEC.text =
+                                    suggestion["label"];
+                                surveyController.respondenId =
+                                    suggestion["value"];
+                              },
+                            ),
                           ),
-                          FilledAutocomplete(
-                            title: "Nama Survey",
-                            hintText: "Pilih nama survey",
-                            controller:
-                                surveyController.namaSurveyEditingController,
-                            items: surveyController.namaSurvey
-                                .map((e) => {
-                                      "label": "${e.nama} | ${e.tipe}",
-                                      "value": e.id
-                                    })
-                                .toList(),
-                            onSuggestionSelected:
-                                (Map<String, dynamic> suggestion) {
-                              surveyController.namaSurveyEditingController
-                                  .text = suggestion["label"];
-                              surveyController.idNamaSurvey =
-                                  suggestion["value"];
-                            },
+                          Obx(
+                            () => FilledAutocomplete(
+                              title: "Nama Survey",
+                              hintText: "Pilih nama survey",
+                              errorText: surveyController.namaSurveyError.value,
+                              controller: surveyController.namaSurveyTEC,
+                              items: surveyController.namaSurvey
+                                  .map((e) => {
+                                        "label": "${e.nama} | ${e.tipe}",
+                                        "value": e.id
+                                      })
+                                  .toList(),
+                              onSuggestionSelected:
+                                  (Map<String, dynamic> suggestion) {
+                                surveyController.namaSurveyTEC.text =
+                                    suggestion["label"];
+                                surveyController.namaSurveyId =
+                                    suggestion["value"];
+                              },
+                            ),
                           ),
                           Center(
                             child: CustomElevatedButton(
@@ -269,7 +271,10 @@ class SurveyScreen extends StatelessWidget {
                                       "Anda yakin akan menghapus data ini?"),
                                 );
                               },
-                              onEdit: () {},
+                              onEdit: () {
+                                Get.toNamed(RouteName.isiSurvey,
+                                    arguments: surveyController.surveys[index]);
+                              },
                               survey: surveyController.surveys[index],
                             );
                           },

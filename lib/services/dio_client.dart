@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:survey_stunting/models/akun.dart';
 import 'package:survey_stunting/models/auth.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
@@ -24,7 +23,6 @@ import 'package:survey_stunting/models/user_profile.dart';
 import 'package:survey_stunting/services/logging.dart';
 
 class DioClient {
-  // final String token = GetStorage().read("token");
   final Dio _dio = Dio(
     BaseOptions(
       baseUrl: "${dotenv.env['BASE_URL']!}/api",
@@ -84,7 +82,7 @@ class DioClient {
     }
   }
 
-  Future<Survey>? createSurvey({
+  Future<List<Survey>?> createSurvey({
     required String token,
     required Survey data,
   }) async {
@@ -96,7 +94,7 @@ class DioClient {
           "authorization": "Bearer $token",
         }),
       );
-      return surveyFromJson(getData(response.data));
+      return listSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error create survey: $e');
       rethrow;

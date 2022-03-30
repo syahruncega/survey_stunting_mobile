@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:survey_stunting/components/custom_elevated_button_icon.dart';
-import 'package:survey_stunting/components/filled_autocomplete.dart';
-import 'package:survey_stunting/components/filled_text_field.dart';
 import 'package:survey_stunting/controllers/isi_survey.controller.dart';
 
 class IsiSurveyScreen extends StatelessWidget {
@@ -40,16 +38,48 @@ class IsiSurveyScreen extends StatelessWidget {
                   SizedBox(
                     height: size.height * 0.06,
                   ),
-                  Center(
-                    child: CustomElevatedButtonIcon(
-                      label: "Selanjutnya",
-                      icon: SvgPicture.asset(
-                        "assets/icons/outline/arrow-right2.svg",
-                        color: Colors.white,
+                  Obx(
+                    () => Visibility(
+                      visible: !controller.isLoading.value,
+                      replacement: const Center(
+                        child: CircularProgressIndicator(),
                       ),
-                      onPressed: () {},
+                      child: Wrap(
+                        runSpacing: 20,
+                        children: [
+                          Center(
+                            child: Text(
+                              controller.currentCategoryTitle.value,
+                              style: Theme.of(context).textTheme.headline2,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          ...controller.soalAndJawaban.map((value) {
+                            var index =
+                                controller.soalAndJawaban.indexOf(value);
+                            return controller.generateSoalUI(
+                              number: index + 1,
+                              context: context,
+                              soal: value.soal.soal,
+                              soalId: value.soal.id,
+                              typeJawaban: value.soal.tipeJawaban,
+                              jawaban: value.jawabanSoal,
+                            );
+                          }).toList(),
+                          Center(
+                            child: CustomElevatedButtonIcon(
+                              label: "Selanjutnya",
+                              icon: SvgPicture.asset(
+                                "assets/icons/outline/arrow-right2.svg",
+                                color: Colors.white,
+                              ),
+                              onPressed: () {},
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
