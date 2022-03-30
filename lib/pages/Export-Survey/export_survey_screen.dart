@@ -16,7 +16,7 @@ class ExportSurveyScreen extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return RefreshIndicator(
       onRefresh: () async => await exportSurveyController.getSurvey(
-        typeSurveyId: exportSurveyController.jenisSurvey,
+        namaSurveyId: exportSurveyController.namaSurveyId,
       ),
       displacement: 0,
       child: SingleChildScrollView(
@@ -31,38 +31,58 @@ class ExportSurveyScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.headline1,
               ),
               SizedBox(height: size.height * 0.04),
-              FilledAutocomplete(
-                controller: exportSurveyController.jenisSurveyEditingController,
-                hintText: "Pilih jenis survey",
-                items: const [
-                  {"label": "Post", "value": "1"},
-                  {"label": "Pre", "value": "2"},
-                ],
-                onSuggestionSelected: (Map<String, dynamic> suggestion) async {
-                  exportSurveyController.jenisSurveyEditingController.text =
-                      suggestion["label"];
-                  exportSurveyController.jenisSurvey = suggestion["value"];
-                  await exportSurveyController.getSurvey(
-                    typeSurveyId: suggestion["value"],
-                  );
-                },
+              Obx(
+                () => FilledAutocomplete(
+                  controller: exportSurveyController.namaSurveyTEC,
+                  hintText: "Pilih nama survey",
+                  items: exportSurveyController.namaSurvey
+                      .map((e) => {
+                            'label': e.nama + '|' + e.tipe,
+                            'value': e.id.toString()
+                          })
+                      .toList(),
+                  errorText: exportSurveyController.namaSurveyIdError.value,
+                  onSuggestionSelected:
+                      (Map<String, dynamic> suggestion) async {
+                    exportSurveyController.namaSurveyTEC.text =
+                        suggestion["label"];
+                    exportSurveyController.namaSurveyId = suggestion["value"];
+                    await exportSurveyController.getSurvey(
+                      namaSurveyId: suggestion["value"],
+                    );
+                  },
+                ),
               ),
               SizedBox(
                 height: size.height * 0.01,
               ),
-              ElevatedButton.icon(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              Obx(
+                () => ElevatedButton.icon(
+                  onPressed: () async {
+                    await exportSurveyController.exportToExcel();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    primary: Theme.of(context).colorScheme.secondary,
                   ),
-                  primary: Theme.of(context).colorScheme.secondary,
-                ),
-                icon: SvgPicture.asset("assets/icons/outline/import.svg",
-                    color: Colors.white),
-                label: Text(
-                  "Export",
-                  style: Theme.of(context).textTheme.button,
+                  icon: exportSurveyController.exportStatus.value == 'completed'
+                      ? SvgPicture.asset("assets/icons/outline/import.svg",
+                          color: Colors.white)
+                      : Container(
+                          width: 24,
+                          height: 24,
+                          padding: const EdgeInsets.all(2.0),
+                          child: const CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 3,
+                          ),
+                        ),
+                  label: Text(
+                    "Export",
+                    style: Theme.of(context).textTheme.button,
+                  ),
                 ),
               ),
               SizedBox(

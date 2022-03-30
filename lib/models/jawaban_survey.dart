@@ -32,8 +32,8 @@ class JawabanSurvey {
   String soalId;
   String surveyId;
   String kategoriSoalId;
-  String jawabanSoalId;
-  String jawabanLainnya;
+  String? jawabanSoalId;
+  String? jawabanLainnya;
   DateTime? createdAt;
   DateTime? updatedAt;
 
