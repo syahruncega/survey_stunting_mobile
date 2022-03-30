@@ -89,7 +89,7 @@ class FilledTextField extends StatelessWidget {
             filled: true,
             // fillColor: Colors.grey.shade300,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: borderRadius ?? BorderRadius.circular(14),
             ),
           ),
         ),
