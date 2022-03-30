@@ -105,6 +105,7 @@ class IsiSurveyController extends GetxController {
                 label: value.jawaban,
                 value: checkedValue.value,
                 groupValue: groupValue.value,
+                isOther: value.isLainnya == "1" ? true : false,
                 onChanged: (x) {
                   checkedValue.value = x!;
                 },
