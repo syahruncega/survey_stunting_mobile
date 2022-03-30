@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -144,7 +145,8 @@ class ExportSurveyController extends GetxController {
 
           sheetObject
               .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 6 + y))
-              .value = s.responden!.createdAt;
+              // .value = s.responden!.createdAt;
+              .value = s.createdAt;
 
           sheetObject
               .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 6 + y))
@@ -167,18 +169,55 @@ class ExportSurveyController extends GetxController {
               .value = s.responden!.kartuKeluarga;
 
           await getJawabanSurvey(surveyId: s.id.toString());
+
+          var getListJawaban =
+              jawabanSoal.where((element) => element.soalId == "14").toList();
+
+          for (var i in getListJawaban) {
+            debugPrint(i.jawaban);
+          }
+
           //print jawaban survey
           int x = 0;
-          for (var jawaban in jawabanSurvey) {
+          for (var jawaban = 0; jawaban < jawabanSurvey.length; jawaban++) {
             String? currentJawaban = '';
-            if (jawaban.jawabanLainnya != null) {
-              currentJawaban = jawaban.jawabanLainnya;
+            if (jawabanSurvey[jawaban].jawabanLainnya != null) {
+              currentJawaban = jawabanSurvey[jawaban].jawabanLainnya;
             } else {
-              currentJawaban = jawabanSoal
-                  .singleWhere((element) =>
-                      element.id == int.parse(jawaban.jawabanSoalId!))
-                  .jawaban
-                  .toString();
+              // cek, jika soal id == soal id sebelumnya,
+              // print jawaban soal pada cell yang sama
+              // buat variable untuk tampung jawaban dari soal yang sama
+              var tempJawaban = [];
+              if (jawabanSurvey[jawaban].soalId ==
+                  jawabanSurvey[jawaban - 1].soalId) {
+                x -= 1;
+                // soal sama seperti soal sebelumnya
+
+                // tambahkan jawaban sebelumnya dengan jawaban saat ini kedalam
+                // array tempJawaban
+                var getJawaban = jawabanSurvey
+                    .where((element) =>
+                        element.soalId == jawabanSurvey[jawaban].soalId)
+                    .toList();
+
+                for (var j in getJawaban) {
+                  var jawaban = jawabanSoal
+                      .singleWhere(
+                          (element) => element.id.toString() == j.jawabanSoalId)
+                      .jawaban
+                      .toString();
+
+                  tempJawaban.add(jawaban);
+                }
+                currentJawaban = tempJawaban.toString();
+              } else {
+                currentJawaban = jawabanSoal
+                    .singleWhere((element) =>
+                        element.id ==
+                        int.parse(jawabanSurvey[jawaban].jawabanSoalId!))
+                    .jawaban
+                    .toString();
+              }
             }
             sheetObject
                 .cell(CellIndex.indexByColumnRow(
@@ -186,16 +225,20 @@ class ExportSurveyController extends GetxController {
                 .value = currentJawaban;
             x++;
           }
-
           y++;
         }
-        final String path = (await getApplicationSupportDirectory()).path;
-        final String filename = '$path/$namaSurvey.xlsx';
-        final File file = File(filename);
-        final List<int>? bytes = excel.save(fileName: filename);
-        await file.writeAsBytes(bytes!, flush: true);
-        exportStatus.value = 'completed';
-        OpenFile.open(filename);
+
+        // web version
+        const filename = 'Stunting.xlsx';
+        excel.save(fileName: filename);
+        // mobile version
+        // final String path = (await getApplicationSupportDirectory()).path;
+        // final String filename = '$path/$namaSurvey.xlsx';
+        // final File file = File(filename);
+        // final List<int>? bytes = excel.save(fileName: filename);
+        // await file.writeAsBytes(bytes!, flush: true);
+        // exportStatus.value = 'completed';
+        // OpenFile.open(filename);
       }
     } else {
       debugPrint('Export validation failed');
