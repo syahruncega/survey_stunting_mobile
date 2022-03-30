@@ -189,7 +189,7 @@ class ExportSurveyController extends GetxController {
               // buat variable untuk tampung jawaban dari soal yang sama
               var tempJawaban = [];
               if (jawabanSurvey[jawaban].soalId ==
-                  jawabanSurvey[jawaban - 1].soalId) {
+                  jawabanSurvey[jawaban + 1].soalId) {
                 x -= 1;
                 // soal sama seperti soal sebelumnya
 
