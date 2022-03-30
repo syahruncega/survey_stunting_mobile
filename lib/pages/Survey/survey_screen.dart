@@ -271,7 +271,10 @@ class SurveyScreen extends StatelessWidget {
                                       "Anda yakin akan menghapus data ini?"),
                                 );
                               },
-                              onEdit: () {},
+                              onEdit: () {
+                                Get.toNamed(RouteName.isiSurvey,
+                                    arguments: surveyController.surveys[index]);
+                              },
                               survey: surveyController.surveys[index],
                             );
                           },

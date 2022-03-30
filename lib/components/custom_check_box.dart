@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CustomComboBox extends StatelessWidget {
-  const CustomComboBox({
+class CustomCheckBox extends StatelessWidget {
+  const CustomCheckBox({
     required this.label,
     required this.value,
     required this.groupValue,
@@ -10,23 +10,22 @@ class CustomComboBox extends StatelessWidget {
   }) : super(key: key);
 
   final String label;
-  final String value;
+  final bool value;
   final String groupValue;
-  final void Function(String?)? onChanged;
+  final void Function(bool?)? onChanged;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => {onChanged!(value)},
+      onTap: () => {onChanged!(!value)},
       child: Row(
         children: [
-          Radio(
+          Checkbox(
             value: value,
-            groupValue: groupValue,
             onChanged: onChanged,
             activeColor: Theme.of(context).primaryColor,
           ),
-          Text(label),
+          Flexible(child: Text(label)),
         ],
       ),
     );

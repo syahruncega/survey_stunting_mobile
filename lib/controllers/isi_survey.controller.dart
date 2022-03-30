@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:survey_stunting/components/custom_check_box.dart';
 import 'package:survey_stunting/components/custom_combo_box.dart';
 import 'package:survey_stunting/components/filled_text_field.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
@@ -17,7 +18,7 @@ import 'package:survey_stunting/services/handle_errors.dart';
 class IsiSurveyController extends GetxController {
   String token = GetStorage().read("token");
   late String currentCategory;
-  late List<Survey> survey;
+  late Survey survey;
   late List<KategoriSoal> kategoriSoal;
   final soal = RxList<Soal>();
   final soalAndJawaban = RxList<SoalAndJawaban>();
@@ -26,7 +27,7 @@ class IsiSurveyController extends GetxController {
   Future getKategoriSoal() async {
     try {
       List<KategoriSoal>? response = await DioClient().getKategoriSoal(
-          token: token, namaSurveyId: survey[0].namaSurvey!.id.toString());
+          token: token, namaSurveyId: survey.namaSurvey!.id.toString());
       kategoriSoal = response!;
     } on DioError catch (e) {
       handleError(error: e);
@@ -93,7 +94,23 @@ class IsiSurveyController extends GetxController {
         ]);
       case "Kotak Centang":
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(soal),
+          Text(
+            soal,
+            style: Theme.of(context).textTheme.headline3,
+          ),
+          ...jawaban!.map((value) {
+            Rx<bool> checkedValue = false.obs;
+            return Obx(
+              () => CustomCheckBox(
+                label: value.jawaban,
+                value: checkedValue.value,
+                groupValue: groupValue.value,
+                onChanged: (x) {
+                  checkedValue.value = x!;
+                },
+              ),
+            );
+          })
         ]);
       default:
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -107,7 +124,7 @@ class IsiSurveyController extends GetxController {
   @override
   void onInit() async {
     survey = Get.arguments;
-    currentCategory = survey[0].kategoriSelanjutnya!;
+    currentCategory = survey.kategoriSelanjutnya!;
     await getKategoriSoal();
     await getSoal();
     await getJawabanSoal();

@@ -107,7 +107,7 @@ class SurveyController extends GetxController {
         List<Survey>? response =
             await DioClient().createSurvey(token: token, data: data);
         isLoading.value = false;
-        Get.toNamed(RouteName.isiSurvey, arguments: response);
+        Get.toNamed(RouteName.isiSurvey, arguments: response![0]);
         successScackbar("Survey berhasil disimpan");
       } on DioError catch (e) {
         handleError(error: e);
