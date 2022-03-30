@@ -287,12 +287,15 @@ class DioClient {
 
   Future<List<Soal>?> getSoal({
     required String token,
-    required String kategoriSoalId,
+    String? kategoriSoalId,
   }) async {
     try {
       Response response = await _dio.get(
         "/soal",
-        queryParameters: {"kategori_soal_id": int.parse(kategoriSoalId)},
+        queryParameters: {
+          "kategori_soal_id":
+              kategoriSoalId != null ? int.parse(kategoriSoalId) : null
+        },
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
@@ -306,12 +309,16 @@ class DioClient {
 
   Future<List<JawabanSoal>?> getJawabanSoal({
     required String token,
-    required String soalId,
+    String? id,
+    String? soalId,
   }) async {
     try {
       Response response = await _dio.get(
         "/jawaban_soal",
-        queryParameters: {"soal_id": int.parse(soalId)},
+        queryParameters: {
+          "id": id != null ? int.parse(id) : null,
+          "soal_id": soalId != null ? int.parse(soalId) : null
+        },
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
@@ -326,7 +333,7 @@ class DioClient {
   Future<List<JawabanSurvey>?> getJawabanSurvey(
       {required String token,
       required String surveyId,
-      required String soalId,
+      String? soalId,
       String? kategoriSoalId}) async {
     try {
       Response response = await _dio.get(
@@ -335,7 +342,7 @@ class DioClient {
           "survey_id": int.parse(surveyId),
           "kategori_soal_id":
               kategoriSoalId != null ? int.parse(kategoriSoalId) : null,
-          "soal_id": int.parse(soalId),
+          "soal_id": soalId != null ? int.parse(soalId) : null,
         },
         options: Options(headers: {
           "authorization": "Bearer $token",
@@ -354,7 +361,7 @@ class DioClient {
   }) async {
     try {
       Response response = await _dio.post(
-        "/surveyor/survey/jawaban",
+        "/jawaban_survey",
         data: jawabanSurveyToJson(data),
         options: Options(headers: {
           "authorization": "Bearer $token",
@@ -373,7 +380,7 @@ class DioClient {
   }) async {
     try {
       Response response = await _dio.put(
-        "/surveyor/survey",
+        "/jawaban_survey",
         data: jawabanSurveyToJson(data),
         options: Options(headers: {
           "authorization": "Bearer $token",
