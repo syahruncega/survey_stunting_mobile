@@ -47,8 +47,18 @@ class IsiSurveyScreen extends StatelessWidget {
                       child: Wrap(
                         runSpacing: 20,
                         children: [
+                          Center(
+                            child: Text(
+                              controller.currentCategoryTitle.value,
+                              style: Theme.of(context).textTheme.headline2,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                           ...controller.soalAndJawaban.map((value) {
+                            var index =
+                                controller.soalAndJawaban.indexOf(value);
                             return controller.generateSoalUI(
+                              number: index + 1,
                               context: context,
                               soal: value.soal.soal,
                               soalId: value.soal.id,

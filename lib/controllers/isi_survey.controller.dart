@@ -17,7 +17,8 @@ import 'package:survey_stunting/services/handle_errors.dart';
 
 class IsiSurveyController extends GetxController {
   String token = GetStorage().read("token");
-  late String currentCategory;
+  late String currentCategoryId;
+  Rx<String> currentCategoryTitle = "".obs;
   late Survey survey;
   late List<KategoriSoal> kategoriSoal;
   final soal = RxList<Soal>();
@@ -37,7 +38,7 @@ class IsiSurveyController extends GetxController {
   Future getSoal() async {
     try {
       List<Soal>? response = await DioClient()
-          .getSoal(token: token, kategoriSoalId: currentCategory);
+          .getSoal(token: token, kategoriSoalId: currentCategoryId);
       soal.value = response!;
     } on DioError catch (e) {
       handleError(error: e);
@@ -61,6 +62,7 @@ class IsiSurveyController extends GetxController {
   }
 
   Widget generateSoalUI({
+    required int number,
     required String soal,
     required String typeJawaban,
     required int soalId,
@@ -72,7 +74,7 @@ class IsiSurveyController extends GetxController {
       case "Pilihan Ganda":
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
-            soal,
+            "$number. $soal",
             style: Theme.of(context).textTheme.headline3,
           ),
           ...jawaban!.map((value) {
@@ -95,7 +97,7 @@ class IsiSurveyController extends GetxController {
       case "Kotak Centang":
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
-            soal,
+            "$number. $soal",
             style: Theme.of(context).textTheme.headline3,
           ),
           ...jawaban!.map((value) {
@@ -116,7 +118,7 @@ class IsiSurveyController extends GetxController {
       default:
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           FilledTextField(
-            title: soal,
+            title: "$number. $soal",
           ),
         ]);
     }
@@ -125,8 +127,11 @@ class IsiSurveyController extends GetxController {
   @override
   void onInit() async {
     survey = Get.arguments;
-    currentCategory = survey.kategoriSelanjutnya!;
+    currentCategoryId = survey.kategoriSelanjutnya!;
     await getKategoriSoal();
+    currentCategoryTitle.value = kategoriSoal
+        .firstWhere((element) => element.id.toString() == currentCategoryId)
+        .nama;
     await getSoal();
     await getJawabanSoal();
     log(soalAndJawaban.toString());
