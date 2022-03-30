@@ -57,7 +57,7 @@ class SurveyScreen extends StatelessWidget {
                           search: surveyController
                               .searchSurveyEditingController.text,
                           status: surveyController.statusSurvey,
-                          namaSurveyId: surveyController.idNamaSurvey,
+                          namaSurveyId: surveyController.typeSurvey,
                         ),
                       ),
                       prefixIcon: SvgPicture.asset(
@@ -89,7 +89,7 @@ class SurveyScreen extends StatelessWidget {
                               search: surveyController
                                   .searchSurveyEditingController.text,
                               status: surveyController.statusSurvey,
-                              namaSurveyId: surveyController.idNamaSurvey,
+                              namaSurveyId: surveyController.typeSurvey,
                             ),
                           );
                         },
