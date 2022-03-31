@@ -66,6 +66,387 @@ class ExportSurveyController extends GetxController {
     return true;
   }
 
+  Future exportSurvey() async {
+    var excel = Excel.createExcel();
+    String sheetName = namaSurveyTEC.text;
+    Sheet sheetObject = excel[sheetName];
+    excel.setDefaultSheet(sheetName);
+
+    // style
+    CellStyle cellStyle = CellStyle(
+        backgroundColorHex: "#FF7562",
+        fontFamily: getFontFamily(FontFamily.Calibri));
+    cellStyle.isBold = true;
+
+    // print header table survey
+    var idField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0));
+    idField.value = 'id';
+    idField.cellStyle = cellStyle;
+
+    var respondenIdFiled = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: 0));
+    respondenIdFiled.cellStyle = cellStyle;
+    respondenIdFiled.value = 'responden_id';
+
+    var namaSurveyIdField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 0));
+    namaSurveyIdField.cellStyle = cellStyle;
+    namaSurveyIdField.value = 'nama_survey_id';
+
+    var profileIdField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 0));
+    profileIdField.cellStyle = cellStyle;
+    profileIdField.value = 'profile_id';
+
+    var kategoriField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 0));
+    kategoriField.cellStyle = cellStyle;
+    kategoriField.value = 'kategori_selanjutnya';
+
+    var isSelesaiField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 0));
+    isSelesaiField.cellStyle = cellStyle;
+    isSelesaiField.value = 'is_selesai';
+
+    var createdField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 0));
+    createdField.cellStyle = cellStyle;
+    createdField.value = 'created_at';
+
+    var updateField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 0));
+    updateField.cellStyle = cellStyle;
+    updateField.value = 'updated_at';
+
+    // print value survey
+    int rowIndex = 0;
+    for (var s in surveys) {
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 0, rowIndex: 2 + rowIndex))
+          .value = s.id;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 1, rowIndex: 2 + rowIndex))
+          .value = s.respondenId;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 2, rowIndex: 2 + rowIndex))
+          .value = s.namaSurveyId;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 3, rowIndex: 2 + rowIndex))
+          .value = s.profileId;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 4, rowIndex: 2 + rowIndex))
+          .value = s.kategoriSelanjutnya;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 5, rowIndex: 2 + rowIndex))
+          .value = s.isSelesai;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 6, rowIndex: 2 + rowIndex))
+          .value = s.createdAt.toString();
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 7, rowIndex: 2 + rowIndex))
+          .value = s.updatedAt.toString();
+
+      rowIndex++;
+    }
+
+    //! web version
+    const filename = 'tableSurvey.xlsx';
+    excel.save(fileName: filename);
+    //? mobile version
+    // final String path = (await getApplicationSupportDirectory()).path;
+    // final String filename = '$path/$namaSurvey.xlsx';
+    // final File file = File(filename);
+    // final List<int>? bytes = excel.save(fileName: filename);
+    // await file.writeAsBytes(bytes!, flush: true);
+    // OpenFile.open(filename);
+  }
+
+  Future exportJawabanSurvey() async {
+    var excel = Excel.createExcel();
+    String sheetName = namaSurveyTEC.text;
+    Sheet sheetObject = excel[sheetName];
+    excel.setDefaultSheet(sheetName);
+
+    // style
+    CellStyle cellStyle = CellStyle(
+        backgroundColorHex: "#FF7562",
+        fontFamily: getFontFamily(FontFamily.Calibri));
+    cellStyle.isBold = true;
+
+    // table jawaban_survey
+    // print header table jawaban_survey
+    var idField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0));
+    idField.cellStyle = cellStyle;
+    idField.value = 'id';
+
+    var soalIdField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: 0));
+    soalIdField.cellStyle = cellStyle;
+    soalIdField.value = 'soal_id';
+
+    var surveyIdField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 0));
+    surveyIdField.cellStyle = cellStyle;
+    surveyIdField.value = 'survey_id';
+
+    var kategoriSoalField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 0));
+    kategoriSoalField.cellStyle = cellStyle;
+    kategoriSoalField.value = 'kategori_soal_id';
+
+    var jawabanSoalField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 0));
+    jawabanSoalField.cellStyle = cellStyle;
+    jawabanSoalField.value = 'jawaban_soal_id';
+
+    var jawabanLainnyaField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 0));
+    jawabanLainnyaField.cellStyle = cellStyle;
+    jawabanLainnyaField.value = 'jawaban_lainnya';
+
+    var createdField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 0));
+    createdField.cellStyle = cellStyle;
+    createdField.value = 'created_at';
+
+    var updatedField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 0));
+    updatedField.cellStyle = cellStyle;
+    updatedField.value = 'updated_at';
+
+    // print value jawaban_survey
+    int rowIndex = 0;
+    for (var s in surveys) {
+      await getJawabanSurvey(surveyId: s.id.toString());
+      for (var jawaban in jawabanSurvey) {
+        sheetObject
+            .cell(CellIndex.indexByColumnRow(
+                columnIndex: 0, rowIndex: 2 + rowIndex))
+            .value = jawaban.id;
+
+        sheetObject
+            .cell(CellIndex.indexByColumnRow(
+                columnIndex: 1, rowIndex: 2 + rowIndex))
+            .value = jawaban.soalId;
+
+        sheetObject
+            .cell(CellIndex.indexByColumnRow(
+                columnIndex: 2, rowIndex: 2 + rowIndex))
+            .value = jawaban.surveyId;
+
+        sheetObject
+            .cell(CellIndex.indexByColumnRow(
+                columnIndex: 3, rowIndex: 2 + rowIndex))
+            .value = jawaban.kategoriSoalId;
+
+        sheetObject
+            .cell(CellIndex.indexByColumnRow(
+                columnIndex: 4, rowIndex: 2 + rowIndex))
+            .value = jawaban.jawabanSoalId;
+
+        sheetObject
+            .cell(CellIndex.indexByColumnRow(
+                columnIndex: 5, rowIndex: 2 + rowIndex))
+            .value = jawaban.jawabanLainnya;
+
+        sheetObject
+            .cell(CellIndex.indexByColumnRow(
+                columnIndex: 6, rowIndex: 2 + rowIndex))
+            .value = jawaban.createdAt.toString();
+
+        sheetObject
+            .cell(CellIndex.indexByColumnRow(
+                columnIndex: 7, rowIndex: 2 + rowIndex))
+            .value = jawaban.updatedAt.toString();
+
+        rowIndex++;
+      }
+    }
+    //! web version
+    const filename = 'tableJawabanSurvey.xlsx';
+    excel.save(fileName: filename);
+    //? mobile version
+    // final String path = (await getApplicationSupportDirectory()).path;
+    // final String filename = '$path/$namaSurvey.xlsx';
+    // final File file = File(filename);
+    // final List<int>? bytes = excel.save(fileName: filename);
+    // await file.writeAsBytes(bytes!, flush: true);
+    // OpenFile.open(filename);
+  }
+
+  Future exportResponden() async {
+    var excel = Excel.createExcel();
+    String sheetName = namaSurveyTEC.text;
+    Sheet sheetObject = excel[sheetName];
+    excel.setDefaultSheet(sheetName);
+
+    // style
+    CellStyle cellStyle = CellStyle(
+        backgroundColorHex: "#FF7562",
+        fontFamily: getFontFamily(FontFamily.Calibri));
+    cellStyle.isBold = true;
+
+    // table responden
+    // print header table responden
+    var idField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0));
+    idField.cellStyle = cellStyle;
+    idField.value = 'id';
+
+    var kartuKeluargaField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: 0));
+    kartuKeluargaField.cellStyle = cellStyle;
+    kartuKeluargaField.value = 'kartu_keluarga';
+
+    var alamatField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 0));
+    alamatField.cellStyle = cellStyle;
+    alamatField.value = 'alamat';
+
+    var provinsiIdField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 0));
+    provinsiIdField.cellStyle = cellStyle;
+    provinsiIdField.value = 'provinsi_id';
+
+    var kabupatenField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 0));
+    kabupatenField.cellStyle = cellStyle;
+    kabupatenField.value = 'kabupaten_kota_id';
+
+    var kecamatanField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 0));
+    kecamatanField.cellStyle = cellStyle;
+    kecamatanField.value = 'kecamatan_id';
+
+    var kelurahanField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 0));
+    kelurahanField.cellStyle = cellStyle;
+    kelurahanField.value = 'desa_kelurahan_id';
+
+    var nomorHpField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 0));
+    nomorHpField.cellStyle = cellStyle;
+    nomorHpField.value = 'nomor_hp';
+
+    var deletedField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: 0));
+    deletedField.cellStyle = cellStyle;
+    deletedField.value = 'deleted_at';
+
+    var createdField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: 0));
+    createdField.cellStyle = cellStyle;
+    createdField.value = 'created_at';
+
+    var updatedField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 10, rowIndex: 0));
+    updatedField.cellStyle = cellStyle;
+    updatedField.value = 'updated_at';
+
+    int rowIndex = 0;
+    for (var s in surveys) {
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 0, rowIndex: 2 + rowIndex))
+          .value = s.responden!.id;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 1, rowIndex: 2 + rowIndex))
+          .value = s.responden!.kartuKeluarga;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 2, rowIndex: 2 + rowIndex))
+          .value = s.responden!.alamat;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 3, rowIndex: 2 + rowIndex))
+          .value = s.responden!.provinsiId;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 4, rowIndex: 2 + rowIndex))
+          .value = s.responden!.kabupatenKotaId;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 5, rowIndex: 2 + rowIndex))
+          .value = s.responden!.kecamatanId;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 6, rowIndex: 2 + rowIndex))
+          .value = s.responden!.desaKelurahanId;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 7, rowIndex: 2 + rowIndex))
+          .value = s.responden!.nomorHp;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 8, rowIndex: 2 + rowIndex))
+          .value = s.responden!.deletedAt.toString();
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 9, rowIndex: 2 + rowIndex))
+          .value = s.responden!.createdAt.toString();
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 10, rowIndex: 2 + rowIndex))
+          .value = s.responden!.updatedAt.toString();
+
+      rowIndex++;
+    }
+    //! web version
+    const filename = 'tableResponden.xlsx';
+    excel.save(fileName: filename);
+    //? mobile version
+    // final String path = (await getApplicationSupportDirectory()).path;
+    // final String filename = '$path/$namaSurvey.xlsx';
+    // final File file = File(filename);
+    // final List<int>? bytes = excel.save(fileName: filename);
+    // await file.writeAsBytes(bytes!, flush: true);
+    // OpenFile.open(filename);
+  }
+
+  Future exportToExcelNew() async {
+    if (validate()) {
+      // get nama survey (Params nama_survey_id)
+      if (surveys.isNotEmpty) {
+        exportStatus.value = '';
+
+        await exportSurvey();
+        await exportJawabanSurvey();
+        await exportResponden();
+        exportStatus.value = 'completed';
+      }
+    } else {
+      debugPrint('validation failed');
+    }
+  }
+
   Future exportToExcel() async {
     if (validate()) {
       var excel = Excel.createExcel();
@@ -230,6 +611,7 @@ class ExportSurveyController extends GetxController {
 
         //! web version
         const filename = 'Stunting.xlsx';
+        exportStatus.value = 'completed';
         excel.save(fileName: filename);
         //? mobile version
         // final String path = (await getApplicationSupportDirectory()).path;

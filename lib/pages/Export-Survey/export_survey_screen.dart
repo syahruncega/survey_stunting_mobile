@@ -59,7 +59,7 @@ class ExportSurveyScreen extends StatelessWidget {
               Obx(
                 () => ElevatedButton.icon(
                   onPressed: () async {
-                    await exportSurveyController.exportToExcel();
+                    await exportSurveyController.exportToExcelNew();
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
