@@ -79,10 +79,16 @@ class ExportSurveyScreen extends StatelessWidget {
                             strokeWidth: 3,
                           ),
                         ),
-                  label: Text(
-                    "Export",
-                    style: Theme.of(context).textTheme.button,
-                  ),
+                  label:
+                      exportSurveyController.exportStatus.value == 'completed'
+                          ? Text(
+                              "Export",
+                              style: Theme.of(context).textTheme.button,
+                            )
+                          : Text(
+                              "Exporting..",
+                              style: Theme.of(context).textTheme.button,
+                            ),
                 ),
               ),
               SizedBox(

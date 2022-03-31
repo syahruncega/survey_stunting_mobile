@@ -3,6 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  file_saver
+  permission_handler_windows
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

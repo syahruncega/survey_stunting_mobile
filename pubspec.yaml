@@ -48,6 +48,8 @@ dependencies:
   excel: 2.0.0-null-safety-3
   path_provider: ^2.0.9
   open_file: ^3.2.1
+  permission_handler: ^9.2.0
+  file_saver: ^0.1.0
 
 dev_dependencies:
   flutter_test:

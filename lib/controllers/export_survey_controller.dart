@@ -1,13 +1,17 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:excel/excel.dart';
+import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
 import 'package:survey_stunting/models/jawaban_survey.dart';
 import 'package:survey_stunting/models/kategori_soal.dart';
@@ -64,6 +68,19 @@ class ExportSurveyController extends GetxController {
       return false;
     }
     return true;
+  }
+
+  static Future _checkPermission() async {
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+  }
+
+  static Future saveFile(String name, Uint8List bytes, String ext) async {
+    await _checkPermission();
+    await FileSaver.instance
+        .saveFile(name, bytes, ext, mimeType: MimeType.MICROSOFTEXCEL);
   }
 
   Future exportSurvey() async {
@@ -166,15 +183,15 @@ class ExportSurveyController extends GetxController {
     }
 
     //! web version
-    const filename = 'tableSurvey.xlsx';
-    excel.save(fileName: filename);
+    // const filename = 'tableSurvey.xlsx';
+    // excel.save(fileName: filename);
     //? mobile version
-    // final String path = (await getApplicationSupportDirectory()).path;
-    // final String filename = '$path/$namaSurvey.xlsx';
-    // final File file = File(filename);
-    // final List<int>? bytes = excel.save(fileName: filename);
-    // await file.writeAsBytes(bytes!, flush: true);
-    // OpenFile.open(filename);
+    final String path = (await getApplicationSupportDirectory()).path;
+    final String filename = '$path/$namaSurvey.xlsx';
+    final List<int>? mBytes = excel.save(fileName: filename);
+    final Uint8List bytes = Uint8List.fromList(mBytes!);
+
+    await saveFile("survey", bytes, "xlsx");
   }
 
   Future exportJawabanSurvey() async {
@@ -280,14 +297,15 @@ class ExportSurveyController extends GetxController {
       }
     }
     //! web version
-    const filename = 'tableJawabanSurvey.xlsx';
-    excel.save(fileName: filename);
+    // const filename = 'tableJawabanSurvey.xlsx';
+    // excel.save(fileName: filename);
     //? mobile version
-    // final String path = (await getApplicationSupportDirectory()).path;
-    // final String filename = '$path/$namaSurvey.xlsx';
-    // final File file = File(filename);
-    // final List<int>? bytes = excel.save(fileName: filename);
-    // await file.writeAsBytes(bytes!, flush: true);
+    final String path = (await getApplicationSupportDirectory()).path;
+    final String filename = '$path/$namaSurvey.xlsx';
+    final List<int>? mBytes = excel.save(fileName: filename);
+    final Uint8List bytes = Uint8List.fromList(mBytes!);
+
+    await saveFile("jawaban_survey", bytes, "xlsx");
     // OpenFile.open(filename);
   }
 
@@ -420,14 +438,15 @@ class ExportSurveyController extends GetxController {
       rowIndex++;
     }
     //! web version
-    const filename = 'tableResponden.xlsx';
-    excel.save(fileName: filename);
+    // const filename = 'tableResponden.xlsx';
+    // excel.save(fileName: filename);
     //? mobile version
-    // final String path = (await getApplicationSupportDirectory()).path;
-    // final String filename = '$path/$namaSurvey.xlsx';
-    // final File file = File(filename);
-    // final List<int>? bytes = excel.save(fileName: filename);
-    // await file.writeAsBytes(bytes!, flush: true);
+    final String path = (await getApplicationSupportDirectory()).path;
+    final String filename = '$path/$namaSurvey.xlsx';
+    final List<int>? mBytes = excel.save(fileName: filename);
+    final Uint8List bytes = Uint8List.fromList(mBytes!);
+
+    await saveFile("responden", bytes, "xlsx");
     // OpenFile.open(filename);
   }
 
@@ -441,6 +460,10 @@ class ExportSurveyController extends GetxController {
         await exportJawabanSurvey();
         await exportResponden();
         exportStatus.value = 'completed';
+        if (exportStatus.value == 'completed') {
+          successScackbar(
+              'Export berhasil, Lokasi : /Android/data/com.pkg.name/files/');
+        }
       }
     } else {
       debugPrint('validation failed');
@@ -689,6 +712,7 @@ class ExportSurveyController extends GetxController {
   void onInit() async {
     await getSurvey(namaSurveyId: namaSurveyId);
     await getNamaSurvey();
+    await _checkPermission();
     super.onInit();
   }
 
