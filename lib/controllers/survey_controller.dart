@@ -24,7 +24,7 @@ class SurveyController extends GetxController {
   var isLoadingFilter = false.obs;
   String typeSurvey = "";
   String statusSurvey = "";
-  late int respondenId;
+  late int kodeUnikResponden;
   late int namaSurveyId;
   List<Survey> surveys = [];
   List<Responden> responden = [];
@@ -99,7 +99,7 @@ class SurveyController extends GetxController {
     if (validate()) {
       try {
         Survey data = Survey(
-          respondenId: respondenId.toString(),
+          kodeUnikResponden: kodeUnikResponden.toString(),
           namaSurveyId: namaSurveyId.toString(),
           profileId: "3",
           isSelesai: "0",

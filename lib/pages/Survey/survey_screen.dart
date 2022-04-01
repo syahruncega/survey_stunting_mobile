@@ -190,7 +190,7 @@ class SurveyScreen extends StatelessWidget {
                                   (Map<String, dynamic> suggestion) {
                                 surveyController.respondenTEC.text =
                                     suggestion["label"];
-                                surveyController.respondenId =
+                                surveyController.kodeUnikResponden =
                                     suggestion["value"];
                               },
                             ),

@@ -332,14 +332,14 @@ class DioClient {
 
   Future<List<JawabanSurvey>?> getJawabanSurvey(
       {required String token,
-      required String surveyId,
+      required String kodeUnikSurvey,
       String? soalId,
       String? kategoriSoalId}) async {
     try {
       Response response = await _dio.get(
         "/jawaban_survey",
         queryParameters: {
-          "survey_id": int.parse(surveyId),
+          "kode_unik_survey": int.parse(kodeUnikSurvey),
           "kategori_soal_id":
               kategoriSoalId != null ? int.parse(kategoriSoalId) : null,
           "soal_id": soalId != null ? int.parse(soalId) : null,
