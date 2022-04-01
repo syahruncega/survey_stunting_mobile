@@ -22,10 +22,10 @@ class LoginController extends GetxController {
     passwordError.value = "";
 
     if (username.text.trim().isEmpty) {
-      usernameError.value = 'Nama pengguna harus diiisi';
+      usernameError.value = 'Nama pengguna wajib diisi';
     }
     if (password.text.trim().isEmpty) {
-      passwordError.value = "Kata sandi harus diisi";
+      passwordError.value = "Kata sandi wajib diisi";
     }
 
     if (usernameError.value.isNotEmpty || passwordError.value.isNotEmpty) {
@@ -41,6 +41,7 @@ class LoginController extends GetxController {
       try {
         Session? session = await _dioClient.login(loginInfo: auth);
         GetStorage().write("token", session?.token);
+        GetStorage().write("session", sessionToJson(session!));
         Get.offAllNamed(RouteName.layout);
       } on DioError catch (e) {
         if (e.response?.statusCode == 401) {
