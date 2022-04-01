@@ -13,6 +13,7 @@ String respondenToJson(Responden data) => json.encode(data.toJson());
 class Responden {
   Responden({
     this.id,
+    this.kodeUnik,
     required this.kartuKeluarga,
     required this.alamat,
     required this.provinsiId,
@@ -26,6 +27,7 @@ class Responden {
   });
 
   int? id;
+  String? kodeUnik;
   String kartuKeluarga;
   String alamat;
   String provinsiId;
@@ -39,6 +41,7 @@ class Responden {
 
   factory Responden.fromJson(Map<String, dynamic> json) => Responden(
         id: json["id"],
+        kodeUnik: json["kode_unik"],
         kartuKeluarga: json["kartu_keluarga"],
         alamat: json["alamat"],
         provinsiId: json["provinsi_id"],
@@ -59,6 +62,7 @@ class Responden {
 
   Map<String, dynamic> toJson() => {
         "id": id,
+        "kode_unik": kodeUnik,
         "kartu_keluarga": kartuKeluarga,
         "alamat": alamat,
         "provinsi_id": provinsiId,

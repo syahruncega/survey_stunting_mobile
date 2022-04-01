@@ -95,15 +95,16 @@ class ExportSurveyController extends GetxController {
     cellStyle.isBold = true;
 
     // print header table survey
-    var idField = sheetObject
+
+    var nomorField = sheetObject
         .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0));
-    idField.value = 'id';
-    idField.cellStyle = cellStyle;
+    nomorField.value = 'no';
+    nomorField.cellStyle = cellStyle;
 
     var respondenIdFiled = sheetObject
         .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: 0));
     respondenIdFiled.cellStyle = cellStyle;
-    respondenIdFiled.value = 'responden_id';
+    respondenIdFiled.value = 'kode_unik_responden';
 
     var namaSurveyIdField = sheetObject
         .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 0));
@@ -125,58 +126,48 @@ class ExportSurveyController extends GetxController {
     isSelesaiField.cellStyle = cellStyle;
     isSelesaiField.value = 'is_selesai';
 
-    var createdField = sheetObject
+    var kodeUnikField = sheetObject
         .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 0));
-    createdField.cellStyle = cellStyle;
-    createdField.value = 'created_at';
-
-    var updateField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 0));
-    updateField.cellStyle = cellStyle;
-    updateField.value = 'updated_at';
+    kodeUnikField.cellStyle = cellStyle;
+    kodeUnikField.value = 'kode_unik';
 
     // print value survey
     int rowIndex = 0;
     for (var s in surveys) {
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 0, rowIndex: 2 + rowIndex))
-          .value = s.id;
+              columnIndex: 0, rowIndex: 1 + rowIndex))
+          .value = rowIndex + 1;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 1, rowIndex: 2 + rowIndex))
-          .value = s.respondenId;
+              columnIndex: 1, rowIndex: 1 + rowIndex))
+          .value = s.kodeUnikResponden;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 2, rowIndex: 2 + rowIndex))
+              columnIndex: 2, rowIndex: 1 + rowIndex))
           .value = s.namaSurveyId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 3, rowIndex: 2 + rowIndex))
+              columnIndex: 3, rowIndex: 1 + rowIndex))
           .value = s.profileId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 4, rowIndex: 2 + rowIndex))
+              columnIndex: 4, rowIndex: 1 + rowIndex))
           .value = s.kategoriSelanjutnya;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 5, rowIndex: 2 + rowIndex))
+              columnIndex: 5, rowIndex: 1 + rowIndex))
           .value = s.isSelesai;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 6, rowIndex: 2 + rowIndex))
-          .value = s.createdAt.toString();
-
-      sheetObject
-          .cell(CellIndex.indexByColumnRow(
-              columnIndex: 7, rowIndex: 2 + rowIndex))
-          .value = s.updatedAt.toString();
+              columnIndex: 6, rowIndex: 1 + rowIndex))
+          .value = s.kodeUnik;
 
       rowIndex++;
     }
@@ -207,20 +198,21 @@ class ExportSurveyController extends GetxController {
 
     // table jawaban_survey
     // print header table jawaban_survey
-    var idField = sheetObject
+
+    var nomorField = sheetObject
         .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0));
-    idField.cellStyle = cellStyle;
-    idField.value = 'id';
+    nomorField.cellStyle = cellStyle;
+    nomorField.value = 'no';
 
     var soalIdField = sheetObject
         .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: 0));
     soalIdField.cellStyle = cellStyle;
     soalIdField.value = 'soal_id';
 
-    var surveyIdField = sheetObject
+    var kodeUnikSurveyField = sheetObject
         .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 0));
-    surveyIdField.cellStyle = cellStyle;
-    surveyIdField.value = 'survey_id';
+    kodeUnikSurveyField.cellStyle = cellStyle;
+    kodeUnikSurveyField.value = 'kode_unik_survey';
 
     var kategoriSoalField = sheetObject
         .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 0));
@@ -237,61 +229,41 @@ class ExportSurveyController extends GetxController {
     jawabanLainnyaField.cellStyle = cellStyle;
     jawabanLainnyaField.value = 'jawaban_lainnya';
 
-    var createdField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 0));
-    createdField.cellStyle = cellStyle;
-    createdField.value = 'created_at';
-
-    var updatedField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 0));
-    updatedField.cellStyle = cellStyle;
-    updatedField.value = 'updated_at';
-
     // print value jawaban_survey
     int rowIndex = 0;
     for (var s in surveys) {
-      await getJawabanSurvey(surveyId: s.id.toString());
+      // await getJawabanSurvey(surveyId: s.id.toString());
+      await getJawabanSurvey(kodeUnikSurvey: s.kodeUnik.toString());
       for (var jawaban in jawabanSurvey) {
         sheetObject
             .cell(CellIndex.indexByColumnRow(
-                columnIndex: 0, rowIndex: 2 + rowIndex))
-            .value = jawaban.id;
+                columnIndex: 0, rowIndex: 1 + rowIndex))
+            .value = rowIndex + 1;
 
         sheetObject
             .cell(CellIndex.indexByColumnRow(
-                columnIndex: 1, rowIndex: 2 + rowIndex))
+                columnIndex: 1, rowIndex: 1 + rowIndex))
             .value = jawaban.soalId;
 
         sheetObject
             .cell(CellIndex.indexByColumnRow(
-                columnIndex: 2, rowIndex: 2 + rowIndex))
-            .value = jawaban.surveyId;
+                columnIndex: 2, rowIndex: 1 + rowIndex))
+            .value = jawaban.kodeUnikSurvey;
 
         sheetObject
             .cell(CellIndex.indexByColumnRow(
-                columnIndex: 3, rowIndex: 2 + rowIndex))
+                columnIndex: 3, rowIndex: 1 + rowIndex))
             .value = jawaban.kategoriSoalId;
 
         sheetObject
             .cell(CellIndex.indexByColumnRow(
-                columnIndex: 4, rowIndex: 2 + rowIndex))
+                columnIndex: 4, rowIndex: 1 + rowIndex))
             .value = jawaban.jawabanSoalId;
 
         sheetObject
             .cell(CellIndex.indexByColumnRow(
-                columnIndex: 5, rowIndex: 2 + rowIndex))
+                columnIndex: 5, rowIndex: 1 + rowIndex))
             .value = jawaban.jawabanLainnya;
-
-        sheetObject
-            .cell(CellIndex.indexByColumnRow(
-                columnIndex: 6, rowIndex: 2 + rowIndex))
-            .value = jawaban.createdAt.toString();
-
-        sheetObject
-            .cell(CellIndex.indexByColumnRow(
-                columnIndex: 7, rowIndex: 2 + rowIndex))
-            .value = jawaban.updatedAt.toString();
-
         rowIndex++;
       }
     }
@@ -322,10 +294,11 @@ class ExportSurveyController extends GetxController {
 
     // table responden
     // print header table responden
-    var idField = sheetObject
+
+    var nomorField = sheetObject
         .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0));
-    idField.cellStyle = cellStyle;
-    idField.value = 'id';
+    nomorField.cellStyle = cellStyle;
+    nomorField.value = 'no';
 
     var kartuKeluargaField = sheetObject
         .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: 0));
@@ -362,77 +335,57 @@ class ExportSurveyController extends GetxController {
     nomorHpField.cellStyle = cellStyle;
     nomorHpField.value = 'nomor_hp';
 
-    var deletedField = sheetObject
+    var kodeUnikField = sheetObject
         .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: 0));
-    deletedField.cellStyle = cellStyle;
-    deletedField.value = 'deleted_at';
-
-    var createdField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: 0));
-    createdField.cellStyle = cellStyle;
-    createdField.value = 'created_at';
-
-    var updatedField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 10, rowIndex: 0));
-    updatedField.cellStyle = cellStyle;
-    updatedField.value = 'updated_at';
+    kodeUnikField.cellStyle = cellStyle;
+    kodeUnikField.value = 'kode_unik';
 
     int rowIndex = 0;
     for (var s in surveys) {
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 0, rowIndex: 2 + rowIndex))
-          .value = s.responden!.id;
+              columnIndex: 0, rowIndex: 1 + rowIndex))
+          .value = rowIndex + 1;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 1, rowIndex: 2 + rowIndex))
+              columnIndex: 1, rowIndex: 1 + rowIndex))
           .value = s.responden!.kartuKeluarga;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 2, rowIndex: 2 + rowIndex))
+              columnIndex: 2, rowIndex: 1 + rowIndex))
           .value = s.responden!.alamat;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 3, rowIndex: 2 + rowIndex))
+              columnIndex: 3, rowIndex: 1 + rowIndex))
           .value = s.responden!.provinsiId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 4, rowIndex: 2 + rowIndex))
+              columnIndex: 4, rowIndex: 1 + rowIndex))
           .value = s.responden!.kabupatenKotaId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 5, rowIndex: 2 + rowIndex))
+              columnIndex: 5, rowIndex: 1 + rowIndex))
           .value = s.responden!.kecamatanId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 6, rowIndex: 2 + rowIndex))
+              columnIndex: 6, rowIndex: 1 + rowIndex))
           .value = s.responden!.desaKelurahanId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 7, rowIndex: 2 + rowIndex))
+              columnIndex: 7, rowIndex: 1 + rowIndex))
           .value = s.responden!.nomorHp;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
-              columnIndex: 8, rowIndex: 2 + rowIndex))
-          .value = s.responden!.deletedAt.toString();
-
-      sheetObject
-          .cell(CellIndex.indexByColumnRow(
-              columnIndex: 9, rowIndex: 2 + rowIndex))
-          .value = s.responden!.createdAt.toString();
-
-      sheetObject
-          .cell(CellIndex.indexByColumnRow(
-              columnIndex: 10, rowIndex: 2 + rowIndex))
-          .value = s.responden!.updatedAt.toString();
+              columnIndex: 8, rowIndex: 1 + rowIndex))
+          .value = s.responden!.kodeUnik;
 
       rowIndex++;
     }
@@ -571,7 +524,8 @@ class ExportSurveyController extends GetxController {
               .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: 6 + y))
               .value = s.responden!.kartuKeluarga;
 
-          await getJawabanSurvey(surveyId: s.id.toString());
+          // await getJawabanSurvey(surveyId: s.id.toString());
+          await getJawabanSurvey(kodeUnikSurvey: s.kodeUnik.toString());
 
           var getListJawaban =
               jawabanSoal.where((element) => element.soalId == "14").toList();
@@ -673,13 +627,13 @@ class ExportSurveyController extends GetxController {
     }
   }
 
-  Future getJawabanSurvey({required String surveyId}) async {
+  Future getJawabanSurvey({required String kodeUnikSurvey}) async {
     if (jawabanSurvey.isNotEmpty) {
       jawabanSurvey.clear();
     }
     try {
-      List<JawabanSurvey>? response =
-          await DioClient().getJawabanSurvey(token: token, surveyId: surveyId);
+      List<JawabanSurvey>? response = await DioClient()
+          .getJawabanSurvey(token: token, kodeUnikSurvey: kodeUnikSurvey);
       jawabanSurvey = response!;
     } on DioError catch (e) {
       handleError(error: e);

@@ -20,7 +20,8 @@ String surveyToJson(Survey data) => json.encode(data.toJson());
 class Survey {
   Survey({
     this.id,
-    required this.respondenId,
+    required this.kodeUnikResponden,
+    this.kodeUnik,
     required this.namaSurveyId,
     required this.profileId,
     this.kategoriSelanjutnya,
@@ -33,7 +34,8 @@ class Survey {
   });
 
   int? id;
-  String respondenId;
+  String kodeUnikResponden;
+  String? kodeUnik;
   String namaSurveyId;
   String profileId;
   String? kategoriSelanjutnya;
@@ -46,7 +48,8 @@ class Survey {
 
   factory Survey.fromJson(Map<String, dynamic> json) => Survey(
         id: json["id"],
-        respondenId: json["responden_id"],
+        kodeUnikResponden: json["kode_unik_responden"],
+        kodeUnik: json["kode_unik"],
         namaSurveyId: json["nama_survey_id"],
         profileId: json["profile_id"],
         kategoriSelanjutnya: json["kategori_selanjutnya"],
@@ -64,7 +67,8 @@ class Survey {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "responden_id": respondenId,
+        "kode_unik_responden": kodeUnikResponden,
+        "kode_unik": kodeUnik,
         "nama_survey_id": namaSurveyId,
         "profile_id": profileId,
         "kategori_selanjutnya": kategoriSelanjutnya,

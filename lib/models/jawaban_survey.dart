@@ -20,7 +20,7 @@ class JawabanSurvey {
   JawabanSurvey({
     this.id,
     required this.soalId,
-    required this.surveyId,
+    required this.kodeUnikSurvey,
     required this.kategoriSoalId,
     required this.jawabanSoalId,
     required this.jawabanLainnya,
@@ -30,7 +30,7 @@ class JawabanSurvey {
 
   int? id;
   String soalId;
-  String surveyId;
+  String kodeUnikSurvey;
   String kategoriSoalId;
   String? jawabanSoalId;
   String? jawabanLainnya;
@@ -40,7 +40,7 @@ class JawabanSurvey {
   factory JawabanSurvey.fromJson(Map<String, dynamic> json) => JawabanSurvey(
         id: json["id"],
         soalId: json["soal_id"],
-        surveyId: json["survey_id"],
+        kodeUnikSurvey: json["kode_unik_survey"],
         kategoriSoalId: json["kategori_soal_id"],
         jawabanSoalId: json["jawaban_soal_id"],
         jawabanLainnya: json["jawaban_lainnya"],
@@ -55,7 +55,7 @@ class JawabanSurvey {
   Map<String, dynamic> toJson() => {
         "id": id,
         "soal_id": soalId,
-        "survey_id": surveyId,
+        "kode_unik_survey": kodeUnikSurvey,
         "kategori_soal_id": kategoriSoalId,
         "jawaban_soal_id": jawabanSoalId,
         "jawaban_lainnya": jawabanLainnya,
