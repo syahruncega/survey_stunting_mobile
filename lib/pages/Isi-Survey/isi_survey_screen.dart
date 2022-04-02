@@ -1,17 +1,21 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:survey_stunting/components/custom_elevated_button_icon.dart';
 import 'package:survey_stunting/controllers/isi_survey.controller.dart';
+import 'package:survey_stunting/models/jawaban_soal.dart';
+import 'package:survey_stunting/models/jawaban_survey.dart';
 
 class IsiSurveyScreen extends StatelessWidget {
   const IsiSurveyScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return GetBuilder<IsiSurveyController>(
-      builder: (controller) => Scaffold(
+    return GetBuilder<IsiSurveyController>(builder: (controller) {
+      controller.listJawabanSurvey = [];
+      return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -29,14 +33,14 @@ class IsiSurveyScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.start,
-                runSpacing: size.height * 0.02,
+                runSpacing: 20,
                 children: [
                   Text(
                     "Isi Survey",
                     style: Theme.of(context).textTheme.headline1,
                   ),
-                  SizedBox(
-                    height: size.height * 0.06,
+                  const SizedBox(
+                    height: 20,
                   ),
                   Obx(
                     () => Visibility(
@@ -49,7 +53,7 @@ class IsiSurveyScreen extends StatelessWidget {
                         children: [
                           Center(
                             child: Text(
-                              controller.currentCategoryTitle.value,
+                              controller.currentKategoriSoalTitle.value,
                               style: Theme.of(context).textTheme.headline2,
                               textAlign: TextAlign.center,
                             ),
@@ -73,7 +77,11 @@ class IsiSurveyScreen extends StatelessWidget {
                                 "assets/icons/outline/arrow-right2.svg",
                                 color: Colors.white,
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                log(listJawabanSurveyToJson(
+                                    controller.listJawabanSurvey));
+                                log("${controller.listJawabanSurvey.length}");
+                              },
                             ),
                           )
                         ],
@@ -85,7 +93,7 @@ class IsiSurveyScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

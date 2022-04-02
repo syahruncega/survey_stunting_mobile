@@ -8,6 +8,7 @@ import 'package:survey_stunting/components/custom_check_box.dart';
 import 'package:survey_stunting/components/custom_combo_box.dart';
 import 'package:survey_stunting/components/filled_text_field.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
+import 'package:survey_stunting/models/jawaban_survey.dart';
 import 'package:survey_stunting/models/kategori_soal.dart';
 import 'package:survey_stunting/models/soal.dart';
 import 'package:survey_stunting/models/soal_and_jawaban.dart';
@@ -17,12 +18,13 @@ import 'package:survey_stunting/services/handle_errors.dart';
 
 class IsiSurveyController extends GetxController {
   String token = GetStorage().read("token");
-  late String currentCategoryId;
-  Rx<String> currentCategoryTitle = "".obs;
+  Rx<String> currentKategoriSoalTitle = "".obs;
+  late KategoriSoal currentKategoriSoal;
   late Survey survey;
   late List<KategoriSoal> kategoriSoal;
   final soal = RxList<Soal>();
   final soalAndJawaban = RxList<SoalAndJawaban>();
+  late List<JawabanSurvey> listJawabanSurvey;
   var isLoading = true.obs;
 
   Future getKategoriSoal() async {
@@ -37,8 +39,10 @@ class IsiSurveyController extends GetxController {
 
   Future getSoal() async {
     try {
-      List<Soal>? response = await DioClient()
-          .getSoal(token: token, kategoriSoalId: currentCategoryId);
+      List<Soal>? response = await DioClient().getSoal(
+        token: token,
+        kategoriSoalId: currentKategoriSoal.id.toString(),
+      );
       soal.value = response!;
     } on DioError catch (e) {
       handleError(error: e);
@@ -69,9 +73,22 @@ class IsiSurveyController extends GetxController {
     List<JawabanSoal>? jawaban,
     required BuildContext context,
   }) {
-    Rx<String> groupValue = "".obs;
+    String key = "";
+    if (typeJawaban == "Pilihan Ganda" || typeJawaban == "Jawaban Singkat") {
+      key = UniqueKey().toString();
+      listJawabanSurvey.add(
+        JawabanSurvey(
+          soalId: soalId.toString(),
+          kodeUnikSurvey: survey.kodeUnik.toString(),
+          kategoriSoalId: currentKategoriSoal.id.toString(),
+          key: key,
+          isAllowed: true,
+        ),
+      );
+    }
     switch (typeJawaban) {
       case "Pilihan Ganda":
+        Rx<String> groupValue = "".obs;
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
             "$number. $soal",
@@ -82,6 +99,8 @@ class IsiSurveyController extends GetxController {
             if (index == 0) {
               groupValue.value = value.id.toString();
             }
+            JawabanSurvey jawabanSurvey =
+                listJawabanSurvey.firstWhere((element) => element.key == key);
             return Obx(
               () => CustomComboBox(
                 label: value.jawaban,
@@ -89,53 +108,84 @@ class IsiSurveyController extends GetxController {
                 groupValue: groupValue.value,
                 onChanged: (x) {
                   groupValue.value = x!;
+                  jawabanSurvey.jawabanSoalId = groupValue.value;
                 },
               ),
             );
           })
         ]);
       case "Kotak Centang":
-        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            "$number. $soal",
-            style: Theme.of(context).textTheme.headline3,
-          ),
-          ...jawaban!.map((value) {
-            Rx<bool> checkedValue = false.obs;
-            return Obx(
-              () => CustomCheckBox(
-                label: value.jawaban,
-                value: checkedValue.value,
-                groupValue: groupValue.value,
-                isOther: value.isLainnya == "1" ? true : false,
-                onChanged: (x) {
-                  checkedValue.value = x!;
-                },
-              ),
-            );
-          })
-        ]);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "$number. $soal",
+              style: Theme.of(context).textTheme.headline3,
+            ),
+            ...jawaban!.map((value) {
+              key = UniqueKey().toString();
+              Rx<bool> checkedValue = false.obs;
+              TextEditingController textEditingController =
+                  TextEditingController();
+              JawabanSurvey jawabanSurvey = JawabanSurvey(
+                soalId: soalId.toString(),
+                kodeUnikSurvey: survey.kodeUnik.toString(),
+                kategoriSoalId: currentKategoriSoal.id.toString(),
+                jawabanSoalId: value.id.toString(),
+                key: key,
+                isAllowed: true,
+              );
+              listJawabanSurvey.add(jawabanSurvey);
+              return Obx(
+                () => CustomCheckBox(
+                  label: value.jawaban,
+                  value: checkedValue.value,
+                  isOther: value.isLainnya == "1" ? true : false,
+                  controller: textEditingController,
+                  jawabanSurvey: jawabanSurvey,
+                  onChanged: (x) {
+                    checkedValue.value = x!;
+                    jawabanSurvey.isAllowed = checkedValue.value;
+                    if (value.isLainnya == "1") {
+                      jawabanSurvey.jawabanLainnya = textEditingController.text;
+                    }
+                  },
+                ),
+              );
+            })
+          ],
+        );
       default:
-        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          FilledTextField(
-            title: "$number. $soal",
-          ),
-        ]);
+        TextEditingController textEditingController = TextEditingController();
+        JawabanSurvey jawabanSurvey =
+            listJawabanSurvey.firstWhere((element) => element.key == key);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FilledTextField(
+              title: "$number. $soal",
+              controller: textEditingController,
+              onEditingComplete: () {
+                jawabanSurvey.jawabanLainnya = textEditingController.text;
+              },
+            ),
+          ],
+        );
     }
   }
 
   @override
   void onInit() async {
     survey = Get.arguments;
-    currentCategoryId = survey.kategoriSelanjutnya!;
     await getKategoriSoal();
-    currentCategoryTitle.value = kategoriSoal
-        .firstWhere((element) => element.id.toString() == currentCategoryId)
-        .nama;
+    currentKategoriSoal = kategoriSoal.firstWhere(
+        (element) => element.id.toString() == survey.kategoriSelanjutnya!);
+    currentKategoriSoalTitle.value = currentKategoriSoal.nama;
     await getSoal();
     await getJawabanSoal();
     log(soalAndJawaban.toString());
     isLoading.value = false;
+    listJawabanSurvey = [];
     super.onInit();
   }
 }

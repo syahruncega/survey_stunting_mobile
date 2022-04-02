@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+
 List<JawabanSurvey> listJawabanSurveyFromJson(String str) =>
     List<JawabanSurvey>.from(
         json.decode(str).map((x) => JawabanSurvey.fromJson(x)));
@@ -22,10 +24,12 @@ class JawabanSurvey {
     required this.soalId,
     required this.kodeUnikSurvey,
     required this.kategoriSoalId,
-    required this.jawabanSoalId,
-    required this.jawabanLainnya,
+    this.jawabanSoalId,
+    this.jawabanLainnya,
     this.createdAt,
     this.updatedAt,
+    this.key,
+    this.isAllowed,
   });
 
   int? id;
@@ -36,6 +40,8 @@ class JawabanSurvey {
   String? jawabanLainnya;
   DateTime? createdAt;
   DateTime? updatedAt;
+  String? key;
+  bool? isAllowed;
 
   factory JawabanSurvey.fromJson(Map<String, dynamic> json) => JawabanSurvey(
         id: json["id"],
@@ -50,6 +56,8 @@ class JawabanSurvey {
         updatedAt: json["updated_at"] != null
             ? DateTime.parse(json["updated_at"])
             : null,
+        key: json["key"],
+        isAllowed: json["is_allowed"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -61,5 +69,7 @@ class JawabanSurvey {
         "jawaban_lainnya": jawabanLainnya,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
+        "key": key,
+        "is_allowed": isAllowed,
       };
 }
