@@ -103,12 +103,12 @@ class DioClient {
 
   Future deleteSurvey({
     required String token,
-    required int id,
+    required dynamic kodeUnik,
   }) async {
     try {
       await _dio.delete(
         "/surveyor/survey",
-        data: {"id": id},
+        data: {"kode_unik": kodeUnik},
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),

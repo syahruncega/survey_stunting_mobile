@@ -133,7 +133,7 @@ class IsiSurveyController extends GetxController {
                 kategoriSoalId: currentKategoriSoal.id.toString(),
                 jawabanSoalId: value.id.toString(),
                 key: key,
-                isAllowed: true,
+                isAllowed: false,
               );
               listJawabanSurvey.add(jawabanSurvey);
               return Obx(
