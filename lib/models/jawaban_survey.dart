@@ -30,6 +30,7 @@ class JawabanSurvey {
     this.updatedAt,
     this.key,
     this.isAllowed,
+    this.typeSoal,
   });
 
   int? id;
@@ -42,6 +43,7 @@ class JawabanSurvey {
   DateTime? updatedAt;
   String? key;
   bool? isAllowed;
+  String? typeSoal;
 
   factory JawabanSurvey.fromJson(Map<String, dynamic> json) => JawabanSurvey(
         id: json["id"],
@@ -58,6 +60,7 @@ class JawabanSurvey {
             : null,
         key: json["key"],
         isAllowed: json["is_allowed"],
+        typeSoal: json["type_soal"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -71,5 +74,6 @@ class JawabanSurvey {
         "updated_at": updatedAt?.toIso8601String(),
         "key": key,
         "is_allowed": isAllowed,
+        "type_soal": typeSoal,
       };
 }

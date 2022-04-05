@@ -367,9 +367,10 @@ class DioClient {
           "authorization": "Bearer $token",
         }),
       );
+      log("$response");
       return jawabanSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
-      log('Error create jawaban survey: $e');
+      log('Error create jawaban survey: ${e.message}');
       rethrow;
     }
   }

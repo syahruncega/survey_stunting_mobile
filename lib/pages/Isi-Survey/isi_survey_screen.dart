@@ -48,43 +48,47 @@ class IsiSurveyScreen extends StatelessWidget {
                       replacement: const Center(
                         child: CircularProgressIndicator(),
                       ),
-                      child: Wrap(
-                        runSpacing: 20,
-                        children: [
-                          Center(
-                            child: Text(
-                              controller.currentKategoriSoalTitle.value,
-                              style: Theme.of(context).textTheme.headline2,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          ...controller.soalAndJawaban.map((value) {
-                            var index =
-                                controller.soalAndJawaban.indexOf(value);
-                            return controller.generateSoalUI(
-                              number: index + 1,
-                              context: context,
-                              soal: value.soal.soal,
-                              soalId: value.soal.id,
-                              typeJawaban: value.soal.tipeJawaban,
-                              jawaban: value.jawabanSoal,
-                            );
-                          }).toList(),
-                          Center(
-                            child: CustomElevatedButtonIcon(
-                              label: "Selanjutnya",
-                              icon: SvgPicture.asset(
-                                "assets/icons/outline/arrow-right2.svg",
-                                color: Colors.white,
+                      child: Form(
+                        key: controller.formKey,
+                        child: Wrap(
+                          runSpacing: 20,
+                          children: [
+                            Center(
+                              child: Text(
+                                controller.currentKategoriSoalTitle.value,
+                                style: Theme.of(context).textTheme.headline2,
+                                textAlign: TextAlign.center,
                               ),
-                              onPressed: () {
-                                log(listJawabanSurveyToJson(
-                                    controller.listJawabanSurvey));
-                                log("${controller.listJawabanSurvey.length}");
-                              },
                             ),
-                          )
-                        ],
+                            ...controller.soalAndJawaban.map((value) {
+                              var index =
+                                  controller.soalAndJawaban.indexOf(value);
+                              return controller.generateSoalUI(
+                                number: index + 1,
+                                context: context,
+                                soal: value.soal.soal,
+                                soalId: value.soal.id,
+                                typeJawaban: value.soal.tipeJawaban,
+                                jawaban: value.jawabanSoal,
+                              );
+                            }).toList(),
+                            Center(
+                              child: CustomElevatedButtonIcon(
+                                label: "Selanjutnya",
+                                icon: SvgPicture.asset(
+                                  "assets/icons/outline/arrow-right2.svg",
+                                  color: Colors.white,
+                                ),
+                                onPressed: () async {
+                                  log(listJawabanSurveyToJson(
+                                      controller.listJawabanSurvey));
+                                  log("${controller.listJawabanSurvey.length}");
+                                  await controller.submitForm();
+                                },
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),

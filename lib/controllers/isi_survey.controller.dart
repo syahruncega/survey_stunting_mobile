@@ -7,6 +7,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:survey_stunting/components/custom_check_box.dart';
 import 'package:survey_stunting/components/custom_combo_box.dart';
 import 'package:survey_stunting/components/filled_text_field.dart';
+import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
 import 'package:survey_stunting/models/jawaban_survey.dart';
 import 'package:survey_stunting/models/kategori_soal.dart';
@@ -26,6 +27,7 @@ class IsiSurveyController extends GetxController {
   final soalAndJawaban = RxList<SoalAndJawaban>();
   late List<JawabanSurvey> listJawabanSurvey;
   var isLoading = true.obs;
+  final formKey = GlobalKey<FormState>();
 
   Future getKategoriSoal() async {
     try {
@@ -122,41 +124,38 @@ class IsiSurveyController extends GetxController {
               "$number. $soal",
               style: Theme.of(context).textTheme.headline3,
             ),
-            ...jawaban!.map((value) {
-              key = UniqueKey().toString();
-              Rx<bool> checkedValue = false.obs;
-              TextEditingController textEditingController =
-                  TextEditingController();
-              JawabanSurvey jawabanSurvey = JawabanSurvey(
-                soalId: soalId.toString(),
-                kodeUnikSurvey: survey.kodeUnik.toString(),
-                kategoriSoalId: currentKategoriSoal.id.toString(),
-                jawabanSoalId: value.id.toString(),
-                key: key,
-                isAllowed: false,
-              );
-              listJawabanSurvey.add(jawabanSurvey);
-              return Obx(
-                () => CustomCheckBox(
-                  label: value.jawaban,
-                  value: checkedValue.value,
-                  isOther: value.isLainnya == "1" ? true : false,
-                  controller: textEditingController,
-                  jawabanSurvey: jawabanSurvey,
-                  onChanged: (x) {
-                    checkedValue.value = x!;
-                    jawabanSurvey.isAllowed = checkedValue.value;
-                    if (value.isLainnya == "1") {
-                      jawabanSurvey.jawabanLainnya = textEditingController.text;
-                    }
-                  },
-                ),
-              );
-            })
+            ...jawaban!.map(
+              (value) {
+                key = UniqueKey().toString();
+                Rx<bool> checkedValue = false.obs;
+                JawabanSurvey jawabanSurvey = JawabanSurvey(
+                  soalId: soalId.toString(),
+                  kodeUnikSurvey: survey.kodeUnik.toString(),
+                  kategoriSoalId: currentKategoriSoal.id.toString(),
+                  jawabanSoalId: value.id.toString(),
+                  key: key,
+                  isAllowed: false,
+                  typeSoal: "Kotak Centang",
+                );
+                listJawabanSurvey.add(jawabanSurvey);
+                return Obx(
+                  () => CustomCheckBox(
+                    label: value.jawaban,
+                    value: checkedValue.value,
+                    isOther: value.isLainnya == "1" ? true : false,
+                    jawabanSurvey: jawabanSurvey,
+                    onChanged: (x) {
+                      checkedValue.value = x!;
+                      jawabanSurvey.isAllowed = checkedValue.value;
+                    },
+                  ),
+                );
+              },
+            )
           ],
         );
+
       default:
-        TextEditingController textEditingController = TextEditingController();
         JawabanSurvey jawabanSurvey =
             listJawabanSurvey.firstWhere((element) => element.key == key);
         return Column(
@@ -164,13 +163,45 @@ class IsiSurveyController extends GetxController {
           children: [
             FilledTextField(
               title: "$number. $soal",
-              controller: textEditingController,
-              onEditingComplete: () {
-                jawabanSurvey.jawabanLainnya = textEditingController.text;
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return "Jawaban tidak boleh kosong";
+                }
+                return null;
+              },
+              onSaved: (value) {
+                jawabanSurvey.jawabanLainnya = value;
               },
             ),
           ],
         );
+    }
+  }
+
+  Future submitForm() async {
+    try {
+      if (formKey.currentState!.validate()) {
+        formKey.currentState!.save();
+        for (var item in listJawabanSurvey) {
+          if (item.isAllowed == true) {
+            log(jawabanSurveyToJson(item));
+            await DioClient().createJawabanSurvey(
+                token: token,
+                data: JawabanSurvey(
+                  soalId: item.soalId,
+                  kodeUnikSurvey: item.kodeUnikSurvey,
+                  kategoriSoalId: item.kategoriSoalId,
+                  jawabanSoalId: item.jawabanSoalId,
+                  jawabanLainnya: item.jawabanLainnya,
+                ));
+            log('message');
+          }
+        }
+
+        successScackbar("Data berhasil disimpan");
+      }
+    } on DioError catch (e) {
+      handleError(error: e);
     }
   }
 

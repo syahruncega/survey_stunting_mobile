@@ -8,7 +8,6 @@ class CustomCheckBox extends StatelessWidget {
     required this.value,
     required this.isOther,
     required this.onChanged,
-    required this.controller,
     required this.jawabanSurvey,
     Key? key,
   }) : super(key: key);
@@ -17,7 +16,6 @@ class CustomCheckBox extends StatelessWidget {
   final bool value;
   final bool isOther;
   final void Function(bool?)? onChanged;
-  final TextEditingController controller;
   final JawabanSurvey jawabanSurvey;
 
   @override
@@ -34,10 +32,17 @@ class CustomCheckBox extends StatelessWidget {
           if (isOther)
             Flexible(
               child: FilledTextField(
-                controller: controller,
                 hintText: "Lainnya",
                 height: 36,
                 borderRadius: BorderRadius.circular(10),
+                validator: (value) {
+                  if (jawabanSurvey.isAllowed == true &&
+                      (value == null || value.trim().isEmpty)) {
+                    return "Jawaban tidak boleh kosong";
+                  }
+                  return null;
+                },
+                onSaved: (value) => jawabanSurvey.jawabanLainnya = value,
               ),
             ),
           if (!isOther) Flexible(child: Text(label)),

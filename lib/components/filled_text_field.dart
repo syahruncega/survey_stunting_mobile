@@ -18,6 +18,8 @@ class FilledTextField extends StatelessWidget {
   final void Function()? onEditingComplete;
   final double? height;
   final BorderRadius? borderRadius;
+  final void Function(String?)? onSaved;
+  final String? Function(String?)? validator;
   const FilledTextField({
     this.prefixIcon,
     this.suffixIcon,
@@ -35,6 +37,8 @@ class FilledTextField extends StatelessWidget {
     this.onEditingComplete,
     this.height,
     this.borderRadius,
+    this.onSaved,
+    this.validator,
     Key? key,
   }) : super(key: key);
 
@@ -58,6 +62,8 @@ class FilledTextField extends StatelessWidget {
           textInputAction: textInputAction,
           inputFormatters: inputFormatters,
           obscureText: obsecureText!,
+          onSaved: onSaved,
+          validator: validator,
           onEditingComplete: onEditingComplete,
           decoration: InputDecoration(
             hintText: hintText,
