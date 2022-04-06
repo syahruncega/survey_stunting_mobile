@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:survey_stunting/components/custom_check_box.dart';
@@ -75,47 +76,40 @@ class IsiSurveyController extends GetxController {
     List<JawabanSoal>? jawaban,
     required BuildContext context,
   }) {
-    String key = "";
-    if (typeJawaban == "Pilihan Ganda" || typeJawaban == "Jawaban Singkat") {
-      key = UniqueKey().toString();
-      listJawabanSurvey.add(
-        JawabanSurvey(
-          soalId: soalId.toString(),
-          kodeUnikSurvey: survey.kodeUnik.toString(),
-          kategoriSoalId: currentKategoriSoal.id.toString(),
-          key: key,
-          isAllowed: true,
-        ),
-      );
-    }
     switch (typeJawaban) {
       case "Pilihan Ganda":
-        Rx<String> groupValue = "".obs;
-        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            "$number. $soal",
-            style: Theme.of(context).textTheme.headline3,
-          ),
-          ...jawaban!.map((value) {
-            var index = jawaban.indexOf(value);
-            if (index == 0) {
-              groupValue.value = value.id.toString();
-            }
-            JawabanSurvey jawabanSurvey =
-                listJawabanSurvey.firstWhere((element) => element.key == key);
-            return Obx(
-              () => CustomComboBox(
-                label: value.jawaban,
-                value: value.id.toString(),
-                groupValue: groupValue.value,
-                onChanged: (x) {
-                  groupValue.value = x!;
-                  jawabanSurvey.jawabanSoalId = groupValue.value;
-                },
-              ),
-            );
-          })
-        ]);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "$number. $soal",
+              style: Theme.of(context).textTheme.headline3,
+            ),
+            FormBuilderRadioGroup(
+              name: soalId.toString(),
+              activeColor: Theme.of(context).primaryColor,
+              orientation: OptionsOrientation.vertical,
+              validator: (value) {
+                log("yyyy $value");
+                if (value == null) {
+                  return "Jawaban tidak boleh kosong";
+                }
+                return null;
+              },
+              options: jawaban!.map((value) {
+                return FormBuilderFieldOption(
+                  value: JawabanSurvey(
+                    soalId: soalId.toString(),
+                    kodeUnikSurvey: survey.kodeUnik.toString(),
+                    kategoriSoalId: currentKategoriSoal.id.toString(),
+                    jawabanSoalId: value.id.toString(),
+                  ),
+                  child: Text(value.jawaban),
+                );
+              }).toList(),
+            )
+          ],
+        );
       case "Kotak Centang":
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,40 +118,48 @@ class IsiSurveyController extends GetxController {
               "$number. $soal",
               style: Theme.of(context).textTheme.headline3,
             ),
-            ...jawaban!.map(
-              (value) {
-                key = UniqueKey().toString();
-                Rx<bool> checkedValue = false.obs;
+            FormBuilderCheckboxGroup(
+              name: soalId.toString(),
+              activeColor: Theme.of(context).primaryColor,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Jawaban tidak boleh kosong";
+                }
+                log("xxxx ${listJawabanSurveyToJson(value as List<JawabanSurvey>)}");
+                return null;
+              },
+              orientation: OptionsOrientation.vertical,
+              options: jawaban!.map((value) {
+                String key = UniqueKey().toString();
                 JawabanSurvey jawabanSurvey = JawabanSurvey(
+                  key: key,
                   soalId: soalId.toString(),
                   kodeUnikSurvey: survey.kodeUnik.toString(),
                   kategoriSoalId: currentKategoriSoal.id.toString(),
                   jawabanSoalId: value.id.toString(),
-                  key: key,
-                  isAllowed: false,
-                  typeSoal: "Kotak Centang",
                 );
-                listJawabanSurvey.add(jawabanSurvey);
-                return Obx(
-                  () => CustomCheckBox(
-                    label: value.jawaban,
-                    value: checkedValue.value,
-                    isOther: value.isLainnya == "1" ? true : false,
-                    jawabanSurvey: jawabanSurvey,
-                    onChanged: (x) {
-                      checkedValue.value = x!;
-                      jawabanSurvey.isAllowed = checkedValue.value;
-                    },
-                  ),
+                return FormBuilderFieldOption(
+                  value: jawabanSurvey,
+                  child: value.isLainnya == "0"
+                      ? Text(value.jawaban)
+                      : FilledTextField(
+                          onChanged: (value) =>
+                              jawabanSurvey.jawabanLainnya = value,
+                          hintText: "Lainnya",
+                          // validator: (x) {
+                          //   if (x!.trim().isEmpty) {
+                          //     return "Jawaban tidak boleh kosong";
+                          //   }
+                          //   return null;
+                          // },
+                          onSaved: (value) {},
+                        ),
                 );
-              },
-            )
+              }).toList(),
+            ),
           ],
         );
-
       default:
-        JawabanSurvey jawabanSurvey =
-            listJawabanSurvey.firstWhere((element) => element.key == key);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -170,7 +172,13 @@ class IsiSurveyController extends GetxController {
                 return null;
               },
               onSaved: (value) {
-                jawabanSurvey.jawabanLainnya = value;
+                JawabanSurvey jawabanSurvey = JawabanSurvey(
+                  soalId: soalId.toString(),
+                  kodeUnikSurvey: survey.kodeUnik.toString(),
+                  kategoriSoalId: currentKategoriSoal.id.toString(),
+                  jawabanLainnya: value,
+                );
+                listJawabanSurvey.add(jawabanSurvey);
               },
             ),
           ],
@@ -182,21 +190,6 @@ class IsiSurveyController extends GetxController {
     try {
       if (formKey.currentState!.validate()) {
         formKey.currentState!.save();
-        for (var item in listJawabanSurvey) {
-          if (item.isAllowed == true) {
-            log(jawabanSurveyToJson(item));
-            await DioClient().createJawabanSurvey(
-                token: token,
-                data: JawabanSurvey(
-                  soalId: item.soalId,
-                  kodeUnikSurvey: item.kodeUnikSurvey,
-                  kategoriSoalId: item.kategoriSoalId,
-                  jawabanSoalId: item.jawabanSoalId,
-                  jawabanLainnya: item.jawabanLainnya,
-                ));
-            log('message');
-          }
-        }
 
         successScackbar("Data berhasil disimpan");
       }

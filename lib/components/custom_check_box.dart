@@ -36,10 +36,10 @@ class CustomCheckBox extends StatelessWidget {
                 height: 36,
                 borderRadius: BorderRadius.circular(10),
                 validator: (value) {
-                  if (jawabanSurvey.isAllowed == true &&
-                      (value == null || value.trim().isEmpty)) {
-                    return "Jawaban tidak boleh kosong";
-                  }
+                  // if (jawabanSurvey.isAllowed == true &&
+                  //     (value == null || value.trim().isEmpty)) {
+                  //   return "Jawaban tidak boleh kosong";
+                  // }
                   return null;
                 },
                 onSaved: (value) => jawabanSurvey.jawabanLainnya = value,
