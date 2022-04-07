@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:survey_stunting/components/custom_elevated_button_icon.dart';
 import 'package:survey_stunting/controllers/isi_survey.controller.dart';
-import 'package:survey_stunting/models/jawaban_soal.dart';
 import 'package:survey_stunting/models/jawaban_survey.dart';
 
 class IsiSurveyScreen extends StatelessWidget {
@@ -69,7 +68,7 @@ class IsiSurveyScreen extends StatelessWidget {
                                 soal: value.soal.soal,
                                 soalId: value.soal.id,
                                 typeJawaban: value.soal.tipeJawaban,
-                                jawaban: value.jawabanSoal,
+                                jawabanSoal: value.jawabanSoal,
                               );
                             }).toList(),
                             Center(

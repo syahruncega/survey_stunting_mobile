@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:survey_stunting/components/custom_check_box.dart';
-import 'package:survey_stunting/components/custom_combo_box.dart';
 import 'package:survey_stunting/components/filled_text_field.dart';
 import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
@@ -73,7 +71,7 @@ class IsiSurveyController extends GetxController {
     required String soal,
     required String typeJawaban,
     required int soalId,
-    List<JawabanSoal>? jawaban,
+    List<JawabanSoal>? jawabanSoal,
     required BuildContext context,
   }) {
     switch (typeJawaban) {
@@ -90,13 +88,18 @@ class IsiSurveyController extends GetxController {
               activeColor: Theme.of(context).primaryColor,
               orientation: OptionsOrientation.vertical,
               validator: (value) {
-                log("yyyy $value");
                 if (value == null) {
                   return "Jawaban tidak boleh kosong";
                 }
                 return null;
               },
-              options: jawaban!.map((value) {
+              onSaved: (value) async {
+                await DioClient().createJawabanSurvey(
+                  token: token,
+                  data: value as JawabanSurvey,
+                );
+              },
+              options: jawabanSoal!.map((value) {
                 return FormBuilderFieldOption(
                   value: JawabanSurvey(
                     soalId: soalId.toString(),
@@ -125,14 +128,19 @@ class IsiSurveyController extends GetxController {
                 if (value == null || value.isEmpty) {
                   return "Jawaban tidak boleh kosong";
                 }
-                log("xxxx ${listJawabanSurveyToJson(value as List<JawabanSurvey>)}");
                 return null;
               },
+              onSaved: (value) async {
+                for (var item in value!) {
+                  await DioClient().createJawabanSurvey(
+                    token: token,
+                    data: item as JawabanSurvey,
+                  );
+                }
+              },
               orientation: OptionsOrientation.vertical,
-              options: jawaban!.map((value) {
-                String key = UniqueKey().toString();
+              options: jawabanSoal!.map((value) {
                 JawabanSurvey jawabanSurvey = JawabanSurvey(
-                  key: key,
                   soalId: soalId.toString(),
                   kodeUnikSurvey: survey.kodeUnik.toString(),
                   kategoriSoalId: currentKategoriSoal.id.toString(),
@@ -146,12 +154,6 @@ class IsiSurveyController extends GetxController {
                           onChanged: (value) =>
                               jawabanSurvey.jawabanLainnya = value,
                           hintText: "Lainnya",
-                          // validator: (x) {
-                          //   if (x!.trim().isEmpty) {
-                          //     return "Jawaban tidak boleh kosong";
-                          //   }
-                          //   return null;
-                          // },
                           onSaved: (value) {},
                         ),
                 );
@@ -171,14 +173,16 @@ class IsiSurveyController extends GetxController {
                 }
                 return null;
               },
-              onSaved: (value) {
-                JawabanSurvey jawabanSurvey = JawabanSurvey(
-                  soalId: soalId.toString(),
-                  kodeUnikSurvey: survey.kodeUnik.toString(),
-                  kategoriSoalId: currentKategoriSoal.id.toString(),
-                  jawabanLainnya: value,
+              onSaved: (value) async {
+                await DioClient().createJawabanSurvey(
+                  token: token,
+                  data: JawabanSurvey(
+                    soalId: soalId.toString(),
+                    kodeUnikSurvey: survey.kodeUnik.toString(),
+                    kategoriSoalId: currentKategoriSoal.id.toString(),
+                    jawabanLainnya: value,
+                  ),
                 );
-                listJawabanSurvey.add(jawabanSurvey);
               },
             ),
           ],
@@ -190,7 +194,6 @@ class IsiSurveyController extends GetxController {
     try {
       if (formKey.currentState!.validate()) {
         formKey.currentState!.save();
-
         successScackbar("Data berhasil disimpan");
       }
     } on DioError catch (e) {
