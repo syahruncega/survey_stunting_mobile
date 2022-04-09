@@ -87,18 +87,6 @@ class IsiSurveyController extends GetxController {
               name: soalId.toString(),
               activeColor: Theme.of(context).primaryColor,
               orientation: OptionsOrientation.vertical,
-              validator: (value) {
-                if (value == null) {
-                  return "Jawaban tidak boleh kosong";
-                }
-                return null;
-              },
-              onSaved: (value) async {
-                await DioClient().createJawabanSurvey(
-                  token: token,
-                  data: value as JawabanSurvey,
-                );
-              },
               options: jawabanSoal!.map((value) {
                 return FormBuilderFieldOption(
                   value: JawabanSurvey(
@@ -110,6 +98,40 @@ class IsiSurveyController extends GetxController {
                   child: Text(value.jawaban),
                 );
               }).toList(),
+              validator: (value) {
+                if (value == null) {
+                  return "Jawaban tidak boleh kosong";
+                }
+                return null;
+              },
+              onSaved: (value) async {
+                value as JawabanSurvey;
+                List<JawabanSurvey>? jawabanSurvey;
+                try {
+                  jawabanSurvey = await DioClient().getJawabanSurvey(
+                    token: token,
+                    kodeUnikSurvey: survey.kodeUnik!,
+                    kategoriSoalId: currentKategoriSoal.id.toString(),
+                    soalId: soalId.toString(),
+                  );
+                } on DioError catch (e) {
+                  if (e.response?.statusCode == 404) {
+                    jawabanSurvey = [];
+                  } else {
+                    handleError(error: e);
+                    return;
+                  }
+                }
+
+                if (jawabanSurvey!.isNotEmpty) {
+                  await DioClient().deleteJawabanSurvey(
+                      token: token, id: jawabanSurvey[0].id.toString());
+                }
+                await DioClient().createJawabanSurvey(
+                  token: token,
+                  data: value,
+                );
+              },
             )
           ],
         );
@@ -124,21 +146,8 @@ class IsiSurveyController extends GetxController {
             FormBuilderCheckboxGroup(
               name: soalId.toString(),
               activeColor: Theme.of(context).primaryColor,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return "Jawaban tidak boleh kosong";
-                }
-                return null;
-              },
-              onSaved: (value) async {
-                for (var item in value!) {
-                  await DioClient().createJawabanSurvey(
-                    token: token,
-                    data: item as JawabanSurvey,
-                  );
-                }
-              },
               orientation: OptionsOrientation.vertical,
+              initialValue: [],
               options: jawabanSoal!.map((value) {
                 JawabanSurvey jawabanSurvey = JawabanSurvey(
                   soalId: soalId.toString(),
@@ -158,6 +167,46 @@ class IsiSurveyController extends GetxController {
                         ),
                 );
               }).toList(),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Jawaban tidak boleh kosong";
+                }
+                return null;
+              },
+              onSaved: (value) async {
+                List<JawabanSurvey>? jawabanSurvey;
+                try {
+                  jawabanSurvey = await DioClient().getJawabanSurvey(
+                    token: token,
+                    kodeUnikSurvey: survey.kodeUnik!,
+                    kategoriSoalId: currentKategoriSoal.id.toString(),
+                    soalId: soalId.toString(),
+                  );
+                } on DioError catch (e) {
+                  if (e.response?.statusCode == 404) {
+                    jawabanSurvey = [];
+                  } else {
+                    handleError(error: e);
+                    return;
+                  }
+                }
+
+                if (jawabanSurvey!.isNotEmpty) {
+                  for (var item in jawabanSurvey) {
+                    await DioClient().deleteJawabanSurvey(
+                      token: token,
+                      id: item.id.toString(),
+                    );
+                  }
+                }
+
+                for (var item in value!) {
+                  await DioClient().createJawabanSurvey(
+                    token: token,
+                    data: item as JawabanSurvey,
+                  );
+                }
+              },
             ),
           ],
         );
@@ -174,6 +223,27 @@ class IsiSurveyController extends GetxController {
                 return null;
               },
               onSaved: (value) async {
+                List<JawabanSurvey>? jawabanSurvey;
+                try {
+                  jawabanSurvey = await DioClient().getJawabanSurvey(
+                    token: token,
+                    kodeUnikSurvey: survey.kodeUnik!,
+                    kategoriSoalId: currentKategoriSoal.id.toString(),
+                    soalId: soalId.toString(),
+                  );
+                } on DioError catch (e) {
+                  if (e.response?.statusCode == 404) {
+                    jawabanSurvey = [];
+                  } else {
+                    handleError(error: e);
+                    return;
+                  }
+                }
+
+                if (jawabanSurvey!.isNotEmpty) {
+                  await DioClient().deleteJawabanSurvey(
+                      token: token, id: jawabanSurvey[0].id.toString());
+                }
                 await DioClient().createJawabanSurvey(
                   token: token,
                   data: JawabanSurvey(

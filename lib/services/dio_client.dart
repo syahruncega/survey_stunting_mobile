@@ -330,11 +330,12 @@ class DioClient {
     }
   }
 
-  Future<List<JawabanSurvey>?> getJawabanSurvey(
-      {required String token,
-      required String kodeUnikSurvey,
-      String? soalId,
-      String? kategoriSoalId}) async {
+  Future<List<JawabanSurvey>?> getJawabanSurvey({
+    required String token,
+    required String kodeUnikSurvey,
+    String? soalId,
+    String? kategoriSoalId,
+  }) async {
     try {
       Response response = await _dio.get(
         "/jawaban_survey",
@@ -370,7 +371,7 @@ class DioClient {
       log("$response");
       return jawabanSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
-      log('Error create jawaban survey: ${e.response!.data}');
+      log('Error create jawaban survey: $e');
       rethrow;
     }
   }
@@ -390,6 +391,24 @@ class DioClient {
       return jawabanSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error create jawaban survey: $e');
+      rethrow;
+    }
+  }
+
+  Future deleteJawabanSurvey({
+    required String token,
+    required String id,
+  }) async {
+    try {
+      await _dio.delete(
+        "/jawaban_survey",
+        data: {"id": id},
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+    } on DioError catch (e) {
+      log('Error delete jawaban survey: $e');
       rethrow;
     }
   }
