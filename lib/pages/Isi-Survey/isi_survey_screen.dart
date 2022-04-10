@@ -54,7 +54,7 @@ class IsiSurveyScreen extends StatelessWidget {
                           children: [
                             Center(
                               child: Text(
-                                controller.currentKategoriSoalTitle.value,
+                                controller.title.value,
                                 style: Theme.of(context).textTheme.headline2,
                                 textAlign: TextAlign.center,
                               ),
@@ -71,21 +71,42 @@ class IsiSurveyScreen extends StatelessWidget {
                                 jawabanSoal: value.jawabanSoal,
                               );
                             }).toList(),
-                            Center(
-                              child: CustomElevatedButtonIcon(
-                                label: "Selanjutnya",
-                                icon: SvgPicture.asset(
-                                  "assets/icons/outline/arrow-right2.svg",
-                                  color: Colors.white,
-                                ),
-                                onPressed: () async {
-                                  log(listJawabanSurveyToJson(
-                                      controller.listJawabanSurvey));
-                                  log("${controller.listJawabanSurvey.length}");
-                                  await controller.submitForm();
-                                },
-                              ),
-                            )
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  if (controller.currentOrder > 1)
+                                    CustomElevatedButtonIcon(
+                                      label: "Kembali",
+                                      icon: SvgPicture.asset(
+                                        "assets/icons/outline/arrow-left.svg",
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () async {
+                                        await controller.previousCategory();
+                                      },
+                                    ),
+                                  if (controller.currentOrder > 1 ||
+                                      controller.currentOrder <
+                                          controller.kategoriSoal.length)
+                                    const SizedBox(
+                                      width: 8,
+                                    ),
+                                  if (controller.currentOrder <
+                                      controller.kategoriSoal.length)
+                                    CustomElevatedButtonIcon(
+                                      label: "Selanjutnya",
+                                      icon: SvgPicture.asset(
+                                        "assets/icons/outline/arrow-right2.svg",
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () async {
+                                        log(listJawabanSurveyToJson(
+                                            controller.listJawabanSurvey));
+                                        log("${controller.listJawabanSurvey.length}");
+                                        await controller.submitForm();
+                                      },
+                                    ),
+                                ])
                           ],
                         ),
                       ),

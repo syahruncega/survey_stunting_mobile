@@ -101,6 +101,25 @@ class DioClient {
     }
   }
 
+  Future<Survey>? updateSurvey({
+    required String token,
+    required Object data,
+  }) async {
+    try {
+      Response response = await _dio.put(
+        "/surveyor/survey",
+        data: jsonEncode(data),
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return surveyFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error update survey: $e');
+      rethrow;
+    }
+  }
+
   Future deleteSurvey({
     required String token,
     required dynamic kodeUnik,
