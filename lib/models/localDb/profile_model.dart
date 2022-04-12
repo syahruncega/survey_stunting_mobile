@@ -4,7 +4,7 @@ import 'package:survey_stunting/models/localDb/user_model.dart';
 
 @Entity()
 class ProfileModel {
-  int id = 0;
+  int? id = 0;
   String namaLengkap;
   String jenisKelamin;
   String tempatLahir;
@@ -19,7 +19,8 @@ class ProfileModel {
   String? userId;
 
   ProfileModel(
-      {required this.namaLengkap,
+      {this.id,
+      required this.namaLengkap,
       required this.jenisKelamin,
       required this.tempatLahir,
       required this.tanggalLahir,

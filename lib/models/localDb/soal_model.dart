@@ -6,7 +6,7 @@ import 'jawaban_survey_model.dart';
 
 @Entity()
 class SoalModel {
-  int id = 0;
+  int? id = 0;
   String soal;
   int urutan;
   String tipeJawaban;
@@ -14,6 +14,7 @@ class SoalModel {
   int? kategoriSoalId;
 
   SoalModel({
+    this.id,
     required this.soal,
     required this.urutan,
     required this.tipeJawaban,

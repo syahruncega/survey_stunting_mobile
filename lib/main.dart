@@ -169,24 +169,24 @@ class WrapperState extends State<Wrapper> {
 
   void insertData() async {
     final profile = ProfileModel(
-        userId: "1998",
-        namaLengkap: "Dyman",
-        jenisKelamin: "Laki-laki",
-        tempatLahir: "Kayumaloa",
-        tanggalLahir: "26-06-1998",
-        alamat: "R.E. Martadinata",
-        provinsiId: "73",
-        kabupatenId: "7331",
-        kecamatanId: "kecamatanId",
-        kelurahanId: "kelurahanId",
-        nomorHp: "nomorHp",
-        email: "email");
-    await DbHelper.insertProfile(objectbox.store, profile);
+        userId: "19981",
+        namaLengkap: "Dyman1",
+        jenisKelamin: "Laki-laki1",
+        tempatLahir: "Kayumaloa1",
+        tanggalLahir: "26-06-19981",
+        alamat: "R.E. Martadinata1",
+        provinsiId: "731",
+        kabupatenId: "73311",
+        kecamatanId: "73310201",
+        kelurahanId: "73310200201",
+        nomorHp: "0813228992461",
+        email: "andimardimansaputra@gmail.com1");
+    await DbHelper.putProfile(objectbox.store, profile);
     debugPrint("data was inserted.");
   }
 
   void getData() async {
-    List<ProfileModel> data = await DbHelper.getData(objectbox.store);
+    List<ProfileModel> data = await DbHelper.getProfile(objectbox.store);
     debugPrint("data length is : " + data.length.toString());
   }
 

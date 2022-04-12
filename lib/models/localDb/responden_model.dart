@@ -7,7 +7,7 @@ import 'kelurahan_model.dart';
 
 @Entity()
 class RespondenModel {
-  int id = 0;
+  int? id = 0;
   int kodeUnik;
   int kartuKeluarga;
   String alamat;
@@ -18,6 +18,7 @@ class RespondenModel {
   int? kelurahanId;
 
   RespondenModel({
+    this.id,
     required this.kodeUnik,
     required this.kartuKeluarga,
     required this.alamat,

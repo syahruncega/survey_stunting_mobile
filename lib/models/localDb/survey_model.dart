@@ -6,7 +6,7 @@ import 'profile_model.dart';
 
 @Entity()
 class SurveyModel {
-  int id = 0;
+  int? id = 0;
   int kodeUnik;
   int kategoriSelanjutnya;
   int isSelesai;
@@ -15,7 +15,8 @@ class SurveyModel {
   int? profileId;
 
   SurveyModel(
-      {required this.kodeUnik,
+      {this.id,
+      required this.kodeUnik,
       required this.kategoriSelanjutnya,
       required this.isSelesai,
       this.kodeUnikResponden,

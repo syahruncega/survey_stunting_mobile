@@ -5,11 +5,11 @@ import 'provinsi_model.dart';
 
 @Entity()
 class KabupatenModel {
-  int id = 0;
+  int? id = 0;
   String nama;
   int? provinsiId;
 
-  KabupatenModel({required this.nama, this.provinsiId});
+  KabupatenModel({this.id, required this.nama, this.provinsiId});
 
   @Backlink()
   final kecamatan = ToMany<KecamatanModel>();
