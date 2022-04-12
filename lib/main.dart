@@ -4,14 +4,19 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:survey_stunting/consts/colors.dart';
+import 'package:survey_stunting/models/localDb/profile_model.dart';
 import 'package:survey_stunting/routes/app_page.dart';
 import 'package:survey_stunting/routes/route_name.dart';
 
-void main() async {
+import 'models/localDb/helpers.dart';
+
+late final Objectbox objectbox;
+Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await GetStorage.init();
   Get.put<GetStorage>(GetStorage());
-  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
+  objectbox = await Objectbox.create();
   runApp(const MyApp());
 }
 
@@ -142,6 +147,13 @@ class WrapperState extends State<Wrapper> {
     sessionCheck();
   }
 
+  @override
+  void dispose() {
+    // objectbox.store.close();
+    // objectbox.admin.close();
+    super.dispose();
+  }
+
   void sessionCheck() async {
     await GetStorage.init();
     final box = Get.find<GetStorage>();
@@ -150,7 +162,32 @@ class WrapperState extends State<Wrapper> {
       Get.offAllNamed(RouteName.login);
     } else {
       Get.offAllNamed(RouteName.layout);
+      insertData();
+      getData();
     }
+  }
+
+  void insertData() async {
+    final profile = ProfileModel(
+        userId: "1998",
+        namaLengkap: "Dyman",
+        jenisKelamin: "Laki-laki",
+        tempatLahir: "Kayumaloa",
+        tanggalLahir: "26-06-1998",
+        alamat: "R.E. Martadinata",
+        provinsiId: "73",
+        kabupatenId: "7331",
+        kecamatanId: "kecamatanId",
+        kelurahanId: "kelurahanId",
+        nomorHp: "nomorHp",
+        email: "email");
+    await DbHelper.insertProfile(objectbox.store, profile);
+    debugPrint("data was inserted.");
+  }
+
+  void getData() async {
+    List<ProfileModel> data = await DbHelper.getData(objectbox.store);
+    debugPrint("data length is : " + data.length.toString());
   }
 
   @override

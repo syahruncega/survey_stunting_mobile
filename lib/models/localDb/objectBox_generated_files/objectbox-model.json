@@ -1,0 +1,591 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:821437238388320073",
+      "lastPropertyId": "3:1645587994060750341",
+      "name": "KabupatenModel",
+      "properties": [
+        {
+          "id": "1:7939561048812687244",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2285949745968332555",
+          "name": "nama",
+          "type": 9
+        },
+        {
+          "id": "3:1645587994060750341",
+          "name": "provinsiId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "52:5764148767177562005",
+          "relationTarget": "ProvinsiModel"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:6534798726560860369",
+      "lastPropertyId": "3:9177761084708938840",
+      "name": "KecamatanModel",
+      "properties": [
+        {
+          "id": "1:7733413167700202959",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2705341838644328387",
+          "name": "nama",
+          "type": 9
+        },
+        {
+          "id": "3:9177761084708938840",
+          "name": "kabupatenId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "54:1452677126374720539",
+          "relationTarget": "KabupatenModel"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:230881352240125451",
+      "lastPropertyId": "3:7983282806061738096",
+      "name": "KelurahanModel",
+      "properties": [
+        {
+          "id": "1:899386988635997274",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7282467935632901021",
+          "name": "nama",
+          "type": 9
+        },
+        {
+          "id": "3:7983282806061738096",
+          "name": "kecamatanId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "55:1794557539332104649",
+          "relationTarget": "KecamatanModel"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:7961302844381496818",
+      "lastPropertyId": "13:137135037531265020",
+      "name": "ProfileModel",
+      "properties": [
+        {
+          "id": "1:1823316799304039181",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:4559797957659789200",
+          "name": "namaLengkap",
+          "type": 9
+        },
+        {
+          "id": "3:9191354489190628499",
+          "name": "jenisKelamin",
+          "type": 9
+        },
+        {
+          "id": "4:4989556676571459469",
+          "name": "tempatLahir",
+          "type": 9
+        },
+        {
+          "id": "5:4538580831209507619",
+          "name": "tanggalLahir",
+          "type": 9
+        },
+        {
+          "id": "6:2544610706230383295",
+          "name": "alamat",
+          "type": 9
+        },
+        {
+          "id": "7:2337591111516215456",
+          "name": "provinsiId",
+          "type": 9
+        },
+        {
+          "id": "8:936141306553237067",
+          "name": "kabupatenId",
+          "type": 9
+        },
+        {
+          "id": "9:2994831023007697618",
+          "name": "kecamatanId",
+          "type": 9
+        },
+        {
+          "id": "10:4695085073332601912",
+          "name": "kelurahanId",
+          "type": 9
+        },
+        {
+          "id": "11:1612844192495937042",
+          "name": "nomorHp",
+          "type": 9
+        },
+        {
+          "id": "12:4648944592338277511",
+          "name": "email",
+          "type": 9
+        },
+        {
+          "id": "13:137135037531265020",
+          "name": "userId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "56:5495971050128804607",
+          "relationTarget": "UserModel"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:3736194549334799072",
+      "lastPropertyId": "2:3371162267630261490",
+      "name": "ProvinsiModel",
+      "properties": [
+        {
+          "id": "1:2128063950324546510",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:3371162267630261490",
+          "name": "nama",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "6:7571376430553036038",
+      "lastPropertyId": "6:7468128549644713820",
+      "name": "UserModel",
+      "properties": [
+        {
+          "id": "1:4893731760978996176",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2121139019315157389",
+          "name": "username",
+          "type": 9
+        },
+        {
+          "id": "3:8371897932022918651",
+          "name": "password",
+          "type": 9
+        },
+        {
+          "id": "4:292545510440662609",
+          "name": "status",
+          "type": 9
+        },
+        {
+          "id": "5:8398943240353955167",
+          "name": "role",
+          "type": 9
+        },
+        {
+          "id": "6:7468128549644713820",
+          "name": "profileId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "64:4283278835855456507",
+          "relationTarget": "ProfileModel"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "7:6730170210099396451",
+      "lastPropertyId": "5:683988189963980562",
+      "name": "JawabanSoalModel",
+      "properties": [
+        {
+          "id": "1:7611943232950508350",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:3751679730042368129",
+          "name": "jawaban",
+          "type": 9
+        },
+        {
+          "id": "3:2148409444854419761",
+          "name": "isLainnya",
+          "type": 6
+        },
+        {
+          "id": "4:3333297609756102014",
+          "name": "soalId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "49:563778893123684210",
+          "relationTarget": "SoalModel"
+        },
+        {
+          "id": "5:683988189963980562",
+          "name": "jawabanSurveyId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "18:5903126011582420310",
+          "relationTarget": "JawabanSurveyModel"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "8:6919355098134234648",
+      "lastPropertyId": "6:9056509508985943632",
+      "name": "SoalModel",
+      "properties": [
+        {
+          "id": "1:4356994585136694228",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:3150971659067295789",
+          "name": "soal",
+          "type": 9
+        },
+        {
+          "id": "3:169999242458768526",
+          "name": "urutan",
+          "type": 6
+        },
+        {
+          "id": "4:4480664117121378729",
+          "name": "tipeJawaban",
+          "type": 9
+        },
+        {
+          "id": "5:591914508634207884",
+          "name": "isNumerik",
+          "type": 6
+        },
+        {
+          "id": "6:9056509508985943632",
+          "name": "kategoriSoalId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "61:2182141119834368714",
+          "relationTarget": "KategoriSoalModel"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "9:775640740996710187",
+      "lastPropertyId": "4:7352329364432689224",
+      "name": "KategoriSoalModel",
+      "properties": [
+        {
+          "id": "1:1044473858870159773",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:4145585338437701784",
+          "name": "urutan",
+          "type": 6
+        },
+        {
+          "id": "3:8987259840514710233",
+          "name": "nama",
+          "type": 9
+        },
+        {
+          "id": "4:7352329364432689224",
+          "name": "namaSurveyId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "53:949405250410167639",
+          "relationTarget": "NamaSurveyModel"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "10:1015485897443048882",
+      "lastPropertyId": "3:5264054723561507895",
+      "name": "NamaSurveyModel",
+      "properties": [
+        {
+          "id": "1:4567799032301688152",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:8516560057526478364",
+          "name": "nama",
+          "type": 9
+        },
+        {
+          "id": "3:5264054723561507895",
+          "name": "tipe",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "11:8917507482400098574",
+      "lastPropertyId": "9:3824394716663783066",
+      "name": "RespondenModel",
+      "properties": [
+        {
+          "id": "1:496199523747764753",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:8889885046250546905",
+          "name": "kodeUnik",
+          "type": 6
+        },
+        {
+          "id": "3:5509883077919847228",
+          "name": "kartuKeluarga",
+          "type": 6
+        },
+        {
+          "id": "4:1113401018393960323",
+          "name": "alamat",
+          "type": 9
+        },
+        {
+          "id": "5:7840575363785724897",
+          "name": "nomorHp",
+          "type": 9
+        },
+        {
+          "id": "6:7504996130691907902",
+          "name": "provinsiId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "57:3862554851536391375",
+          "relationTarget": "ProvinsiModel"
+        },
+        {
+          "id": "7:3814307560276169301",
+          "name": "kabupatenId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "58:5730295308048162853",
+          "relationTarget": "KabupatenModel"
+        },
+        {
+          "id": "8:6500787457306192499",
+          "name": "kecamatanId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "59:117076446211017991",
+          "relationTarget": "KecamatanModel"
+        },
+        {
+          "id": "9:3824394716663783066",
+          "name": "kelurahanId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "60:7454206687723763791",
+          "relationTarget": "KelurahanModel"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "12:6018438410049762284",
+      "lastPropertyId": "7:5952156441452052042",
+      "name": "SurveyModel",
+      "properties": [
+        {
+          "id": "1:4222274193559179859",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2808220338010057740",
+          "name": "kodeUnik",
+          "type": 6
+        },
+        {
+          "id": "3:2777786338288240604",
+          "name": "kategoriSelanjutnya",
+          "type": 6
+        },
+        {
+          "id": "4:6771294572000819304",
+          "name": "isSelesai",
+          "type": 6
+        },
+        {
+          "id": "5:5407569599997546686",
+          "name": "kodeUnikResponden",
+          "type": 6
+        },
+        {
+          "id": "6:5250955757698102693",
+          "name": "namaSurveyId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "62:1251115243033954817",
+          "relationTarget": "NamaSurveyModel"
+        },
+        {
+          "id": "7:5952156441452052042",
+          "name": "profileId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "63:1265146511065188587",
+          "relationTarget": "ProfileModel"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "13:7907279023081611690",
+      "lastPropertyId": "7:8917967544040747505",
+      "name": "JawabanSurveyModel",
+      "properties": [
+        {
+          "id": "1:2362489079654565068",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:3849564802500080415",
+          "name": "jawabanLainnya",
+          "type": 9
+        },
+        {
+          "id": "3:6296079507127929579",
+          "name": "soalId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "50:1724030805024264803",
+          "relationTarget": "SoalModel"
+        },
+        {
+          "id": "4:4642082222094592432",
+          "name": "kodeUnikSurvey",
+          "type": 6
+        },
+        {
+          "id": "5:2477251376165528480",
+          "name": "kategoriSoalId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "51:3703848452925393696",
+          "relationTarget": "KategoriSoalModel"
+        },
+        {
+          "id": "6:8389590033272517577",
+          "name": "jawabanSoalId",
+          "type": 6
+        },
+        {
+          "id": "7:8917967544040747505",
+          "name": "surveyId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "34:5350397408779662820",
+          "relationTarget": "SurveyModel"
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "13:7907279023081611690",
+  "lastIndexId": "64:4283278835855456507",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [
+    7546205454611146349,
+    5450123480609978993,
+    4087678798844483137,
+    5225819696646216501,
+    5325727260973450899,
+    2952388815124864214,
+    7387260816154134177,
+    8301851575015353708,
+    7611742595797808075,
+    6972292735377818949,
+    1219610591793618023,
+    5862218283886115088,
+    4489774702929713238,
+    4488629762250220079,
+    1064240358405320883,
+    2342539601840410084,
+    987979608996454315,
+    2297635303573518136,
+    5999630695234605722,
+    3301436305088645627,
+    2687100883340918523,
+    4941484386581867574,
+    4465965163256384014,
+    4950122854397493332,
+    4269641338617275425,
+    8832041928796057647,
+    6916175322486797520,
+    3166615882898300343,
+    5742213654806382831,
+    5143713939603201393,
+    4240488385175165455,
+    6282749042408874710,
+    5495703802842830826,
+    1146538170942063880,
+    7464373381056783997,
+    4887209935639626501,
+    1458730065466126920,
+    7564036712187049468,
+    8690044986097436572,
+    3423679839995202282,
+    4335533767002035907,
+    6915254380638831928,
+    5914762070669013426,
+    249609563258600646,
+    994372884089725367,
+    2887026861375696127
+  ],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}
