@@ -16,7 +16,7 @@ class ProfileModel {
   String kelurahanId;
   String nomorHp;
   String email;
-  String? userId;
+  int? userId;
 
   ProfileModel(
       {this.id,

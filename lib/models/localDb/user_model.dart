@@ -8,7 +8,7 @@ class UserModel {
   String? password;
   String? status;
   String? role;
-  String? profileId;
+  int? profileId;
 
   UserModel(
       {this.id,

@@ -9,6 +9,7 @@ import 'package:survey_stunting/routes/app_page.dart';
 import 'package:survey_stunting/routes/route_name.dart';
 
 import 'models/localDb/helpers.dart';
+import 'models/localDb/user_model.dart';
 
 late final Objectbox objectbox;
 Future<void> main() async {
@@ -162,32 +163,13 @@ class WrapperState extends State<Wrapper> {
       Get.offAllNamed(RouteName.login);
     } else {
       Get.offAllNamed(RouteName.layout);
-      insertData();
-      getData();
+      // insertProfile();
+      // insertUser();
+      // getData();
+      // getProfileById();
+      // getProfileByUserId();
+      // deleteProfile();
     }
-  }
-
-  void insertData() async {
-    final profile = ProfileModel(
-        userId: "19981",
-        namaLengkap: "Dyman1",
-        jenisKelamin: "Laki-laki1",
-        tempatLahir: "Kayumaloa1",
-        tanggalLahir: "26-06-19981",
-        alamat: "R.E. Martadinata1",
-        provinsiId: "731",
-        kabupatenId: "73311",
-        kecamatanId: "73310201",
-        kelurahanId: "73310200201",
-        nomorHp: "0813228992461",
-        email: "andimardimansaputra@gmail.com1");
-    await DbHelper.putProfile(objectbox.store, profile);
-    debugPrint("data was inserted.");
-  }
-
-  void getData() async {
-    List<ProfileModel> data = await DbHelper.getProfile(objectbox.store);
-    debugPrint("data length is : " + data.length.toString());
   }
 
   @override
