@@ -9,12 +9,14 @@ class JawabanSoalModel {
   String jawaban;
   int isLainnya;
   int? soalId;
+  int? jawabanSurveyId;
 
   JawabanSoalModel({
     this.id,
     required this.jawaban,
     required this.isLainnya,
     this.soalId,
+    this.jawabanSurveyId,
   });
 
   final soal = ToOne<SoalModel>();
