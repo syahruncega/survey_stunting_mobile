@@ -4,6 +4,7 @@ import 'package:survey_stunting/models/localDb/objectBox_generated_files/objectb
 import 'package:survey_stunting/models/localDb/profile_model.dart';
 
 import 'jawaban_soal_model.dart';
+import 'jawaban_survey_model.dart';
 import 'kategori_soal_model.dart';
 import 'nama_survey_mode.dart';
 import 'soal_model.dart';
@@ -254,5 +255,19 @@ class DbHelper {
         .where((jawabanSoal) =>
             jawabanSoal.jawabanSurvey.targetId == jawabanSurveyId)
         .toList();
+  }
+
+  // create function jawabanSurvey same as jawaban soal
+  //? Jawaban Survey
+  /// Params:
+  /// - store (ObjextBoxStore)
+  /// - JawabanSurveyData (JawabanSurveyModel)
+  /// - id (int) - id of the jawaban survey optional only if you want to update the jawaban survey
+  static Future<int> putJawabanSurvey(
+      Store store, JawabanSurveyModel jawabanSurvey) async {
+    jawabanSurvey.soal.targetId = jawabanSurvey.soalId;
+    jawabanSurvey.kodeUnikSurvey.targetId = jawabanSurvey.kodeUnikSurveyId;
+    jawabanSurvey.kategoriSoal.targetId = jawabanSurvey.kategoriSoalId;
+    return store.box<JawabanSurveyModel>().put(jawabanSurvey);
   }
 }

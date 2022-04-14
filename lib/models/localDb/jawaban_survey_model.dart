@@ -10,7 +10,7 @@ class JawabanSurveyModel {
   int? id = 0;
   String jawabanLainnya;
   int? soalId;
-  int? kodeUnikSurvey;
+  int? kodeUnikSurveyId;
   int? kategoriSoalId;
   int? jawabanSoalId;
 
@@ -18,13 +18,13 @@ class JawabanSurveyModel {
     this.id,
     required this.jawabanLainnya,
     this.soalId,
-    this.kodeUnikSurvey,
+    this.kodeUnikSurveyId,
     this.kategoriSoalId,
     this.jawabanSoalId,
   });
 
   final soal = ToOne<SoalModel>();
-  final survey = ToOne<SurveyModel>();
+  final kodeUnikSurvey = ToOne<SurveyModel>();
   final kategoriSoal = ToOne<KategoriSoalModel>();
 
   @Backlink()

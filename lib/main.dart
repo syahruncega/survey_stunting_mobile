@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:survey_stunting/consts/colors.dart';
+import 'package:survey_stunting/models/localDb/jawaban_survey_model.dart';
 import 'package:survey_stunting/models/localDb/profile_model.dart';
 import 'package:survey_stunting/routes/app_page.dart';
 import 'package:survey_stunting/routes/route_name.dart';
@@ -169,7 +170,19 @@ class WrapperState extends State<Wrapper> {
       // getProfileById();
       // getProfileByUserId();
       // deleteProfile();
+      putJawabanSurvey();
     }
+  }
+
+  void putJawabanSurvey() async {
+    var jawabanSurvey = JawabanSurveyModel(
+        jawabanLainnya: "tes jawaban lainnya",
+        jawabanSoalId: 1,
+        kategoriSoalId: 11,
+        kodeUnikSurveyId: 98124510,
+        soalId: 24);
+    await DbHelper.putJawabanSurvey(objectbox.store, jawabanSurvey);
+    debugPrint("jawaban survey was inserted");
   }
 
   @override
