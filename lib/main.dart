@@ -10,6 +10,7 @@ import 'package:survey_stunting/routes/app_page.dart';
 import 'package:survey_stunting/routes/route_name.dart';
 
 import 'models/localDb/helpers.dart';
+import 'models/localDb/survey_model.dart';
 import 'models/localDb/user_model.dart';
 
 late final Objectbox objectbox;
@@ -166,24 +167,35 @@ class WrapperState extends State<Wrapper> {
       Get.offAllNamed(RouteName.layout);
       // insertProfile();
       // insertUser();
+      // putUser();
       // getData();
       // getProfileById();
       // getProfileByUserId();
       // deleteProfile();
-      putJawabanSurvey();
+      // putJawabanSurvey();
+      // putSurvey();
+      getTest();
     }
   }
 
-  void putJawabanSurvey() async {
-    var jawabanSurvey = JawabanSurveyModel(
-        jawabanLainnya: "tes jawaban lainnya",
-        jawabanSoalId: 1,
-        kategoriSoalId: 11,
-        kodeUnikSurveyId: 98124510,
-        soalId: 24);
-    await DbHelper.putJawabanSurvey(objectbox.store, jawabanSurvey);
-    debugPrint("jawaban survey was inserted");
+  void getTest() async {
+    var data = await DbHelper.getTest(objectbox.store, 3, 3);
+    List<dynamic> results = [];
+    for (var result in data) {
+      results.add(result);
+    }
+    debugPrint("data : " + results.toString());
   }
+  // void putUser() async {
+  //   var user = UserModel(
+  //       username: 'Surveyor1',
+  //       password: 'password',
+  //       status: "1",
+  //       role: "surveyor",
+  //       profileId: 3);
+  //   await DbHelper.putUser(objectbox.store, user);
+  //   debugPrint("user was inserted");
+  // }
 
   @override
   Widget build(BuildContext context) {

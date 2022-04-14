@@ -2,12 +2,18 @@ import 'dart:developer';
 
 import 'package:survey_stunting/models/localDb/objectBox_generated_files/objectbox.g.dart';
 import 'package:survey_stunting/models/localDb/profile_model.dart';
+import 'package:survey_stunting/models/localDb/responden_model.dart';
 
 import 'jawaban_soal_model.dart';
 import 'jawaban_survey_model.dart';
+import 'kabupaten_model.dart';
 import 'kategori_soal_model.dart';
+import 'kecamatan_model.dart';
+import 'kelurahan_model.dart';
 import 'nama_survey_mode.dart';
+import 'provinsi_model.dart';
 import 'soal_model.dart';
+import 'survey_model.dart';
 import 'user_model.dart';
 
 class Objectbox {
@@ -332,5 +338,276 @@ class DbHelper {
   static Future<bool> deleteJawabanSurvey(Store store,
       {required int id}) async {
     return store.box<JawabanSurveyModel>().remove(id);
+  }
+
+  // create function Survey same as jawaban survey
+  //? Survey
+  /// Params:
+  /// - store (ObjextBoxStore)
+  /// - SurveyData (SurveyModel)
+  /// - id (int) - id of the survey optional only if you want to update the survey
+  static Future<int> putSurvey(Store store, SurveyModel survey) async {
+    survey.namaSurvey.targetId = survey.namaSurveyId;
+    survey.profile.targetId = survey.profileId;
+    survey.kodeUnikResponden.targetId = survey.kodeUnikRespondenId;
+    return store.box<SurveyModel>().put(survey);
+  }
+
+  /// get all survey
+  static Future<List<SurveyModel>> getSurvey(Store store) async {
+    return store.box<SurveyModel>().getAll();
+  }
+
+  /// get survey by id
+  static Future<SurveyModel?> getSurveyById(Store store,
+      {required int id}) async {
+    return store.box<SurveyModel>().get(id);
+  }
+
+  /// Get survey by namaSurveyId
+  static Future<List<SurveyModel>> getSurveyByNamaSurveyId(
+    Store store, {
+    required int namaSurveyId,
+  }) async {
+    final surveys = await getSurvey(store);
+    return surveys
+        .where((survey) => survey.namaSurvey.targetId == namaSurveyId)
+        .toList();
+  }
+
+  /// Get survey by profileId
+  static Future<List<SurveyModel>> getSurveyByProfileId(
+    Store store, {
+    required int profileId,
+  }) async {
+    final surveys = await getSurvey(store);
+    return surveys
+        .where((survey) => survey.profile.targetId == profileId)
+        .toList();
+  }
+
+  /// Get survey by kodeUnikRespondenId
+  static Future<List<SurveyModel>> getSurveyByKodeUnikRespondenId(
+    Store store, {
+    required int kodeUnikRespondenId,
+  }) async {
+    final surveys = await getSurvey(store);
+    return surveys
+        .where((survey) =>
+            survey.kodeUnikResponden.targetId == kodeUnikRespondenId)
+        .toList();
+  }
+
+  /// Get survey with isSelesai = 0
+  /// - isSelesai = 0 means that the survey is not finished yet
+  /// - isSelesai = 1 means that the survey is finished
+  static Future<List<SurveyModel>> getSurveyByIsSelesai(
+    Store store, {
+    required int isSelesai,
+  }) async {
+    final surveys = await getSurvey(store);
+    return surveys.where((survey) => survey.isSelesai == isSelesai).toList();
+  }
+
+  // Get detail survey
+  /// Params:
+  /// - store (ObjextBoxStore)
+  /// - kodeUnik (int)
+  static Future<dynamic> getDetailSurvey(Store store) async {
+    // Get survey with kodeUnik = 92230298
+    // Get Responden object id with kodeUnikResponden = 11223344
+    // Get namaSurvey with id = 1
+    // Get profile with id = 1
+    QueryBuilder<SurveyModel> builder =
+        store.box<SurveyModel>().query(SurveyModel_.kodeUnik.equals(92230298));
+    builder.link(SurveyModel_.kodeUnikResponden,
+        RespondenModel_.kodeUnik.equals(11223344));
+    builder.link(SurveyModel_.namaSurvey, NamaSurveyModel_.id.equals(1));
+    builder.link(SurveyModel_.profile, ProfileModel_.id.equals(1));
+    Query<SurveyModel> query = builder.build();
+    List<dynamic> result = query.find();
+    query.close();
+    return result;
+  }
+
+  // !TODO : Get total survey
+
+  // Get survey by keyword (name, kartu keluarga, kodeUnikResponden)
+  /// - name (String) - optional
+  /// - kartuKeluarga (int) - optional
+  /// - kodeUnikResponden (int) - optional
+  // static Future<List<SurveyModel>> getSurveyByKeyword(
+  //   Store store, {
+  //   String? name,
+  //   int? kartuKeluarga,
+  //   int? kodeUnikResponden,
+  // }) async {
+  //   final surveys = await getSurvey(store);
+  //   if (name != null) {
+  //     surveys.where((survey) => survey.namaSurvey.name.contains(name));
+  //   }
+  //   if (kartuKeluarga != null) {
+  //     surveys.where((survey) => survey.profile.kartuKeluarga == kartuKeluarga);
+  //   }
+  //   if (kodeUnikResponden != null) {
+  //     surveys.where(
+  //         (survey) => survey.kodeUnikResponden.targetId == kodeUnikResponden);
+  //   }
+  //   return surveys;
+  // }
+
+  /// delete survey
+  static Future<bool> deleteSurvey(Store store, {required int id}) async {
+    return store.box<SurveyModel>().remove(id);
+  }
+
+  static Future<dynamic> getTest(Store store, int profileId, int userId) async {
+    // Get survey with kodeUnik = 92230298
+    // Get Responden object id with kodeUnikResponden = 11223344
+    // Get namaSurvey with id = 1
+    // Get profile with id = 1
+    QueryBuilder<ProfileModel> builder =
+        store.box<ProfileModel>().query(ProfileModel_.id.equals(profileId));
+    // builder.link(SurveyModel_.kodeUnikResponden,
+    //     RespondenModel_.kodeUnik.equals(11223344));
+    builder.link(ProfileModel_.user, UserModel_.id.equals(userId));
+    // builder.link(SurveyModel_.profile, ProfileModel_.id.equals(1));
+    Query<ProfileModel> query = builder.build();
+    List<dynamic> result = query.find();
+
+    log(result.toString());
+    query.close();
+    return result;
+  }
+
+  //? Responden
+  /// Params:
+  /// - store (ObjextBoxStore)
+  /// - RespondenData (RespondenModel)
+  /// - id (int) - id of the survey optional only if you want to update the survey
+  static Future<int> putResponden(Store store, RespondenModel responden) async {
+    responden.provinsi.targetId = responden.provinsiId;
+    responden.kabupaten.targetId = responden.kabupatenId;
+    responden.kecamatan.targetId = responden.kecamatanId;
+    responden.kelurahan.targetId = responden.kelurahanId;
+    return store.box<RespondenModel>().put(responden);
+  }
+
+  /// Get responden
+  static Future<List<RespondenModel>> getResponden(Store store) async {
+    return store.box<RespondenModel>().getAll();
+  }
+
+  /// Get responden by id
+  static Future<RespondenModel?> getRespondenById(
+    Store store, {
+    required int id,
+  }) async {
+    return store.box<RespondenModel>().get(id);
+  }
+
+  /// Get responden by kodeUnik
+  static Future<RespondenModel?> getRespondenByKodeUnik(
+    Store store, {
+    required int kodeUnik,
+  }) async {
+    final respondens = await getResponden(store);
+    return respondens.firstWhere((responden) => responden.kodeUnik == kodeUnik);
+  }
+
+  /// Delete responden
+  static Future<bool> deleteResponden(Store store, {required int id}) async {
+    return store.box<RespondenModel>().remove(id);
+  }
+
+  //? Provinsi
+  /// Get all provinsi
+  static Future<List<ProvinsiModel>> getProvinsi(Store store) async {
+    return store.box<ProvinsiModel>().getAll();
+  }
+
+  /// Get provinsi by id
+  static Future<ProvinsiModel?> getProvinsiById(
+    Store store, {
+    required int id,
+  }) async {
+    return store.box<ProvinsiModel>().get(id);
+  }
+
+  //? Kabupaten
+  /// Get all kabupaten
+  static Future<List<KabupatenModel>> getKabupaten(Store store) async {
+    return store.box<KabupatenModel>().getAll();
+  }
+
+  /// Get kabupaten by id
+  static Future<KabupatenModel?> getKabupatenById(
+    Store store, {
+    required int id,
+  }) async {
+    return store.box<KabupatenModel>().get(id);
+  }
+
+  /// Get kabupaten by provinsiId
+  static Future<List<KabupatenModel>> getKabupatenByProvinsiId(
+    Store store, {
+    required int provinsiId,
+  }) async {
+    final kabupatens = await getKabupaten(store);
+    return kabupatens
+        .where((kabupaten) => kabupaten.provinsi.targetId == provinsiId)
+        .toList();
+  }
+
+  //? Kecamatan
+  /// Get all kecamatan
+  static Future<List<KecamatanModel>> getKecamatan(Store store) async {
+    return store.box<KecamatanModel>().getAll();
+  }
+
+  /// Get kecamatan by id
+  static Future<KecamatanModel?> getKecamatanById(
+    Store store, {
+    required int id,
+  }) async {
+    return store.box<KecamatanModel>().get(id);
+  }
+
+  /// Get kecamatan by kabupatenId
+  /// - kabupatenId (int)
+  static Future<List<KecamatanModel>> getKecamatanByKabupatenId(
+    Store store, {
+    required int kabupatenId,
+  }) async {
+    final kecamatans = await getKecamatan(store);
+    return kecamatans
+        .where((kecamatan) => kecamatan.kabupaten.targetId == kabupatenId)
+        .toList();
+  }
+
+  //? Kelurahan
+  /// Get all kelurahan
+  static Future<List<KelurahanModel>> getKelurahan(Store store) async {
+    return store.box<KelurahanModel>().getAll();
+  }
+
+  /// Get kelurahan by id
+  static Future<KelurahanModel?> getKelurahanById(
+    Store store, {
+    required int id,
+  }) async {
+    return store.box<KelurahanModel>().get(id);
+  }
+
+  /// Get kelurahan by kecamatanId
+  /// - kecamatanId (int)
+  static Future<List<KelurahanModel>> getKelurahanByKecamatanId(
+    Store store, {
+    required int kecamatanId,
+  }) async {
+    final kelurahans = await getKelurahan(store);
+    return kelurahans
+        .where((kelurahan) => kelurahan.kecamatan.targetId == kecamatanId)
+        .toList();
   }
 }

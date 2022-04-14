@@ -1,5 +1,6 @@
 import 'package:objectbox/objectbox.dart';
 import 'package:survey_stunting/models/localDb/jawaban_survey_model.dart';
+import 'package:survey_stunting/models/localDb/responden_model.dart';
 
 import 'nama_survey_mode.dart';
 import 'profile_model.dart';
@@ -10,7 +11,7 @@ class SurveyModel {
   int kodeUnik;
   int kategoriSelanjutnya;
   int isSelesai;
-  int? kodeUnikResponden;
+  int? kodeUnikRespondenId;
   int? namaSurveyId;
   int? profileId;
 
@@ -19,10 +20,11 @@ class SurveyModel {
       required this.kodeUnik,
       required this.kategoriSelanjutnya,
       required this.isSelesai,
-      this.kodeUnikResponden,
+      this.kodeUnikRespondenId,
       this.namaSurveyId,
       this.profileId});
 
+  final kodeUnikResponden = ToOne<RespondenModel>();
   final namaSurvey = ToOne<NamaSurveyModel>();
   final profile = ToOne<ProfileModel>();
 
