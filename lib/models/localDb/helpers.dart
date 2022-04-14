@@ -270,4 +270,67 @@ class DbHelper {
     jawabanSurvey.kategoriSoal.targetId = jawabanSurvey.kategoriSoalId;
     return store.box<JawabanSurveyModel>().put(jawabanSurvey);
   }
+
+  /// get all jawaban survey
+  static Future<List<JawabanSurveyModel>> getJawabanSurvey(Store store) async {
+    return store.box<JawabanSurveyModel>().getAll();
+  }
+
+  /// get jawaban survey by id
+  static Future<JawabanSurveyModel?> getJawabanSurveyById(Store store,
+      {required int id}) async {
+    return store.box<JawabanSurveyModel>().get(id);
+  }
+
+  /// Get jawabanSurvey by soalId
+  static Future<List<JawabanSurveyModel>> getJawabanSurveyBySoalId(
+    Store store, {
+    required int soalId,
+  }) async {
+    final jawabanSurveys = await getJawabanSurvey(store);
+    return jawabanSurveys
+        .where((jawabanSurvey) => jawabanSurvey.soal.targetId == soalId)
+        .toList();
+  }
+
+  /// Get jawabanSurvey by kodeUnikSurveyId
+  static Future<List<JawabanSurveyModel>> getJawabanSurveyByKodeUnikSurveyId(
+    Store store, {
+    required int kodeUnikSurveyId,
+  }) async {
+    final jawabanSurveys = await getJawabanSurvey(store);
+    return jawabanSurveys
+        .where((jawabanSurvey) =>
+            jawabanSurvey.kodeUnikSurvey.targetId == kodeUnikSurveyId)
+        .toList();
+  }
+
+  /// Get jawabanSurvey by kategoriSoalId
+  static Future<List<JawabanSurveyModel>> getJawabanSurveyByKategoriSoalId(
+    Store store, {
+    required int kategoriSoalId,
+  }) async {
+    final jawabanSurveys = await getJawabanSurvey(store);
+    return jawabanSurveys
+        .where((jawabanSurvey) =>
+            jawabanSurvey.kategoriSoal.targetId == kategoriSoalId)
+        .toList();
+  }
+
+  /// Get jawabanSurvey by jawabanSoalId
+  static Future<List<JawabanSurveyModel>> getJawabanSurveyByJawabanSoalId(
+    Store store, {
+    required int jawabanSoalId,
+  }) async {
+    final jawabanSurveys = await getJawabanSurvey(store);
+    return jawabanSurveys
+        .where((jawabanSurvey) => jawabanSurvey.jawabanSoalId == jawabanSoalId)
+        .toList();
+  }
+
+  /// delete jawaban survey
+  static Future<bool> deleteJawabanSurvey(Store store,
+      {required int id}) async {
+    return store.box<JawabanSurveyModel>().remove(id);
+  }
 }
