@@ -22,13 +22,36 @@ class IsiSurveyController extends GetxController {
   late KategoriSoal currentKategoriSoal;
   late Survey survey;
   late List<KategoriSoal> kategoriSoal = [];
+  late List<JawabanSurvey> initialJawabanSurvey = [];
   final soal = RxList<Soal>();
   final soalAndJawaban = RxList<SoalAndJawaban>();
-  late List<JawabanSurvey> listJawabanSurvey;
+  late List<JawabanSurvey> currentJawabanSurvey;
   var isLoading = true.obs;
   final formKey = GlobalKey<FormState>();
   int currentKategoriIndex = 0;
   int currentOrder = 0;
+
+  @override
+  void onInit() async {
+    survey = Get.arguments;
+    await getKategoriSoal();
+    //Bellow For Create Survey
+    currentKategoriSoal = kategoriSoal.firstWhere(
+        (element) => element.id.toString() == survey.kategoriSelanjutnya!);
+
+    //Bellow For Update Survey
+    // currentKategoriSoal = kategoriSoal[1];
+
+    await getJawabanSurvey();
+    title.value = currentKategoriSoal.nama;
+    currentOrder = int.parse(currentKategoriSoal.urutan);
+    await getSoal();
+    await getJawabanSoal();
+    log(listJawabanSurveyToJson(initialJawabanSurvey));
+    isLoading.value = false;
+    currentJawabanSurvey = [];
+    super.onInit();
+  }
 
   Future getKategoriSoal() async {
     try {
@@ -108,7 +131,7 @@ class IsiSurveyController extends GetxController {
               },
               onSaved: (value) async {
                 value as JawabanSurvey;
-                listJawabanSurvey.add(value);
+                currentJawabanSurvey.add(value);
               },
             )
           ],
@@ -154,7 +177,7 @@ class IsiSurveyController extends GetxController {
               onSaved: (value) async {
                 if (value!.isNotEmpty) {
                   for (var item in value) {
-                    listJawabanSurvey.add(item as JawabanSurvey);
+                    currentJawabanSurvey.add(item as JawabanSurvey);
                   }
                 }
               },
@@ -167,6 +190,12 @@ class IsiSurveyController extends GetxController {
           children: [
             FilledTextField(
               title: "$number. $soal",
+              initialValue: initialJawabanSurvey.isNotEmpty
+                  ? initialJawabanSurvey
+                      .firstWhere(
+                          (element) => element.soalId == soalId.toString())
+                      .jawabanLainnya
+                  : "",
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return "Jawaban tidak boleh kosong";
@@ -174,7 +203,7 @@ class IsiSurveyController extends GetxController {
                 return null;
               },
               onSaved: (value) async {
-                listJawabanSurvey.add(
+                currentJawabanSurvey.add(
                   JawabanSurvey(
                     soalId: soalId.toString(),
                     kodeUnikSurvey: survey.kodeUnik.toString(),
@@ -189,43 +218,60 @@ class IsiSurveyController extends GetxController {
     }
   }
 
+  Future getJawabanSurvey() async {
+    try {
+      List<JawabanSurvey>? response = await DioClient().getJawabanSurvey(
+        token: token,
+        kodeUnikSurvey: survey.kodeUnik!,
+        kategoriSoalId: currentKategoriSoal.id.toString(),
+      );
+      initialJawabanSurvey = response!;
+    } on DioError catch (e) {
+      if (e.response!.statusCode == 404) {
+        initialJawabanSurvey = [];
+      } else {
+        handleError(error: e);
+      }
+    }
+  }
+
   Future submitForm() async {
     try {
-      // if (formKey.currentState!.validate()) {
-      //   listJawabanSurvey.clear();
-      //   formKey.currentState!.save();
-      //   List<JawabanSurvey>? oldJawabanSurvey;
-      //   try {
-      //     oldJawabanSurvey = await DioClient().getJawabanSurvey(
-      //       token: token,
-      //       kodeUnikSurvey: survey.kodeUnik!,
-      //       kategoriSoalId: currentKategoriSoal.id.toString(),
-      //     );
-      //   } on DioError catch (e) {
-      //     if (e.response?.statusCode == 404) {
-      //       oldJawabanSurvey = [];
-      //     } else {
-      //       handleError(error: e);
-      //       return;
-      //     }
-      //   }
+      if (formKey.currentState!.validate()) {
+        currentJawabanSurvey.clear();
+        formKey.currentState!.save();
+        List<JawabanSurvey>? oldJawabanSurvey;
+        try {
+          oldJawabanSurvey = await DioClient().getJawabanSurvey(
+            token: token,
+            kodeUnikSurvey: survey.kodeUnik!,
+            kategoriSoalId: currentKategoriSoal.id.toString(),
+          );
+        } on DioError catch (e) {
+          if (e.response?.statusCode == 404) {
+            oldJawabanSurvey = [];
+          } else {
+            handleError(error: e);
+            return;
+          }
+        }
 
-      //   if (oldJawabanSurvey!.isNotEmpty) {
-      //     for (var item in oldJawabanSurvey) {
-      //       await DioClient().deleteJawabanSurvey(
-      //         token: token,
-      //         id: item.id.toString(),
-      //       );
-      //     }
-      //   }
+        if (oldJawabanSurvey!.isNotEmpty) {
+          for (var item in oldJawabanSurvey) {
+            await DioClient().deleteJawabanSurvey(
+              token: token,
+              id: item.id.toString(),
+            );
+          }
+        }
 
-      //   for (var item in listJawabanSurvey) {
-      //     await DioClient().createJawabanSurvey(token: token, data: item);
-      //   }
+        for (var item in currentJawabanSurvey) {
+          await DioClient().createJawabanSurvey(token: token, data: item);
+        }
 
-      //   successScackbar("Data berhasil disimpan");
-      // }
-      await nextCategory();
+        successScackbar("Data berhasil disimpan");
+        await nextCategory();
+      }
     } on DioError catch (e) {
       handleError(error: e);
     }
@@ -243,9 +289,11 @@ class IsiSurveyController extends GetxController {
 
   Future refreshPage() async {
     isLoading.value = true;
+    soalAndJawaban.clear();
     // currentKategoriSoal = kategoriSoal[currentKategoriIndex + 1];
     if (currentOrder > kategoriSoal.length) {
       currentOrder = kategoriSoal.length;
+      survey.isSelesai = "1";
       isLoading.value = false;
       return;
     }
@@ -258,37 +306,26 @@ class IsiSurveyController extends GetxController {
         .firstWhere((element) => element.urutan == currentOrder.toString());
     title.value = currentKategoriSoal.nama;
     // survey.kategoriSelanjutnya = currentKategoriSoal.id.toString();
-    await DioClient().updateSurvey(
-      token: token,
-      data: {
-        "kode_unik": survey.kodeUnik,
-        "kode_unik_responden": survey.kodeUnikResponden,
-        "nama_survey_id": survey.namaSurveyId,
-        "profile_id": survey.profileId,
-        "kategori_selanjutnya": currentKategoriSoal.id.toString(),
-        "is_selesai": survey.isSelesai,
-      },
-    );
-    await getSoal();
-    await getJawabanSoal();
-    listJawabanSurvey = [];
-    isLoading.value = false;
-  }
+    // await DioClient().updateSurvey(
+    //   token: token,
+    //   data: {
+    //     "kode_unik": survey.kodeUnik,
+    //     "kode_unik_responden": survey.kodeUnikResponden,
+    //     "nama_survey_id": survey.namaSurveyId,
+    //     "profile_id": survey.profileId,
+    //     "kategori_selanjutnya": currentKategoriSoal.id.toString(),
+    //     "is_selesai": survey.isSelesai,
+    //   },
+    // );
 
-  @override
-  void onInit() async {
-    survey = Get.arguments;
-    await getKategoriSoal();
-    currentKategoriSoal = kategoriSoal.firstWhere(
-        (element) => element.id.toString() == survey.kategoriSelanjutnya!);
-    title.value = currentKategoriSoal.nama;
-    // currentKategoriIndex = kategoriSoal.indexOf(currentKategoriSoal);
-    currentOrder = int.parse(currentKategoriSoal.urutan);
+    if (currentOrder == kategoriSoal.length) {
+      Get.back();
+      return;
+    }
+
     await getSoal();
     await getJawabanSoal();
-    log(soalAndJawaban.toString());
+    currentJawabanSurvey = [];
     isLoading.value = false;
-    listJawabanSurvey = [];
-    super.onInit();
   }
 }

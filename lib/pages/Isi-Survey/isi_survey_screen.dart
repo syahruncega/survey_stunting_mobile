@@ -13,7 +13,7 @@ class IsiSurveyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<IsiSurveyController>(builder: (controller) {
-      controller.listJawabanSurvey = [];
+      controller.currentJawabanSurvey = [];
       return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -101,8 +101,8 @@ class IsiSurveyScreen extends StatelessWidget {
                                       ),
                                       onPressed: () async {
                                         log(listJawabanSurveyToJson(
-                                            controller.listJawabanSurvey));
-                                        log("${controller.listJawabanSurvey.length}");
+                                            controller.currentJawabanSurvey));
+                                        log("${controller.currentJawabanSurvey.length}");
                                         await controller.submitForm();
                                       },
                                     ),

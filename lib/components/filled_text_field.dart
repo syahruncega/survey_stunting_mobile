@@ -21,6 +21,7 @@ class FilledTextField extends StatelessWidget {
   final void Function(String?)? onSaved;
   final String? Function(String?)? validator;
   final void Function(String)? onChanged;
+  final String? initialValue;
   const FilledTextField({
     this.prefixIcon,
     this.suffixIcon,
@@ -41,6 +42,7 @@ class FilledTextField extends StatelessWidget {
     this.onSaved,
     this.validator,
     this.onChanged,
+    this.initialValue,
     Key? key,
   }) : super(key: key);
 
@@ -57,6 +59,7 @@ class FilledTextField extends StatelessWidget {
           ),
         if (title != null) SizedBox(height: size.height * 0.01),
         TextFormField(
+          initialValue: initialValue,
           controller: controller,
           minLines: minLine,
           maxLines: maxLine,
