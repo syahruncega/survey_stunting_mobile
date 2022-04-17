@@ -6,6 +6,7 @@ import 'jawaban_survey_model.dart';
 
 @Entity()
 class SoalModel {
+  @Id(assignable: true)
   int? id = 0;
   String soal;
   int urutan;

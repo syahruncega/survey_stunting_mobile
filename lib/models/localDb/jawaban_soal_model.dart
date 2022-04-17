@@ -5,11 +5,12 @@ import 'soal_model.dart';
 
 @Entity()
 class JawabanSoalModel {
+  @Id(assignable: true)
   int? id = 0;
   String jawaban;
   int isLainnya;
   int? soalId;
-  int? jawabanSurveyId;
+  // int? jawabanSurveyId;
   String lastModified;
 
   JawabanSoalModel({
@@ -17,10 +18,10 @@ class JawabanSoalModel {
     required this.jawaban,
     required this.isLainnya,
     this.soalId,
-    this.jawabanSurveyId,
+    // this.jawabanSurveyId,
     required this.lastModified,
   });
 
   final soal = ToOne<SoalModel>();
-  final jawabanSurvey = ToOne<JawabanSurveyModel>();
+  // final jawabanSurvey = ToOne<JawabanSurveyModel>();
 }

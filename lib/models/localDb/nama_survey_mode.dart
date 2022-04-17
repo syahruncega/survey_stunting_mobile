@@ -4,6 +4,7 @@ import 'package:survey_stunting/models/localDb/survey_model.dart';
 
 @Entity()
 class NamaSurveyModel {
+  @Id(assignable: true)
   int? id = 0;
   String nama;
   String tipe;

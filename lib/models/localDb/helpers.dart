@@ -79,7 +79,7 @@ class DbHelper {
   /// - UserData (UserModel)
   /// - id (int) - id of the user optional only if you want to update the user
   static Future<int> putUser(Store store, UserModel user) async {
-    user.profile.targetId = user.profileId;
+    // user.profile.targetId = user.profileId;
     return store.box<UserModel>().put(user);
   }
 
@@ -94,11 +94,11 @@ class DbHelper {
   }
 
   /// get user by profileId
-  static Future<UserModel?> getUserByProfileId(Store store,
-      {required int profileId}) async {
-    final users = await getUser(store);
-    return users.firstWhere((user) => user.profile.targetId == profileId);
-  }
+  // static Future<UserModel?> getUserByProfileId(Store store,
+  //     {required int profileId}) async {
+  //   final users = await getUser(store);
+  //   return users.firstWhere((user) => user.profile.targetId == profileId);
+  // }
 
   /// param :
   /// id (int) - id of the user
@@ -157,6 +157,11 @@ class DbHelper {
     return store.box<SoalModel>().remove(id);
   }
 
+  /// delete all soal
+  static Future<int> deleteAllSoal(Store store) async {
+    return store.box<SoalModel>().removeAll();
+  }
+
   //? Kategori Soal
   /// Params:
   /// - store (ObjextBoxStore)
@@ -196,6 +201,11 @@ class DbHelper {
     return store.box<KategoriSoalModel>().remove(id);
   }
 
+  /// delete all kategori soal
+  static Future<int> deleteAllKategoriSoal(Store store) async {
+    return store.box<KategoriSoalModel>().removeAll();
+  }
+
   //? Nama Survey
   /// Params:
   /// - store (ObjextBoxStore)
@@ -224,6 +234,11 @@ class DbHelper {
     return store.box<NamaSurveyModel>().remove(id);
   }
 
+  /// delete all namaSurvey
+  static Future<int> deleteAllNamaSurvey(Store store) async {
+    return store.box<NamaSurveyModel>().removeAll();
+  }
+
   // create function jawabanSoal same as kategori soal
   //? Jawaban Soal
   /// Params:
@@ -233,7 +248,7 @@ class DbHelper {
   static Future<int> putJawabanSoal(
       Store store, JawabanSoalModel jawabanSoal) async {
     jawabanSoal.soal.targetId = jawabanSoal.soalId;
-    jawabanSoal.jawabanSurvey.targetId = jawabanSoal.jawabanSurveyId;
+    // jawabanSoal.jawabanSurvey.targetId = jawabanSoal.jawabanSurveyId;
     return store.box<JawabanSoalModel>().put(jawabanSoal);
   }
 
@@ -260,15 +275,20 @@ class DbHelper {
   }
 
   /// Get jawabanSoal by jawabanSurveyId
-  static Future<List<JawabanSoalModel>> getJawabanSoalByJawabanSurveyId(
-    Store store, {
-    required int jawabanSurveyId,
-  }) async {
-    final jawabanSoals = await getJawabanSoal(store);
-    return jawabanSoals
-        .where((jawabanSoal) =>
-            jawabanSoal.jawabanSurvey.targetId == jawabanSurveyId)
-        .toList();
+  // static Future<List<JawabanSoalModel>> getJawabanSoalByJawabanSurveyId(
+  //   Store store, {
+  //   required int jawabanSurveyId,
+  // }) async {
+  //   final jawabanSoals = await getJawabanSoal(store);
+  //   return jawabanSoals
+  //       .where((jawabanSoal) =>
+  //           jawabanSoal.jawabanSurvey.targetId == jawabanSurveyId)
+  //       .toList();
+  // }
+
+  /// delete all jawabanSoal
+  static Future<int> deleteAllJawabanSoal(Store store) async {
+    return store.box<JawabanSoalModel>().removeAll();
   }
 
   // create function jawabanSurvey same as jawaban soal

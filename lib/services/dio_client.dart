@@ -334,6 +334,23 @@ class DioClient {
     }
   }
 
+  Future<List<KategoriSoal>?> getAllKategoriSoal({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/kategori_soal",
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listKategoriSoalFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get kategori soal: $e');
+      rethrow;
+    }
+  }
+
   Future<List<Soal>?> getSoal({
     required String token,
     String? kategoriSoalId,
@@ -345,6 +362,23 @@ class DioClient {
           "kategori_soal_id":
               kategoriSoalId != null ? int.parse(kategoriSoalId) : null
         },
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listSoalFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get soal: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Soal>?> getAllSoal({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/soal",
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
@@ -368,6 +402,23 @@ class DioClient {
           "id": id != null ? int.parse(id) : null,
           "soal_id": soalId != null ? int.parse(soalId) : null
         },
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listJawabanSoalFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get jawaban soal: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<JawabanSoal>?> getAllJawabanSoal({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/jawaban_soal",
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),

@@ -9,7 +9,7 @@ class UserModel {
   String? password;
   String? status;
   String? role;
-  int? profileId;
+  // int? profileId;
   String lastModified;
 
   UserModel({
@@ -18,9 +18,9 @@ class UserModel {
     this.password,
     this.status,
     this.role,
-    this.profileId,
+    // this.profileId,
     required this.lastModified,
   });
 
-  final profile = ToOne<ProfileModel>();
+  // final profile = ToOne<ProfileModel>();
 }

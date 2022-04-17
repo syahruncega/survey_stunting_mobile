@@ -29,6 +29,6 @@ class JawabanSurveyModel {
   final kodeUnikSurvey = ToOne<SurveyModel>();
   final kategoriSoal = ToOne<KategoriSoalModel>();
 
-  @Backlink()
+  // @Backlink()
   final jawabanSoal = ToMany<JawabanSoalModel>();
 }
