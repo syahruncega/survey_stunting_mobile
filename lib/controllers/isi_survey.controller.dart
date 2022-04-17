@@ -20,6 +20,8 @@ class IsiSurveyController extends GetxController {
   String token = GetStorage().read("token");
   Rx<String> title = "".obs;
   var isLoading = true.obs;
+  var isLoadingNext = false.obs;
+  var isLoadingPrevious = false.obs;
   late KategoriSoal currentKategoriSoal;
   late Survey survey;
   late List<KategoriSoal> kategoriSoal = [];
@@ -34,8 +36,13 @@ class IsiSurveyController extends GetxController {
   void onInit() async {
     survey = Get.arguments;
     await getKategoriSoal();
-    currentKategoriSoal = kategoriSoal.firstWhere(
-        (element) => element.id.toString() == survey.kategoriSelanjutnya!);
+
+    if (survey.kategoriSelanjutnya != null) {
+      currentKategoriSoal = kategoriSoal.firstWhere(
+          (element) => element.id.toString() == survey.kategoriSelanjutnya!);
+    } else {
+      currentKategoriSoal = kategoriSoal[0];
+    }
 
     await getJawabanSurvey();
     title.value = currentKategoriSoal.nama;
@@ -256,28 +263,14 @@ class IsiSurveyController extends GetxController {
   }
 
   Future submitForm() async {
+    isLoadingNext.value = true;
     try {
       if (formKey.currentState!.validate()) {
         currentJawabanSurvey.clear();
         formKey.currentState!.save();
-        List<JawabanSurvey>? oldJawabanSurvey;
-        try {
-          oldJawabanSurvey = await DioClient().getJawabanSurvey(
-            token: token,
-            kodeUnikSurvey: survey.kodeUnik!,
-            kategoriSoalId: currentKategoriSoal.id.toString(),
-          );
-        } on DioError catch (e) {
-          if (e.response?.statusCode == 404) {
-            oldJawabanSurvey = [];
-          } else {
-            handleError(error: e);
-            return;
-          }
-        }
 
-        if (oldJawabanSurvey!.isNotEmpty) {
-          for (var item in oldJawabanSurvey) {
+        if (initialJawabanSurvey.isNotEmpty) {
+          for (var item in initialJawabanSurvey) {
             await DioClient().deleteJawabanSurvey(
               token: token,
               id: item.id.toString(),
@@ -289,12 +282,13 @@ class IsiSurveyController extends GetxController {
           await DioClient().createJawabanSurvey(token: token, data: item);
         }
 
-        successScackbar("Data berhasil disimpan");
         await nextCategory();
+        successScackbar("Data berhasil disimpan");
       }
     } on DioError catch (e) {
       handleError(error: e);
     }
+    isLoadingNext.value = false;
   }
 
   Future nextCategory() async {
@@ -307,24 +301,7 @@ class IsiSurveyController extends GetxController {
     await refreshPage();
   }
 
-  Future refreshPage() async {
-    isLoading.value = true;
-    soalAndJawaban.clear();
-    if (currentOrder > kategoriSoal.length) {
-      currentOrder = kategoriSoal.length;
-      survey.isSelesai = "1";
-      isLoading.value = false;
-      return;
-    }
-    if (currentOrder < 1) {
-      currentOrder = 1;
-      isLoading.value = false;
-      return;
-    }
-    currentKategoriSoal = kategoriSoal
-        .firstWhere((element) => element.urutan == currentOrder.toString());
-    title.value = currentKategoriSoal.nama;
-    survey.kategoriSelanjutnya = currentKategoriSoal.id.toString();
+  Future updateSurvey() async {
     await DioClient().updateSurvey(
       token: token,
       data: {
@@ -333,18 +310,30 @@ class IsiSurveyController extends GetxController {
         "nama_survey_id": survey.namaSurveyId,
         "profile_id": survey.profileId,
         "kategori_selanjutnya": kategoriSoal
-            .firstWhere((element) => element.urutan == currentOrder.toString())
+            .firstWhere((element) =>
+                element.urutan ==
+                (survey.isSelesai == "0" ? currentOrder.toString() : "1"))
             .id
             .toString(),
         "is_selesai": survey.isSelesai,
       },
     );
+  }
 
+  Future refreshPage() async {
+    isLoading.value = true;
+    soalAndJawaban.clear();
     if (currentOrder == kategoriSoal.length) {
+      survey.isSelesai == "1";
+      await updateSurvey();
       Get.back();
       return;
     }
-
+    currentKategoriSoal = kategoriSoal
+        .firstWhere((element) => element.urutan == currentOrder.toString());
+    title.value = currentKategoriSoal.nama;
+    survey.kategoriSelanjutnya = currentKategoriSoal.id.toString();
+    await updateSurvey();
     await getJawabanSurvey();
     await getSoal();
     await getJawabanSoal();

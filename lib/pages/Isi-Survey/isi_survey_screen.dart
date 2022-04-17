@@ -82,30 +82,26 @@ class IsiSurveyScreen extends StatelessWidget {
                                         color: Colors.white,
                                       ),
                                       onPressed: () async {
-                                        await controller.previousCategory();
+                                        if (!controller.isLoadingNext.value) {
+                                          await controller.previousCategory();
+                                        }
                                       },
                                     ),
-                                  if (controller.currentOrder > 1 ||
-                                      controller.currentOrder <
-                                          controller.kategoriSoal.length)
+                                  if (controller.currentOrder > 1)
                                     const SizedBox(
                                       width: 8,
                                     ),
-                                  if (controller.currentOrder <
-                                      controller.kategoriSoal.length)
-                                    CustomElevatedButtonIcon(
-                                      label: "Selanjutnya",
-                                      icon: SvgPicture.asset(
-                                        "assets/icons/outline/arrow-right2.svg",
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: () async {
-                                        log(listJawabanSurveyToJson(
-                                            controller.currentJawabanSurvey));
-                                        log("${controller.currentJawabanSurvey.length}");
-                                        await controller.submitForm();
-                                      },
+                                  CustomElevatedButtonIcon(
+                                    label: "Selanjutnya",
+                                    icon: SvgPicture.asset(
+                                      "assets/icons/outline/arrow-right2.svg",
+                                      color: Colors.white,
                                     ),
+                                    isLoading: controller.isLoadingNext.value,
+                                    onPressed: () async {
+                                      await controller.submitForm();
+                                    },
+                                  ),
                                 ])
                           ],
                         ),
