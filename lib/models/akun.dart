@@ -32,6 +32,7 @@ class DataAkun {
   DataAkun({
     required this.id,
     required this.username,
+    required this.password,
     required this.status,
     required this.role,
     this.deletedAt,
@@ -41,6 +42,7 @@ class DataAkun {
 
   int id;
   String username;
+  String password;
   String status;
   String role;
   dynamic deletedAt;
@@ -50,6 +52,7 @@ class DataAkun {
   factory DataAkun.fromJson(Map<String, dynamic> json) => DataAkun(
         id: json["id"],
         username: json["username"],
+        password: json["password"],
         status: json["status"],
         role: json["role"],
         deletedAt: json["deleted_at"],

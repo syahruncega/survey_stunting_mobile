@@ -247,6 +247,23 @@ class DioClient {
     }
   }
 
+  Future<List<Kabupaten>?> getAllKabupaten({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/kabupaten_kota",
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listKabupatenFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get kabupaten kota: $e');
+      rethrow;
+    }
+  }
+
   Future<List<Kecamatan>?> getKecamatan({
     required String token,
     required String kabupatenId,
@@ -255,6 +272,23 @@ class DioClient {
       Response response = await _dio.get(
         "/kecamatan",
         queryParameters: {"kabupaten_id": kabupatenId},
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listKecamatanFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get kecamatan: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Kecamatan>?> getAllKecamatan({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/kecamatan",
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
@@ -285,6 +319,21 @@ class DioClient {
     }
   }
 
+  Future<List<Kelurahan>?> getAllKelurahan({required String token}) async {
+    try {
+      Response response = await _dio.get(
+        "/desa_kelurahan",
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listKelurahanFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get kelurahan: $e');
+      rethrow;
+    }
+  }
+
   Future<List<KategoriSoal>?> getKategoriSoal({
     required String token,
     required String namaSurveyId,
@@ -293,6 +342,23 @@ class DioClient {
       Response response = await _dio.get(
         "/kategori_soal",
         queryParameters: {"nama_survey_id": int.parse(namaSurveyId)},
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listKategoriSoalFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get kategori soal: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<KategoriSoal>?> getAllKategoriSoal({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/kategori_soal",
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
@@ -315,6 +381,23 @@ class DioClient {
           "kategori_soal_id":
               kategoriSoalId != null ? int.parse(kategoriSoalId) : null
         },
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listSoalFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get soal: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Soal>?> getAllSoal({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/soal",
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
@@ -349,12 +432,14 @@ class DioClient {
     }
   }
 
+
   Future<List<JawabanSurvey>?> getJawabanSurvey({
     required String token,
     required String kodeUnikSurvey,
     String? soalId,
     String? kategoriSoalId,
   }) async {
+
     try {
       Response response = await _dio.get(
         "/jawaban_survey",
@@ -458,10 +543,12 @@ class DioClient {
     }
   }
 
-  Future updateAkun(
-      {required String token,
-      required String username,
-      String? password}) async {
+  Future updateAkun({
+    required String token,
+    required String username,
+    String? password,
+    required String updatedAt,
+  }) async {
     try {
       Response response = await _dio.put("/dashboard/akun",
           options: Options(responseType: ResponseType.plain, headers: {
@@ -479,19 +566,21 @@ class DioClient {
     }
   }
 
-  Future updateProfile(
-      {required String token,
-      required String nama,
-      required String jenisKelamin,
-      required String tempatLahir,
-      required String tglLahir,
-      required String alamat,
-      required String provinsi,
-      required String kabupaten,
-      required String kecamatan,
-      required String kelurahan,
-      required String nomorHp,
-      required String email}) async {
+  Future updateProfile({
+    required String token,
+    required String nama,
+    required String jenisKelamin,
+    required String tempatLahir,
+    required String tglLahir,
+    required String alamat,
+    required String provinsi,
+    required String kabupaten,
+    required String kecamatan,
+    required String kelurahan,
+    required String nomorHp,
+    required String email,
+    required String updatedAt,
+  }) async {
     try {
       Response response = await _dio.put("/dashboard/profile",
           options: Options(responseType: ResponseType.plain, headers: {
@@ -508,7 +597,8 @@ class DioClient {
             'kecamatan': kecamatan,
             'desa_kelurahan': kelurahan,
             'nomor_hp': nomorHp,
-            'email': email
+            'email': email,
+            'updated_at': updatedAt,
           }));
       if (response.statusCode == 200) {
         return true;
