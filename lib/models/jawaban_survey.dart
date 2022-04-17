@@ -22,8 +22,8 @@ class JawabanSurvey {
     required this.soalId,
     required this.kodeUnikSurvey,
     required this.kategoriSoalId,
-    required this.jawabanSoalId,
-    required this.jawabanLainnya,
+    this.jawabanSoalId,
+    this.jawabanLainnya,
     this.createdAt,
     this.updatedAt,
   });
