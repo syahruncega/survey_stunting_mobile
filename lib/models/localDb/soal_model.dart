@@ -12,6 +12,7 @@ class SoalModel {
   String tipeJawaban;
   int isNumerik;
   int? kategoriSoalId;
+  String lastModified;
 
   SoalModel({
     this.id,
@@ -20,6 +21,7 @@ class SoalModel {
     required this.tipeJawaban,
     required this.isNumerik,
     this.kategoriSoalId,
+    required this.lastModified,
   });
 
   @Backlink()

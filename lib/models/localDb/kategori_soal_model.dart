@@ -10,12 +10,14 @@ class KategoriSoalModel {
   int urutan;
   String nama;
   int? namaSurveyId;
+  String lastModified;
 
   KategoriSoalModel({
     this.id,
     required this.urutan,
     required this.nama,
     this.namaSurveyId,
+    required this.lastModified,
   });
 
   @Backlink()

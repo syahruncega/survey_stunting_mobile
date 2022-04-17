@@ -419,10 +419,12 @@ class DioClient {
     }
   }
 
-  Future updateAkun(
-      {required String token,
-      required String username,
-      String? password}) async {
+  Future updateAkun({
+    required String token,
+    required String username,
+    String? password,
+    required String updatedAt,
+  }) async {
     try {
       Response response = await _dio.put("/dashboard/akun",
           options: Options(responseType: ResponseType.plain, headers: {
@@ -440,19 +442,21 @@ class DioClient {
     }
   }
 
-  Future updateProfile(
-      {required String token,
-      required String nama,
-      required String jenisKelamin,
-      required String tempatLahir,
-      required String tglLahir,
-      required String alamat,
-      required String provinsi,
-      required String kabupaten,
-      required String kecamatan,
-      required String kelurahan,
-      required String nomorHp,
-      required String email}) async {
+  Future updateProfile({
+    required String token,
+    required String nama,
+    required String jenisKelamin,
+    required String tempatLahir,
+    required String tglLahir,
+    required String alamat,
+    required String provinsi,
+    required String kabupaten,
+    required String kecamatan,
+    required String kelurahan,
+    required String nomorHp,
+    required String email,
+    required String updatedAt,
+  }) async {
     try {
       Response response = await _dio.put("/dashboard/profile",
           options: Options(responseType: ResponseType.plain, headers: {
@@ -469,7 +473,8 @@ class DioClient {
             'kecamatan': kecamatan,
             'desa_kelurahan': kelurahan,
             'nomor_hp': nomorHp,
-            'email': email
+            'email': email,
+            'updated_at': updatedAt,
           }));
       if (response.statusCode == 200) {
         return true;

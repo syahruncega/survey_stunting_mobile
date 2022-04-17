@@ -4,6 +4,7 @@ import 'package:survey_stunting/models/localDb/user_model.dart';
 
 @Entity()
 class ProfileModel {
+  @Id(assignable: true)
   int? id = 0;
   String namaLengkap;
   String jenisKelamin;
@@ -17,21 +18,24 @@ class ProfileModel {
   String nomorHp;
   String email;
   int? userId;
+  String lastModified;
 
-  ProfileModel(
-      {this.id,
-      required this.namaLengkap,
-      required this.jenisKelamin,
-      required this.tempatLahir,
-      required this.tanggalLahir,
-      required this.alamat,
-      required this.provinsiId,
-      required this.kabupatenId,
-      required this.kecamatanId,
-      required this.kelurahanId,
-      required this.nomorHp,
-      required this.email,
-      this.userId});
+  ProfileModel({
+    this.id,
+    required this.namaLengkap,
+    required this.jenisKelamin,
+    required this.tempatLahir,
+    required this.tanggalLahir,
+    required this.alamat,
+    required this.provinsiId,
+    required this.kabupatenId,
+    required this.kecamatanId,
+    required this.kelurahanId,
+    required this.nomorHp,
+    required this.email,
+    this.userId,
+    required this.lastModified,
+  });
 
   final user = ToOne<UserModel>();
 

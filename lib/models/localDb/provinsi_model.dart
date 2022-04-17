@@ -6,8 +6,13 @@ import 'kabupaten_model.dart';
 class ProvinsiModel {
   int? id = 0;
   String nama;
+  String lastModified;
 
-  ProvinsiModel({this.id, required this.nama});
+  ProvinsiModel({
+    this.id,
+    required this.nama,
+    required this.lastModified,
+  });
 
   @Backlink()
   final kabupaten = ToMany<KabupatenModel>();

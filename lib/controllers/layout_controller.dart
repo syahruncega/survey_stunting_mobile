@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/state_manager.dart';
+import 'package:survey_stunting/controllers/sync_data_controller.dart';
+
+import '../models/localDb/helpers.dart';
+
+late final Objectbox objectbox;
 
 class LayoutController extends GetxController {
   var scaffoldKey = GlobalKey<ScaffoldState>();
@@ -42,7 +47,9 @@ class LayoutController extends GetxController {
   }
 
   @override
-  void onInit() {
+  void onInit() async {
+    objectbox = await Objectbox.create();
+    SyncDataController(store_: objectbox.store).syncDataFromServer();
     Future.delayed(const Duration(milliseconds: 1500), () {
       canExit = true;
     });

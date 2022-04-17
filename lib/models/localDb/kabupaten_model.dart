@@ -8,8 +8,14 @@ class KabupatenModel {
   int? id = 0;
   String nama;
   int? provinsiId;
+  String lastModified;
 
-  KabupatenModel({this.id, required this.nama, this.provinsiId});
+  KabupatenModel({
+    this.id,
+    required this.nama,
+    this.provinsiId,
+    required this.lastModified,
+  });
 
   @Backlink()
   final kecamatan = ToMany<KecamatanModel>();

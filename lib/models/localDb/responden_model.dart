@@ -16,6 +16,7 @@ class RespondenModel {
   int? kabupatenId;
   int? kecamatanId;
   int? kelurahanId;
+  String lastModified;
 
   RespondenModel({
     this.id,
@@ -27,6 +28,7 @@ class RespondenModel {
     this.kabupatenId,
     this.kecamatanId,
     this.kelurahanId,
+    required this.lastModified,
   });
 
   final provinsi = ToOne<ProvinsiModel>();

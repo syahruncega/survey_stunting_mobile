@@ -69,6 +69,10 @@ class DbHelper {
     return store.box<ProfileModel>().remove(id);
   }
 
+  static Future<int> deleteAllProfile(Store store) async {
+    return store.box<ProfileModel>().removeAll();
+  }
+
   //? User
   /// Params:
   /// - store (ObjextBoxStore)
@@ -102,6 +106,10 @@ class DbHelper {
   /// true if user is deleted
   static Future<bool> deleteUser(Store store, {required int id}) async {
     return store.box<UserModel>().remove(id);
+  }
+
+  static Future<int> deleteAllUser(Store store) async {
+    return store.box<UserModel>().removeAll();
   }
 
   //? Soal

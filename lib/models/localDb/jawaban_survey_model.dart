@@ -13,6 +13,7 @@ class JawabanSurveyModel {
   int? kodeUnikSurveyId;
   int? kategoriSoalId;
   int? jawabanSoalId;
+  String lastModified;
 
   JawabanSurveyModel({
     this.id,
@@ -21,6 +22,7 @@ class JawabanSurveyModel {
     this.kodeUnikSurveyId,
     this.kategoriSoalId,
     this.jawabanSoalId,
+    required this.lastModified,
   });
 
   final soal = ToOne<SoalModel>();

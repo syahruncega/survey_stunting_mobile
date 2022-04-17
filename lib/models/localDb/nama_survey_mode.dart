@@ -7,8 +7,14 @@ class NamaSurveyModel {
   int? id = 0;
   String nama;
   String tipe;
+  String lastModified;
 
-  NamaSurveyModel({this.id, required this.nama, required this.tipe});
+  NamaSurveyModel({
+    this.id,
+    required this.nama,
+    required this.tipe,
+    required this.lastModified,
+  });
 
   @Backlink()
   final kategoriSoal = ToMany<KategoriSoalModel>();

@@ -6,11 +6,13 @@ class KelurahanModel {
   int? id = 0;
   String nama;
   int? kecamatanId;
+  String lastModified;
 
   KelurahanModel({
     this.id,
     required this.nama,
     this.kecamatanId,
+    required this.lastModified,
   });
 
   final kecamatan = ToOne<KecamatanModel>();

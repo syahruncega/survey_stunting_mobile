@@ -4,14 +4,10 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:survey_stunting/consts/colors.dart';
-import 'package:survey_stunting/models/localDb/jawaban_survey_model.dart';
-import 'package:survey_stunting/models/localDb/profile_model.dart';
 import 'package:survey_stunting/routes/app_page.dart';
 import 'package:survey_stunting/routes/route_name.dart';
 
 import 'models/localDb/helpers.dart';
-import 'models/localDb/survey_model.dart';
-import 'models/localDb/user_model.dart';
 
 late final Objectbox objectbox;
 Future<void> main() async {
@@ -19,7 +15,7 @@ Future<void> main() async {
   await GetStorage.init();
   Get.put<GetStorage>(GetStorage());
   WidgetsFlutterBinding.ensureInitialized();
-  objectbox = await Objectbox.create();
+  // objectbox = await Objectbox.create();
   runApp(const MyApp());
 }
 
@@ -146,8 +142,8 @@ class Wrapper extends StatefulWidget {
 class WrapperState extends State<Wrapper> {
   @override
   void initState() {
-    super.initState();
     sessionCheck();
+    super.initState();
   }
 
   @override
@@ -165,37 +161,8 @@ class WrapperState extends State<Wrapper> {
       Get.offAllNamed(RouteName.login);
     } else {
       Get.offAllNamed(RouteName.layout);
-      // insertProfile();
-      // insertUser();
-      // putUser();
-      // getData();
-      // getProfileById();
-      // getProfileByUserId();
-      // deleteProfile();
-      // putJawabanSurvey();
-      // putSurvey();
-      getTest();
     }
   }
-
-  void getTest() async {
-    var data = await DbHelper.getTest(objectbox.store, 3, 3);
-    List<dynamic> results = [];
-    for (var result in data) {
-      results.add(result);
-    }
-    debugPrint("data : " + results.toString());
-  }
-  // void putUser() async {
-  //   var user = UserModel(
-  //       username: 'Surveyor1',
-  //       password: 'password',
-  //       status: "1",
-  //       role: "surveyor",
-  //       profileId: 3);
-  //   await DbHelper.putUser(objectbox.store, user);
-  //   debugPrint("user was inserted");
-  // }
 
   @override
   Widget build(BuildContext context) {

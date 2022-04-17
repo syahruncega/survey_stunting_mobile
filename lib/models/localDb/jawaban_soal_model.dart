@@ -10,6 +10,7 @@ class JawabanSoalModel {
   int isLainnya;
   int? soalId;
   int? jawabanSurveyId;
+  String lastModified;
 
   JawabanSoalModel({
     this.id,
@@ -17,6 +18,7 @@ class JawabanSoalModel {
     required this.isLainnya,
     this.soalId,
     this.jawabanSurveyId,
+    required this.lastModified,
   });
 
   final soal = ToOne<SoalModel>();

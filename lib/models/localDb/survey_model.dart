@@ -14,15 +14,18 @@ class SurveyModel {
   int? kodeUnikRespondenId;
   int? namaSurveyId;
   int? profileId;
+  String lastModified;
 
-  SurveyModel(
-      {this.id,
-      required this.kodeUnik,
-      required this.kategoriSelanjutnya,
-      required this.isSelesai,
-      this.kodeUnikRespondenId,
-      this.namaSurveyId,
-      this.profileId});
+  SurveyModel({
+    this.id,
+    required this.kodeUnik,
+    required this.kategoriSelanjutnya,
+    required this.isSelesai,
+    this.kodeUnikRespondenId,
+    this.namaSurveyId,
+    this.profileId,
+    required this.lastModified,
+  });
 
   final kodeUnikResponden = ToOne<RespondenModel>();
   final namaSurvey = ToOne<NamaSurveyModel>();

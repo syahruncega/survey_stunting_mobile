@@ -161,18 +161,20 @@ class UbahProfilController extends GetxController {
       try {
         profileUpdateStatus.value = 'waiting';
         bool response = await DioClient().updateProfile(
-            token: token,
-            nama: nama,
-            jenisKelamin: jenisKelamin,
-            tempatLahir: tempatLahir,
-            tglLahir: tglLahir,
-            alamat: alamat,
-            provinsi: provinsiId.toString(),
-            kabupaten: kabupatenId.toString(),
-            kecamatan: kecamatanId.toString(),
-            kelurahan: kelurahanId.toString(),
-            nomorHp: nomorHp,
-            email: email);
+          token: token,
+          nama: nama,
+          jenisKelamin: jenisKelamin,
+          tempatLahir: tempatLahir,
+          tglLahir: tglLahir,
+          alamat: alamat,
+          provinsi: provinsiId.toString(),
+          kabupaten: kabupatenId.toString(),
+          kecamatan: kecamatanId.toString(),
+          kelurahan: kelurahanId.toString(),
+          nomorHp: nomorHp,
+          email: email,
+          updatedAt: DateTime.now().toString(),
+        );
         if (response) {
           profileUpdateStatus.value = 'successful';
           successScackbar('Profile berhasil diupdate.');

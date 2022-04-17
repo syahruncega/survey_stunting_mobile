@@ -54,8 +54,12 @@ class UbahAkunController extends GetxController {
     if (validate()) {
       try {
         akunUpdateStatus.value = 'waiting';
-        bool response = await DioClient()
-            .updateAkun(token: token, username: username, password: password);
+        bool response = await DioClient().updateAkun(
+          token: token,
+          username: username,
+          password: password,
+          updatedAt: DateTime.now().toString(),
+        );
         if (response) {
           akunUpdateStatus.value = 'successful';
           successScackbar("Akun berhasil diupdate");
