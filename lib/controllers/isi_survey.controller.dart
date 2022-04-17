@@ -225,17 +225,14 @@ class IsiSurveyController extends GetxController {
           ],
         );
       default:
+        var initialValue = initialJawabanSurvey
+            .firstWhereOrNull((element) => element.soalId == soalId.toString());
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             FilledTextField(
               title: "$number. $soal",
-              initialValue: initialJawabanSurvey.isNotEmpty
-                  ? initialJawabanSurvey
-                      .firstWhere(
-                          (element) => element.soalId == soalId.toString())
-                      .jawabanLainnya
-                  : "",
+              initialValue: initialValue?.jawabanLainnya ?? "",
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return "Jawaban tidak boleh kosong";
