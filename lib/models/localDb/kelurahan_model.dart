@@ -3,6 +3,7 @@ import 'package:survey_stunting/models/localDb/kecamatan_model.dart';
 
 @Entity()
 class KelurahanModel {
+  @Id(assignable: true)
   int? id = 0;
   String nama;
   int? kecamatanId;

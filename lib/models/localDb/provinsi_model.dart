@@ -4,6 +4,7 @@ import 'kabupaten_model.dart';
 
 @Entity()
 class ProvinsiModel {
+  @Id(assignable: true)
   int? id = 0;
   String nama;
   String lastModified;

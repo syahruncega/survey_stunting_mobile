@@ -228,6 +228,23 @@ class DioClient {
     }
   }
 
+  Future<List<Kabupaten>?> getAllKabupaten({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/kabupaten_kota",
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listKabupatenFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get kabupaten kota: $e');
+      rethrow;
+    }
+  }
+
   Future<List<Kecamatan>?> getKecamatan({
     required String token,
     required String kabupatenId,
@@ -247,6 +264,23 @@ class DioClient {
     }
   }
 
+  Future<List<Kecamatan>?> getAllKecamatan({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/kecamatan",
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listKecamatanFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get kecamatan: $e');
+      rethrow;
+    }
+  }
+
   Future<List<Kelurahan>?> getKelurahan({
     required String token,
     required String kecamatanId,
@@ -255,6 +289,21 @@ class DioClient {
       Response response = await _dio.get(
         "/desa_kelurahan",
         queryParameters: {"kecamatan_id": kecamatanId},
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listKelurahanFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get kelurahan: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Kelurahan>?> getAllKelurahan({required String token}) async {
+    try {
+      Response response = await _dio.get(
+        "/desa_kelurahan",
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),

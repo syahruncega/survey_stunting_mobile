@@ -3,10 +3,18 @@ import 'package:flutter/foundation.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:survey_stunting/models/akun.dart';
+import 'package:survey_stunting/models/localDb/provinsi_model.dart';
+import 'package:survey_stunting/models/provinsi.dart';
 
 import '../components/error_scackbar.dart';
 import '../components/success_scackbar.dart';
+import '../models/kabupaten.dart';
+import '../models/kecamatan.dart';
+import '../models/kelurahan.dart';
 import '../models/localDb/helpers.dart';
+import '../models/localDb/kabupaten_model.dart';
+import '../models/localDb/kecamatan_model.dart';
+import '../models/localDb/kelurahan_model.dart';
 import '../models/localDb/profile_model.dart';
 import '../models/localDb/user_model.dart';
 import '../models/user_profile.dart';
@@ -22,6 +30,10 @@ class SyncDataController {
   Future syncDataFromServer() async {
     await syncDataProfile();
     await syncDataUser();
+    await syncDataProvinsi();
+    await syncDataKabupaten();
+    await syncDataKecamatan();
+    await syncDataKelurahan();
   }
 
   Future syncDataProfile() async {
@@ -72,7 +84,6 @@ class SyncDataController {
     }
   }
 
-  // create function synchDataUser to sync data user
   Future syncDataUser() async {
     try {
       // Get user form server
@@ -113,6 +124,65 @@ class SyncDataController {
         }
       } else {
         debugPrint("user data not found on server");
+      }
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
+  }
+
+  Future syncDataProvinsi() async {
+    try {
+      // Get provinsi form server
+      List<Provinsi>? provinsi = await DioClient().getProvinsi(token: token);
+      if (provinsi != null) {
+        pullProvinsi(provinsi);
+      } else {
+        debugPrint("provinsi data not found on server");
+      }
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
+  }
+
+  Future syncDataKabupaten() async {
+    try {
+      // Get kabupaten form server
+      List<Kabupaten>? kabupaten =
+          await DioClient().getAllKabupaten(token: token);
+      if (kabupaten != null) {
+        pullKabupaten(kabupaten);
+      } else {
+        debugPrint("kabupaten data not found on server");
+      }
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
+  }
+
+  Future syncDataKecamatan() async {
+    try {
+      // Get kecamatan form server
+      List<Kecamatan>? kecamatan =
+          await DioClient().getAllKecamatan(token: token);
+      if (kecamatan != null) {
+        pullKecamatan(kecamatan);
+      } else {
+        debugPrint("kecamatan data not found on server");
+      }
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
+  }
+
+  Future syncDataKelurahan() async {
+    try {
+      // Get kelurahan form server
+      List<Kelurahan>? kelurahan =
+          await DioClient().getAllKelurahan(token: token);
+      if (kelurahan != null) {
+        pullKelurahan(kelurahan);
+      } else {
+        debugPrint("kelurahan data not found on server");
       }
     } on DioError catch (e) {
       handleError(error: e);
@@ -186,7 +256,6 @@ class SyncDataController {
     debugPrint("user data has been pulled from server to local");
   }
 
-  // create function pushUser to push data user
   void pushUser(UserModel localUser) async {
     bool response = await DioClient().updateAkun(
       token: token,
@@ -200,6 +269,65 @@ class SyncDataController {
     } else {
       errorScackbar('Sync data user Gagal.');
     }
+  }
+
+  void pullProvinsi(List<Provinsi> provinsi) async {
+    // delete provinsi berfore pull
+    await DbHelper.deleteAllProvinsi(store_);
+    for (var prov in provinsi) {
+      ProvinsiModel provinsiModel = ProvinsiModel(
+        id: prov.id,
+        nama: prov.nama,
+        lastModified: DateTime.now().toString(),
+      );
+      await DbHelper.putProvinsi(store_, provinsiModel);
+    }
+    debugPrint("provinsi data has been pulled from server to local");
+  }
+
+  void pullKabupaten(List<Kabupaten> kabupaten) async {
+    // delete kabupaten berfore pull
+    await DbHelper.deleteAllKabupaten(store_);
+    for (var kab in kabupaten) {
+      KabupatenModel kabupatenModel = KabupatenModel(
+        id: kab.id,
+        nama: kab.nama,
+        provinsiId: int.parse(kab.provinsiId),
+        lastModified: DateTime.now().toString(),
+      );
+      await DbHelper.putKabupaten(store_, kabupatenModel);
+    }
+    debugPrint("kabupaten data has been pulled from server to local");
+  }
+
+  void pullKecamatan(List<Kecamatan> kecamatan) async {
+    // delete kecamatan berfore pull
+    await DbHelper.deleteAllKecamatan(store_);
+    for (var kec in kecamatan) {
+      KecamatanModel kecamatanModel = KecamatanModel(
+        id: kec.id,
+        nama: kec.nama,
+        kabupatenId: int.parse(kec.kabupatenKotaId),
+        lastModified: DateTime.now().toString(),
+      );
+      await DbHelper.putKecamatan(store_, kecamatanModel);
+    }
+    debugPrint("kecamatan data has been pulled from server to local");
+  }
+
+  void pullKelurahan(List<Kelurahan> kelurahan) async {
+    // delete kelurahan berfore pull
+    await DbHelper.deleteAllKelurahan(store_);
+    for (var kel in kelurahan) {
+      KelurahanModel kelurahanModel = KelurahanModel(
+        id: kel.id,
+        nama: kel.nama,
+        kecamatanId: int.parse(kel.kecamatanId),
+        lastModified: DateTime.now().toString(),
+      );
+      await DbHelper.putKelurahan(store_, kelurahanModel);
+    }
+    debugPrint("kelurahan data has been pulled from server to local");
   }
 
   /// Comparing between two dates

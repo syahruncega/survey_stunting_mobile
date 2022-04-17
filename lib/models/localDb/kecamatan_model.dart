@@ -5,6 +5,7 @@ import 'kelurahan_model.dart';
 
 @Entity()
 class KecamatanModel {
+  @Id(assignable: true)
   int? id = 0;
   String nama;
   int? kabupatenId;

@@ -534,6 +534,11 @@ class DbHelper {
     return store.box<ProvinsiModel>().getAll();
   }
 
+  /// put provinsi
+  static Future<int> putProvinsi(Store store, ProvinsiModel provinsi) async {
+    return store.box<ProvinsiModel>().put(provinsi);
+  }
+
   /// Get provinsi by id
   static Future<ProvinsiModel?> getProvinsiById(
     Store store, {
@@ -542,10 +547,26 @@ class DbHelper {
     return store.box<ProvinsiModel>().get(id);
   }
 
+  /// Delete all provinsi
+  static Future<int> deleteAllProvinsi(Store store) async {
+    return store.box<RespondenModel>().removeAll();
+  }
+
   //? Kabupaten
   /// Get all kabupaten
   static Future<List<KabupatenModel>> getKabupaten(Store store) async {
     return store.box<KabupatenModel>().getAll();
+  }
+
+  /// put kabupaten
+  static Future<int> putKabupaten(Store store, KabupatenModel kabupaten) async {
+    kabupaten.provinsi.targetId = kabupaten.provinsiId;
+    return store.box<KabupatenModel>().put(kabupaten);
+  }
+
+  /// delete all kabupaten
+  static Future<int> deleteAllKabupaten(Store store) async {
+    return store.box<KabupatenModel>().removeAll();
   }
 
   /// Get kabupaten by id
@@ -593,6 +614,17 @@ class DbHelper {
         .toList();
   }
 
+  /// put kecamatan
+  static Future<int> putKecamatan(Store store, KecamatanModel kecamatan) async {
+    kecamatan.kabupaten.targetId = kecamatan.kabupatenId;
+    return store.box<KecamatanModel>().put(kecamatan);
+  }
+
+  /// delete all kecamatan
+  static Future<int> deleteAllKecamatan(Store store) async {
+    return store.box<KecamatanModel>().removeAll();
+  }
+
   //? Kelurahan
   /// Get all kelurahan
   static Future<List<KelurahanModel>> getKelurahan(Store store) async {
@@ -617,5 +649,16 @@ class DbHelper {
     return kelurahans
         .where((kelurahan) => kelurahan.kecamatan.targetId == kecamatanId)
         .toList();
+  }
+
+  /// put kelurahan
+  static Future<int> putKelurahan(Store store, KelurahanModel kelurahan) async {
+    kelurahan.kecamatan.targetId = kelurahan.kecamatanId;
+    return store.box<KelurahanModel>().put(kelurahan);
+  }
+
+  /// delete all kelurahan
+  static Future<int> deleteAllKelurahan(Store store) async {
+    return store.box<KelurahanModel>().removeAll();
   }
 }
