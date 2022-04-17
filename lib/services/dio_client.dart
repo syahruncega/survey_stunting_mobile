@@ -101,7 +101,7 @@ class DioClient {
     }
   }
 
-  Future<Survey>? updateSurvey({
+  Future<List<Survey>>? updateSurvey({
     required String token,
     required Object data,
   }) async {
@@ -113,7 +113,7 @@ class DioClient {
           "authorization": "Bearer $token",
         }),
       );
-      return surveyFromJson(getData(response.data));
+      return listSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error update survey: $e');
       rethrow;
