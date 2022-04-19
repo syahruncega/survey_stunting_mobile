@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:survey_stunting/models/localDb/objectBox_generated_files/objectbox.g.dart';
@@ -441,21 +442,36 @@ class DbHelper {
   /// Params:
   /// - store (ObjextBoxStore)
   /// - kodeUnik (int)
-  static Future<dynamic> getDetailSurvey(Store store) async {
+  static Future<dynamic> getDetailSurvey(Store store,
+      {required int profileId}) async {
     // Get survey with kodeUnik = 92230298
     // Get Responden object id with kodeUnikResponden = 11223344
     // Get namaSurvey with id = 1
     // Get profile with id = 1
-    QueryBuilder<SurveyModel> builder =
-        store.box<SurveyModel>().query(SurveyModel_.kodeUnik.equals(92230298));
-    builder.link(SurveyModel_.kodeUnikResponden,
-        RespondenModel_.kodeUnik.equals(11223344));
-    builder.link(SurveyModel_.namaSurvey, NamaSurveyModel_.id.equals(1));
-    builder.link(SurveyModel_.profile, ProfileModel_.id.equals(1));
-    Query<SurveyModel> query = builder.build();
-    List<dynamic> result = query.find();
-    query.close();
-    return result;
+    // QueryBuilder<SurveyModel> builder =
+    //     store.box<SurveyModel>().query(SurveyModel_.kodeUnik.equals(92230298));
+    // builder.link(SurveyModel_.kodeUnikResponden,
+    //     RespondenModel_.kodeUnik.equals(11223344));
+    // builder.link(SurveyModel_.namaSurvey, NamaSurveyModel_.id.equals(1));
+    // builder.link(SurveyModel_.profile, ProfileModel_.id.equals(1));
+    // Query<SurveyModel> query = builder.build();
+    // List<dynamic> result = query.find();
+    // query.close();
+    // return result;
+    List allSurveys = [];
+    List surveys = await getSurveyByProfileId(store, profileId: profileId);
+    for (var survey in surveys) {
+      survey.map((e) => {
+            'id': e.id,
+            'kodeUnikResponden': e.kodeUnikResponden.kodeUnik,
+            'namaSurveyId': e.namaSurvey.namaSurvey,
+            'profileId': e.profile.namaLengkap,
+            'kategoriSelanjutnya': e.kodeUnikResponden.kodeUnik,
+            'isSelesai': e.isSelesai,
+            'kodeUnik': e.kodeUnikResponden.kodeUnik,
+            'updatedAt': e.kodeUnikResponden.kodeUnik,
+          });
+    }
   }
 
   // !TODO : Get total survey

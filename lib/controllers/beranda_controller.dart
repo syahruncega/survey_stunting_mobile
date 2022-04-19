@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:survey_stunting/models/survey.dart';
@@ -19,21 +20,26 @@ class BerandaController extends GetxController {
 
   Future getSurvey({String? search}) async {
     isLoadedSurvey.value = false;
-    try {
-      List<Survey>? response = await DioClient().getSurvey(
-        token: token,
-        queryParameters: SurveyParameters(
-          status: "belum_selesai",
-          search: search,
-        ),
-      );
-      surveys = response!;
-    } on DioError catch (e) {
-      if (e.response?.statusCode == 404) {
-        surveys = [];
-      } else {
-        handleError(error: e);
+    String offlineMode = dotenv.get('OFFLINE_MODE');
+    if (offlineMode == '0') {
+      try {
+        List<Survey>? response = await DioClient().getSurvey(
+          token: token,
+          queryParameters: SurveyParameters(
+            status: "belum_selesai",
+            search: search,
+          ),
+        );
+        surveys = response!;
+      } on DioError catch (e) {
+        if (e.response?.statusCode == 404) {
+          surveys = [];
+        } else {
+          handleError(error: e);
+        }
       }
+    } else {
+      //
     }
     isLoadedSurvey.value = true;
   }

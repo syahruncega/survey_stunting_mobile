@@ -36,16 +36,16 @@ class SyncDataController {
   SyncDataController({required this.store_});
 
   Future syncDataFromServer() async {
-    await syncDataUser();
-    await syncDataProfile();
-    await syncDataProvinsi();
-    await syncDataKabupaten();
-    await syncDataKecamatan();
-    await syncDataKelurahan();
-    await syncNamaSurvey();
-    await syncKategoriSoal();
-    await syncSoal();
-    await syncJawabanSoal();
+    // await syncDataUser();
+    // await syncDataProfile();
+    // await syncDataProvinsi();
+    // await syncDataKabupaten();
+    // await syncDataKecamatan();
+    // await syncDataKelurahan();
+    // await syncNamaSurvey();
+    // await syncKategoriSoal();
+    // await syncSoal();
+    // await syncJawabanSoal();
   }
 
   Future syncDataProfile() async {
@@ -266,7 +266,7 @@ class SyncDataController {
     //remove profile before pull
     await DbHelper.deleteAllProfile(store_);
     ProfileModel profile = ProfileModel(
-      id: 1,
+      id: profileData.id,
       namaLengkap: profileData.namaLengkap,
       jenisKelamin: profileData.jenisKelamin,
       tempatLahir: profileData.tempatLahir,
@@ -278,7 +278,7 @@ class SyncDataController {
       kelurahanId: profileData.desaKelurahan,
       nomorHp: profileData.nomorHp,
       email: profileData.email,
-      userId: 1,
+      userId: int.parse(profileData.userId),
       lastModified: DateTime.now().toString(),
     );
     await DbHelper.putProfile(store_, profile);
@@ -316,7 +316,7 @@ class SyncDataController {
     // delete user berfore pull
     DbHelper.deleteAllUser(store_);
     UserModel user = UserModel(
-      id: 1,
+      id: userData.id,
       username: userData.username,
       password: userData.password,
       status: userData.status,
