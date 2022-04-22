@@ -7,8 +7,9 @@ import 'survey_model.dart';
 
 @Entity()
 class JawabanSurveyModel {
+  @Id(assignable: true)
   int? id = 0;
-  String jawabanLainnya;
+  String? jawabanLainnya;
   int? soalId;
   int? kodeUnikSurveyId;
   int? kategoriSoalId;
@@ -17,7 +18,7 @@ class JawabanSurveyModel {
 
   JawabanSurveyModel({
     this.id,
-    required this.jawabanLainnya,
+    this.jawabanLainnya,
     this.soalId,
     this.kodeUnikSurveyId,
     this.kategoriSoalId,

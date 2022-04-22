@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -8,6 +10,9 @@ import 'package:survey_stunting/models/survey_parameters.dart';
 import 'package:survey_stunting/models/total_survey.dart';
 import 'package:survey_stunting/services/dio_client.dart';
 import 'package:survey_stunting/services/handle_errors.dart';
+
+import '../models/localDb/helpers.dart';
+import '../models/localDb/survey_model.dart';
 
 class BerandaController extends GetxController {
   final searchSurveyEditingController = TextEditingController();
@@ -39,7 +44,15 @@ class BerandaController extends GetxController {
         }
       }
     } else {
-      //
+      log('get local');
+      // Get survey local
+      List<SurveysModel>? localSurveys_ = await DbHelper.getDetailSurvey(
+        Objectbox.store_,
+        profileId: 3,
+        isSelesai: 0,
+      );
+      inspect(localSurveys_);
+      surveys = localSurveys_.map((e) => Survey.fromJson(e.toJson())).toList();
     }
     isLoadedSurvey.value = true;
   }

@@ -7,6 +7,7 @@ import 'kelurahan_model.dart';
 
 @Entity()
 class RespondenModel {
+  @Id(assignable: true)
   int? id = 0;
   int kodeUnik;
   int kartuKeluarga;
@@ -35,4 +36,17 @@ class RespondenModel {
   final kabupaten = ToOne<KabupatenModel>();
   final kecamatan = ToOne<KecamatanModel>();
   final kelurahan = ToOne<KelurahanModel>();
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "kode_unik": kodeUnik.toString(),
+        "kartu_keluarga": kartuKeluarga.toString(),
+        "alamat": alamat.toString(),
+        "provinsi_id": provinsiId.toString(),
+        "kabupaten_kota_id": kabupatenId.toString(),
+        "kecamatan_id": kecamatanId.toString(),
+        "desa_kelurahan_id": kelurahanId.toString(),
+        "nomor_hp": nomorHp.toString(),
+        "updated_at": lastModified.toString(),
+      };
 }

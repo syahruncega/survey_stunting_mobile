@@ -5,8 +5,6 @@ import 'package:survey_stunting/controllers/sync_data_controller.dart';
 
 import '../models/localDb/helpers.dart';
 
-late final Objectbox objectbox;
-
 class LayoutController extends GetxController {
   var scaffoldKey = GlobalKey<ScaffoldState>();
   DateTime backButtonPressedTime = DateTime.now();
@@ -48,8 +46,7 @@ class LayoutController extends GetxController {
 
   @override
   void onInit() async {
-    objectbox = await Objectbox.create();
-    SyncDataController(store_: objectbox.store).syncDataFromServer();
+    SyncDataController(store_: Objectbox.store_).syncDataFromServer();
     Future.delayed(const Duration(milliseconds: 1500), () {
       canExit = true;
     });
