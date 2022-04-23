@@ -22,10 +22,10 @@ class BerandaController extends GetxController {
   TotalSurvey totalSurvey = TotalSurvey();
 
   String token = GetStorage().read("token");
+  String offlineMode = dotenv.get('OFFLINE_MODE');
 
   Future getSurvey({String? search}) async {
     isLoadedSurvey.value = false;
-    String offlineMode = dotenv.get('OFFLINE_MODE');
     if (offlineMode == '0') {
       try {
         List<Survey>? response = await DioClient().getSurvey(
@@ -49,7 +49,8 @@ class BerandaController extends GetxController {
       List<SurveysModel>? localSurveys_ = await DbHelper.getDetailSurvey(
         Objectbox.store_,
         profileId: 3,
-        isSelesai: 0,
+        isSelesai: 1,
+        keyword: search,
       );
       inspect(localSurveys_);
       surveys = localSurveys_.map((e) => Survey.fromJson(e.toJson())).toList();
@@ -59,11 +60,18 @@ class BerandaController extends GetxController {
 
   Future getTotalSurvey() async {
     isLoadedTotalSurvey.value = false;
-    try {
-      TotalSurvey? response = await DioClient().getTotalSurvey(token: token);
-      totalSurvey = response!;
-    } on DioError catch (e) {
-      handleError(error: e);
+    if (offlineMode == '0') {
+      try {
+        TotalSurvey? response = await DioClient().getTotalSurvey(token: token);
+        totalSurvey = response!;
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      // get total survey local
+      TotalSurvey? result =
+          await DbHelper.getTotalSurvey(Objectbox.store_, profileId: 3);
+      totalSurvey = result;
     }
     isLoadedTotalSurvey.value = true;
   }

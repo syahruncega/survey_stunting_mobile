@@ -5,6 +5,7 @@ import 'package:get/state_manager.dart';
 import 'package:survey_stunting/models/localDb/objectBox_generated_files/objectbox.g.dart';
 import 'package:survey_stunting/models/localDb/profile_model.dart';
 import 'package:survey_stunting/models/localDb/responden_model.dart';
+import 'package:survey_stunting/models/total_survey.dart';
 import 'jawaban_soal_model.dart';
 import 'jawaban_survey_model.dart';
 import 'kabupaten_model.dart';
@@ -433,14 +434,59 @@ class DbHelper {
   static Future<List<SurveyModel>> getSurveyByProfileId(
     Store store, {
     required int profileId,
-    required int isSelesai,
+    int? isSelesai,
+    String? keyword,
   }) async {
     final surveys = await getSurvey(store);
-    return surveys
-        .where((survey) =>
-            survey.profile.targetId == profileId &&
-            survey.isSelesai == isSelesai)
-        .toList();
+    if (isSelesai == null) {
+      if (keyword == null) {
+        return surveys
+            .where((survey) => survey.profile.targetId == profileId)
+            .toList();
+      } else {
+        return surveys
+            .where((survey) => survey.profile.targetId == profileId)
+            .where((survey) =>
+                survey.kodeUnikResponden.target!.kartuKeluarga
+                    .toString()
+                    .toLowerCase()
+                    .contains(keyword.toLowerCase()) ||
+                survey.namaSurvey.target!.nama
+                    .toString()
+                    .toLowerCase()
+                    .contains(keyword.toLowerCase()) ||
+                survey.profile.target!.namaLengkap
+                    .toString()
+                    .toLowerCase()
+                    .contains(keyword.toLowerCase()))
+            .toList();
+      }
+    } else {
+      if (keyword == null) {
+        return surveys
+            .where((survey) =>
+                survey.profile.targetId == profileId &&
+                survey.isSelesai == isSelesai)
+            .toList();
+      } else {
+        List<SurveyModel> filteredSurveys = surveys
+            .where((survey) =>
+                survey.profile.targetId == profileId &&
+                survey.isSelesai == isSelesai)
+            .toList();
+
+        filteredSurveys.retainWhere((survey) =>
+            survey.namaSurvey.target!.nama
+                .toString()
+                .toLowerCase()
+                .contains(keyword.toString().toLowerCase()) ||
+            survey.profile.target!.namaLengkap
+                .toString()
+                .toLowerCase()
+                .contains(keyword.toString().toLowerCase()));
+        return filteredSurveys;
+      }
+    }
   }
 
   /// Get survey by kodeUnikRespondenId
@@ -471,10 +517,10 @@ class DbHelper {
   /// - store (ObjextBoxStore)
   /// - kodeUnik (int)
   static Future<List<SurveysModel>> getDetailSurvey(Store store,
-      {required int profileId, required int isSelesai}) async {
+      {required int profileId, int? isSelesai, String? keyword}) async {
     List<SurveysModel> allSurveys = [];
     List<SurveyModel> surveys = await getSurveyByProfileId(store,
-        profileId: profileId, isSelesai: isSelesai);
+        profileId: profileId, isSelesai: isSelesai, keyword: keyword);
     for (var survey in surveys) {
       RespondenModel? responden = await getRespondenByKodeUnik(store,
           kodeUnik: survey.kodeUnikResponden.targetId);
@@ -500,7 +546,23 @@ class DbHelper {
     return allSurveys;
   }
 
-  // !TODO : Get total survey
+  static Future<TotalSurvey> getTotalSurvey(
+    Store store, {
+    required int profileId,
+  }) async {
+    final surveys = await getSurveyByProfileId(
+      store,
+      profileId: profileId,
+    );
+    final totalSurvey = TotalSurvey(
+      respondenPost:
+          surveys.where((survey) => survey.namaSurvey.targetId == 1).length,
+      respondenPre:
+          surveys.where((survey) => survey.namaSurvey.targetId == 2).length,
+      totalResponden: surveys.toSet().toList().length,
+    );
+    return totalSurvey;
+  }
 
   // Get survey by keyword (name, kartu keluarga, kodeUnikResponden)
   /// - name (String) - optional
