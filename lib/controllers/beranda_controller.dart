@@ -22,6 +22,7 @@ class BerandaController extends GetxController {
   TotalSurvey totalSurvey = TotalSurvey();
 
   String token = GetStorage().read("token");
+  int userId = GetStorage().read("userId");
   String offlineMode = dotenv.get('OFFLINE_MODE');
 
   Future getSurvey({String? search}) async {
@@ -46,13 +47,15 @@ class BerandaController extends GetxController {
     } else {
       log('get local');
       // Get survey local
+      var profileData =
+          await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
+      int profileId = profileData!.id!;
       List<SurveysModel>? localSurveys_ = await DbHelper.getDetailSurvey(
         Objectbox.store_,
-        profileId: 3,
-        isSelesai: 1,
+        profileId: profileId,
+        isSelesai: 0,
         keyword: search,
       );
-      inspect(localSurveys_);
       surveys = localSurveys_.map((e) => Survey.fromJson(e.toJson())).toList();
     }
     isLoadedSurvey.value = true;
@@ -69,8 +72,11 @@ class BerandaController extends GetxController {
       }
     } else {
       // get total survey local
+      var profileData =
+          await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
+      int profileId = profileData!.id!;
       TotalSurvey? result =
-          await DbHelper.getTotalSurvey(Objectbox.store_, profileId: 3);
+          await DbHelper.getTotalSurvey(Objectbox.store_, profileId: profileId);
       totalSurvey = result;
     }
     isLoadedTotalSurvey.value = true;

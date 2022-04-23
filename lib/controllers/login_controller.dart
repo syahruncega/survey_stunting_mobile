@@ -41,6 +41,7 @@ class LoginController extends GetxController {
       try {
         Session? session = await _dioClient.login(loginInfo: auth);
         GetStorage().write("token", session?.token);
+        GetStorage().write("userId", session?.data.id);
         GetStorage().write("session", sessionToJson(session!));
         Get.offAllNamed(RouteName.layout);
       } on DioError catch (e) {
