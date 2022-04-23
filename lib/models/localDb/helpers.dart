@@ -444,22 +444,22 @@ class DbHelper {
             .where((survey) => survey.profile.targetId == profileId)
             .toList();
       } else {
-        return surveys
-            .where((survey) => survey.profile.targetId == profileId)
+        List<SurveyModel> filteredSurveys = surveys
             .where((survey) =>
-                survey.kodeUnikResponden.target!.kartuKeluarga
-                    .toString()
-                    .toLowerCase()
-                    .contains(keyword.toLowerCase()) ||
-                survey.namaSurvey.target!.nama
-                    .toString()
-                    .toLowerCase()
-                    .contains(keyword.toLowerCase()) ||
-                survey.profile.target!.namaLengkap
-                    .toString()
-                    .toLowerCase()
-                    .contains(keyword.toLowerCase()))
+                survey.profile.targetId == profileId &&
+                survey.isSelesai == isSelesai)
             .toList();
+
+        filteredSurveys.retainWhere((survey) =>
+            survey.namaSurvey.target!.nama
+                .toString()
+                .toLowerCase()
+                .contains(keyword.toString().toLowerCase()) ||
+            survey.profile.target!.namaLengkap
+                .toString()
+                .toLowerCase()
+                .contains(keyword.toString().toLowerCase()));
+        return filteredSurveys;
       }
     } else {
       if (keyword == null) {
