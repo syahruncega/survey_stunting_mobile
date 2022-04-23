@@ -2,9 +2,9 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_stunting/models/survey.dart';
 import 'package:survey_stunting/models/survey_parameters.dart';
 import 'package:survey_stunting/models/total_survey.dart';
@@ -23,11 +23,12 @@ class BerandaController extends GetxController {
 
   String token = GetStorage().read("token");
   int userId = GetStorage().read("userId");
-  String offlineMode = dotenv.get('OFFLINE_MODE');
 
   Future getSurvey({String? search}) async {
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
     isLoadedSurvey.value = false;
-    if (offlineMode == '0') {
+    if (!offlineMode) {
       try {
         List<Survey>? response = await DioClient().getSurvey(
           token: token,
@@ -62,8 +63,10 @@ class BerandaController extends GetxController {
   }
 
   Future getTotalSurvey() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
     isLoadedTotalSurvey.value = false;
-    if (offlineMode == '0') {
+    if (!offlineMode) {
       try {
         TotalSurvey? response = await DioClient().getTotalSurvey(token: token);
         totalSurvey = response!;

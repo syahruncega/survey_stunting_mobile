@@ -63,6 +63,24 @@ class DioClient {
     }
   }
 
+  Future testConnection({required String token}) async {
+    try {
+      Response response = await _dio.get(
+        "/connection",
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      if (response.statusCode == 200) {
+        return true;
+      }
+      return false;
+    } on DioError catch (e) {
+      log('Error check Connection: $e');
+      rethrow;
+    }
+  }
+
   Future<List<Survey>?> getSurvey({
     required String token,
     SurveyParameters? queryParameters,

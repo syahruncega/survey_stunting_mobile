@@ -52,6 +52,7 @@ dependencies:
   file_saver: ^0.1.0
   objectbox: ^1.4.1
   objectbox_flutter_libs: any
+  shared_preferences: ^2.0.13
 
 dev_dependencies:
   flutter_test:
