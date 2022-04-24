@@ -316,6 +316,8 @@ class SyncDataController {
             debugPrint('jawaban survey not found on server');
           }
         }
+      } else {
+        debugPrint('local survey is empty');
       }
     } on DioError catch (e) {
       handleError(error: e);

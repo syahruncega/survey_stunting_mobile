@@ -1,5 +1,6 @@
 import 'package:objectbox/objectbox.dart';
 import 'package:survey_stunting/models/localDb/provinsi_model.dart';
+import 'package:survey_stunting/models/localDb/survey_model.dart';
 
 import 'kabupaten_model.dart';
 import 'kecamatan_model.dart';
@@ -7,8 +8,8 @@ import 'kelurahan_model.dart';
 
 @Entity()
 class RespondenModel {
-  @Id(assignable: true)
   int? id = 0;
+  @Id(assignable: true)
   int kodeUnik;
   int kartuKeluarga;
   String alamat;
@@ -36,6 +37,9 @@ class RespondenModel {
   final kabupaten = ToOne<KabupatenModel>();
   final kecamatan = ToOne<KecamatanModel>();
   final kelurahan = ToOne<KelurahanModel>();
+
+  @Backlink()
+  final survey = ToMany<SurveyModel>();
 
   Map<String, dynamic> toJson() => {
         "id": id,

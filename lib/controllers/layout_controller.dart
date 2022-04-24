@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -50,6 +52,7 @@ class LayoutController extends GetxController {
   }
 
   Future checkConnection() async {
+    log('checking connection..');
     final prefs = await SharedPreferences.getInstance();
     try {
       bool response = await DioClient().testConnection(
