@@ -181,11 +181,11 @@ class SurveyController extends GetxController {
           handleError(error: e);
         }
       } else {
-        debugPrint('create form offline');
+        debugPrint('create survey offline');
         int uniqueCode = await generateUniqueCode();
         SurveyModel data = SurveyModel(
           kodeUnik: uniqueCode,
-          kodeUnikRespondenId: kodeUnikResponden,
+          kodeUnikRespondenId: int.parse(kodeUnikResponden),
           namaSurveyId: namaSurveyId,
           profileId: profileId,
           isSelesai: 0,
@@ -216,7 +216,7 @@ class SurveyController extends GetxController {
         handleError(error: e);
       }
     } else {
-      debugPrint('delete local survey' + id.toString());
+      debugPrint('delete local survey' + kodeUnik.toString());
       // await DbHelper.deleteSurvey(Objectbox.store_, id: id);
     }
     isLoading.value = false;
