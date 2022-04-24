@@ -22,4 +22,11 @@ class NamaSurveyModel {
 
   @Backlink()
   final survey = ToMany<SurveyModel>();
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "nama": nama.toString(),
+        "tipe": tipe.toString(),
+        "updated_at": lastModified.toString(),
+      };
 }

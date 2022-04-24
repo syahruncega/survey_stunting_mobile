@@ -41,4 +41,21 @@ class ProfileModel {
 
   @Backlink()
   final survey = ToMany<SurveyModel>();
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "user_id": userId.toString(),
+        "nama_lengkap": namaLengkap.toString(),
+        "jenis_kelamin": jenisKelamin.toString(),
+        "tempat_lahir": tempatLahir.toString(),
+        "tanggal_lahir": tanggalLahir.toString(),
+        "alamat": alamat.toString(),
+        "provinsi": provinsiId.toString(),
+        "kabupaten_kota": kabupatenId.toString(),
+        "kecamatan": kecamatanId.toString(),
+        "desa_kelurahan": kelurahanId.toString(),
+        "nomor_hp": nomorHp.toString(),
+        "email": email.toString(),
+        "updated_at": lastModified.toString(),
+      };
 }

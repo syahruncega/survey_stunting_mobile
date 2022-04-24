@@ -15,7 +15,7 @@ Future<void> main() async {
   await GetStorage.init();
   Get.put<GetStorage>(GetStorage());
   WidgetsFlutterBinding.ensureInitialized();
-  // objectbox = await Objectbox.create();
+  objectbox = await Objectbox.create();
   runApp(const MyApp());
 }
 

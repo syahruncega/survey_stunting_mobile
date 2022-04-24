@@ -1,12 +1,18 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_stunting/models/survey.dart';
 import 'package:survey_stunting/models/survey_parameters.dart';
 import 'package:survey_stunting/models/total_survey.dart';
 import 'package:survey_stunting/services/dio_client.dart';
 import 'package:survey_stunting/services/handle_errors.dart';
+
+import '../models/localDb/helpers.dart';
+import '../models/localDb/survey_model.dart';
 
 class BerandaController extends GetxController {
   final searchSurveyEditingController = TextEditingController();
@@ -16,35 +22,65 @@ class BerandaController extends GetxController {
   TotalSurvey totalSurvey = TotalSurvey();
 
   String token = GetStorage().read("token");
+  int userId = GetStorage().read("userId");
 
   Future getSurvey({String? search}) async {
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
     isLoadedSurvey.value = false;
-    try {
-      List<Survey>? response = await DioClient().getSurvey(
-        token: token,
-        queryParameters: SurveyParameters(
-          status: "belum_selesai",
-          search: search,
-        ),
-      );
-      surveys = response!;
-    } on DioError catch (e) {
-      if (e.response?.statusCode == 404) {
-        surveys = [];
-      } else {
-        handleError(error: e);
+    if (!offlineMode) {
+      try {
+        List<Survey>? response = await DioClient().getSurvey(
+          token: token,
+          queryParameters: SurveyParameters(
+            status: "belum_selesai",
+            search: search,
+          ),
+        );
+        surveys = response!;
+      } on DioError catch (e) {
+        if (e.response?.statusCode == 404) {
+          surveys = [];
+        } else {
+          handleError(error: e);
+        }
       }
+    } else {
+      log('get local');
+      // Get survey local
+      var profileData =
+          await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
+      int profileId = profileData!.id!;
+      List<SurveysModel>? localSurveys_ = await DbHelper.getDetailSurvey(
+        Objectbox.store_,
+        profileId: profileId,
+        isSelesai: 0,
+        keyword: search,
+      );
+      surveys = localSurveys_.map((e) => Survey.fromJson(e.toJson())).toList();
     }
     isLoadedSurvey.value = true;
   }
 
   Future getTotalSurvey() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
     isLoadedTotalSurvey.value = false;
-    try {
-      TotalSurvey? response = await DioClient().getTotalSurvey(token: token);
-      totalSurvey = response!;
-    } on DioError catch (e) {
-      handleError(error: e);
+    if (!offlineMode) {
+      try {
+        TotalSurvey? response = await DioClient().getTotalSurvey(token: token);
+        totalSurvey = response!;
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      // get total survey local
+      var profileData =
+          await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
+      int profileId = profileData!.id!;
+      TotalSurvey? result =
+          await DbHelper.getTotalSurvey(Objectbox.store_, profileId: profileId);
+      totalSurvey = result;
     }
     isLoadedTotalSurvey.value = true;
   }

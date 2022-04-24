@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_storage/get_storage.dart';
@@ -5,26 +7,32 @@ import 'package:objectbox/objectbox.dart';
 import 'package:survey_stunting/models/akun.dart';
 import 'package:survey_stunting/models/localDb/provinsi_model.dart';
 import 'package:survey_stunting/models/provinsi.dart';
+import 'package:survey_stunting/models/responden.dart';
 
 import '../components/error_scackbar.dart';
 import '../components/success_scackbar.dart';
 import '../models/jawaban_soal.dart';
+import '../models/jawaban_survey.dart';
 import '../models/kabupaten.dart';
 import '../models/kategori_soal.dart';
 import '../models/kecamatan.dart';
 import '../models/kelurahan.dart';
 import '../models/localDb/helpers.dart';
 import '../models/localDb/jawaban_soal_model.dart';
+import '../models/localDb/jawaban_survey_model.dart';
 import '../models/localDb/kabupaten_model.dart';
 import '../models/localDb/kategori_soal_model.dart';
 import '../models/localDb/kecamatan_model.dart';
 import '../models/localDb/kelurahan_model.dart';
 import '../models/localDb/nama_survey_mode.dart';
 import '../models/localDb/profile_model.dart';
+import '../models/localDb/responden_model.dart';
 import '../models/localDb/soal_model.dart';
+import '../models/localDb/survey_model.dart';
 import '../models/localDb/user_model.dart';
 import '../models/nama_survey.dart';
 import '../models/soal.dart';
+import '../models/survey.dart';
 import '../models/user_profile.dart';
 import '../services/dio_client.dart';
 import '../services/handle_errors.dart';
@@ -36,16 +44,19 @@ class SyncDataController {
   SyncDataController({required this.store_});
 
   Future syncDataFromServer() async {
-    await syncDataUser();
-    await syncDataProfile();
-    await syncDataProvinsi();
-    await syncDataKabupaten();
-    await syncDataKecamatan();
-    await syncDataKelurahan();
-    await syncNamaSurvey();
-    await syncKategoriSoal();
-    await syncSoal();
-    await syncJawabanSoal();
+    // await syncDataUser();
+    // await syncDataProfile();
+    // await syncDataProvinsi();
+    // await syncDataKabupaten();
+    // await syncDataKecamatan();
+    // await syncDataKelurahan();
+    // await syncNamaSurvey();
+    // await syncKategoriSoal();
+    // await syncSoal();
+    // await syncJawabanSoal();
+    // await syncResponden();
+    // await syncSurvey();
+    // await syncJawabanSurvey();
   }
 
   Future syncDataProfile() async {
@@ -261,12 +272,64 @@ class SyncDataController {
     }
   }
 
+  Future syncResponden() async {
+    try {
+      // Get responden form server
+      List<Responden>? responden = await DioClient().getResponden(token: token);
+      if (responden != null) {
+        pullResponden(responden);
+      } else {
+        debugPrint("responden data not found on server");
+      }
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
+  }
+
+  Future syncSurvey() async {
+    try {
+      // Get survey form server
+      List<Survey>? survey = await DioClient().getSurvey(token: token);
+      if (survey != null) {
+        pullSurvey(survey);
+      } else {
+        debugPrint("survey data not found on server");
+      }
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
+  }
+
+  Future syncJawabanSurvey() async {
+    try {
+      // get survey from local
+      var surveys = await DbHelper.getSurvey(store_);
+      if (surveys.isNotEmpty) {
+        for (var s in surveys) {
+          // Get jawabanSurvey form server
+          List<JawabanSurvey>? jawabanSurvey = await DioClient()
+              .getJawabanSurvey(
+                  token: token, kodeUnikSurvey: s.kodeUnik.toString());
+          if (jawabanSurvey != null) {
+            pullJawabanSurvey(jawabanSurvey);
+          } else {
+            debugPrint('jawaban survey not found on server');
+          }
+        }
+      } else {
+        debugPrint('local survey is empty');
+      }
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
+  }
+
   void pullProfile(UserProfile serverProfile) async {
     var profileData = serverProfile.data!;
     //remove profile before pull
     await DbHelper.deleteAllProfile(store_);
     ProfileModel profile = ProfileModel(
-      id: 1,
+      id: profileData.id,
       namaLengkap: profileData.namaLengkap,
       jenisKelamin: profileData.jenisKelamin,
       tempatLahir: profileData.tempatLahir,
@@ -278,7 +341,7 @@ class SyncDataController {
       kelurahanId: profileData.desaKelurahan,
       nomorHp: profileData.nomorHp,
       email: profileData.email,
-      userId: 1,
+      userId: int.parse(profileData.userId),
       lastModified: DateTime.now().toString(),
     );
     await DbHelper.putProfile(store_, profile);
@@ -316,7 +379,7 @@ class SyncDataController {
     // delete user berfore pull
     DbHelper.deleteAllUser(store_);
     UserModel user = UserModel(
-      id: 1,
+      id: userData.id,
       username: userData.username,
       password: userData.password,
       status: userData.status,
@@ -464,6 +527,69 @@ class SyncDataController {
       await DbHelper.putNamaSurvey(store_, namaSurveyModel);
     }
     debugPrint("nama survey data has been pulled from server to local");
+  }
+
+  void pullResponden(List<Responden> responden) async {
+    // delete responden berfore pull
+    await DbHelper.deleteAllResponden(store_);
+    for (var resp in responden) {
+      RespondenModel respondenModel = RespondenModel(
+        id: resp.id,
+        kodeUnik: int.parse(resp.kodeUnik!),
+        kartuKeluarga: int.parse(resp.kartuKeluarga),
+        alamat: resp.alamat,
+        nomorHp: resp.nomorHp.toString(),
+        provinsiId: int.parse(resp.provinsiId),
+        kabupatenId: int.parse(resp.kabupatenKotaId),
+        kecamatanId: int.parse(resp.kecamatanId),
+        kelurahanId: int.parse(resp.desaKelurahanId),
+        lastModified: DateTime.now().toString(),
+      );
+      await DbHelper.putResponden(store_, respondenModel);
+    }
+    debugPrint("responden data has been pulled from server to local");
+  }
+
+  void pullSurvey(List<Survey> survey) async {
+    // delete survey berfore pull
+    await DbHelper.deleteAllSurvey(store_);
+    for (var s in survey) {
+      SurveyModel surveyModel = SurveyModel(
+        id: s.id,
+        kodeUnik: int.parse(s.kodeUnik!),
+        kategoriSelanjutnya: s.kategoriSelanjutnya != null
+            ? int.parse(s.kategoriSelanjutnya!)
+            : null,
+        isSelesai: int.parse(s.isSelesai),
+        namaSurveyId: int.parse(s.namaSurveyId),
+        profileId: int.parse(s.profileId),
+        kodeUnikRespondenId: int.parse(s.kodeUnikResponden),
+        lastModified: DateTime.now().toString(),
+      );
+      await DbHelper.putSurvey(store_, surveyModel);
+    }
+    debugPrint("survey data has been pulled from server to local");
+  }
+
+  void pullJawabanSurvey(List<JawabanSurvey> jawabanSurvey) async {
+    // delete jawaban survey berfore pull
+    await DbHelper.deleteAllJawabanSurvey(store_);
+    for (var jawaban in jawabanSurvey) {
+      JawabanSurveyModel jawabanSurveyModel = JawabanSurveyModel(
+        id: jawaban.id,
+        jawabanLainnya:
+            jawaban.jawabanLainnya != null ? jawaban.jawabanLainnya! : null,
+        soalId: int.parse(jawaban.soalId),
+        kategoriSoalId: int.parse(jawaban.kategoriSoalId),
+        jawabanSoalId: jawaban.jawabanSoalId != null
+            ? int.parse(jawaban.jawabanSoalId!)
+            : null,
+        kodeUnikSurveyId: int.parse(jawaban.kodeUnikSurvey),
+        lastModified: DateTime.now().toString(),
+      );
+      await DbHelper.putJawabanSurvey(store_, jawabanSurveyModel);
+    }
+    debugPrint("jawaban survey data has been pulled from server to local");
   }
 
   /// Comparing between two dates
