@@ -2,12 +2,13 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:survey_stunting/components/custom_check_box.dart';
-import 'package:survey_stunting/components/custom_combo_box.dart';
 import 'package:survey_stunting/components/filled_text_field.dart';
+import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
+import 'package:survey_stunting/models/jawaban_survey.dart';
 import 'package:survey_stunting/models/kategori_soal.dart';
 import 'package:survey_stunting/models/soal.dart';
 import 'package:survey_stunting/models/soal_and_jawaban.dart';
@@ -17,13 +18,59 @@ import 'package:survey_stunting/services/handle_errors.dart';
 
 class IsiSurveyController extends GetxController {
   String token = GetStorage().read("token");
-  late String currentCategoryId;
-  Rx<String> currentCategoryTitle = "".obs;
+  Rx<String> title = "".obs;
+  var isLoading = true.obs;
+  var isLoadingNext = false.obs;
+  var isLoadingPrevious = false.obs;
+  late KategoriSoal currentKategoriSoal;
   late Survey survey;
-  late List<KategoriSoal> kategoriSoal;
+  late List<KategoriSoal> kategoriSoal = [];
+  late List<JawabanSurvey> initialJawabanSurvey = [];
+  late List<JawabanSurvey> currentJawabanSurvey;
   final soal = RxList<Soal>();
   final soalAndJawaban = RxList<SoalAndJawaban>();
-  var isLoading = true.obs;
+  final formKey = GlobalKey<FormState>();
+  int currentOrder = 0;
+
+  @override
+  void onInit() async {
+    survey = Get.arguments;
+    await getKategoriSoal();
+
+    if (survey.kategoriSelanjutnya != null) {
+      currentKategoriSoal = kategoriSoal.firstWhere(
+          (element) => element.id.toString() == survey.kategoriSelanjutnya!);
+    } else {
+      currentKategoriSoal = kategoriSoal[0];
+    }
+
+    await getJawabanSurvey();
+    title.value = currentKategoriSoal.nama;
+    currentOrder = int.parse(currentKategoriSoal.urutan);
+
+    await getSoal();
+    await getJawabanSoal();
+    isLoading.value = false;
+    currentJawabanSurvey = [];
+    super.onInit();
+  }
+
+  Future getJawabanSurvey() async {
+    try {
+      List<JawabanSurvey>? response = await DioClient().getJawabanSurvey(
+        token: token,
+        kodeUnikSurvey: survey.kodeUnik!,
+        kategoriSoalId: currentKategoriSoal.id.toString(),
+      );
+      initialJawabanSurvey = response!;
+    } on DioError catch (e) {
+      if (e.response!.statusCode == 404) {
+        initialJawabanSurvey = [];
+      } else {
+        handleError(error: e);
+      }
+    }
+  }
 
   Future getKategoriSoal() async {
     try {
@@ -37,8 +84,10 @@ class IsiSurveyController extends GetxController {
 
   Future getSoal() async {
     try {
-      List<Soal>? response = await DioClient()
-          .getSoal(token: token, kategoriSoalId: currentCategoryId);
+      List<Soal>? response = await DioClient().getSoal(
+        token: token,
+        kategoriSoalId: currentKategoriSoal.id.toString(),
+      );
       soal.value = response!;
     } on DioError catch (e) {
       handleError(error: e);
@@ -66,76 +115,229 @@ class IsiSurveyController extends GetxController {
     required String soal,
     required String typeJawaban,
     required int soalId,
-    List<JawabanSoal>? jawaban,
+    List<JawabanSoal>? jawabanSoal,
     required BuildContext context,
   }) {
-    Rx<String> groupValue = "".obs;
     switch (typeJawaban) {
       case "Pilihan Ganda":
-        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            "$number. $soal",
-            style: Theme.of(context).textTheme.headline3,
-          ),
-          ...jawaban!.map((value) {
-            var index = jawaban.indexOf(value);
-            if (index == 0) {
-              groupValue.value = value.id.toString();
-            }
-            return Obx(
-              () => CustomComboBox(
-                label: value.jawaban,
-                value: value.id.toString(),
-                groupValue: groupValue.value,
-                onChanged: (x) {
-                  groupValue.value = x!;
-                },
-              ),
+        var options = jawabanSoal!.map((value) {
+          JawabanSurvey jawabanSurvey;
+          var check = initialJawabanSurvey.firstWhereOrNull((element) =>
+              element.soalId == soalId.toString() &&
+              element.jawabanSoalId == value.id.toString());
+          if (check != null) {
+            jawabanSurvey = check;
+          } else {
+            jawabanSurvey = JawabanSurvey(
+              soalId: soalId.toString(),
+              kodeUnikSurvey: survey.kodeUnik.toString(),
+              kategoriSoalId: currentKategoriSoal.id.toString(),
+              jawabanSoalId: value.id.toString(),
             );
-          })
-        ]);
+          }
+          return FormBuilderFieldOption(
+            value: jawabanSurvey,
+            child: Text(value.jawaban),
+          );
+        }).toList();
+
+        var initalValue = initialJawabanSurvey
+            .firstWhereOrNull((element) => element.soalId == soalId.toString());
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "$number. $soal",
+              style: Theme.of(context).textTheme.headline3,
+            ),
+            FormBuilderRadioGroup(
+              name: soalId.toString(),
+              activeColor: Theme.of(context).primaryColor,
+              orientation: OptionsOrientation.vertical,
+              initialValue: initalValue,
+              options: options,
+              validator: (value) {
+                if (value == null) {
+                  return "Jawaban tidak boleh kosong";
+                }
+                return null;
+              },
+              onSaved: (value) async {
+                value as JawabanSurvey;
+                currentJawabanSurvey.add(value);
+              },
+            )
+          ],
+        );
       case "Kotak Centang":
-        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            "$number. $soal",
-            style: Theme.of(context).textTheme.headline3,
-          ),
-          ...jawaban!.map((value) {
-            Rx<bool> checkedValue = false.obs;
-            return Obx(
-              () => CustomCheckBox(
-                label: value.jawaban,
-                value: checkedValue.value,
-                groupValue: groupValue.value,
-                isOther: value.isLainnya == "1" ? true : false,
-                onChanged: (x) {
-                  checkedValue.value = x!;
-                },
-              ),
+        var options = jawabanSoal!.map((value) {
+          JawabanSurvey jawabanSurvey;
+          var check = initialJawabanSurvey.firstWhereOrNull((element) =>
+              element.soalId == soalId.toString() &&
+              element.jawabanSoalId == value.id.toString());
+          if (check != null) {
+            jawabanSurvey = check;
+          } else {
+            jawabanSurvey = JawabanSurvey(
+              soalId: soalId.toString(),
+              kodeUnikSurvey: survey.kodeUnik.toString(),
+              kategoriSoalId: currentKategoriSoal.id.toString(),
+              jawabanSoalId: value.id.toString(),
             );
-          })
-        ]);
+          }
+          return FormBuilderFieldOption(
+            value: jawabanSurvey,
+            child: value.isLainnya == "0"
+                ? Text(value.jawaban)
+                : FilledTextField(
+                    initialValue: jawabanSurvey.jawabanLainnya ?? "",
+                    onChanged: (value) => jawabanSurvey.jawabanLainnya = value,
+                    hintText: "Lainnya",
+                    onSaved: (value) {},
+                  ),
+          );
+        }).toList();
+        var initialValue = initialJawabanSurvey
+            .where((e) => e.soalId == soalId.toString())
+            .toList();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "$number. $soal",
+              style: Theme.of(context).textTheme.headline3,
+            ),
+            FormBuilderCheckboxGroup(
+              name: soalId.toString(),
+              activeColor: Theme.of(context).primaryColor,
+              orientation: OptionsOrientation.vertical,
+              initialValue: initialValue,
+              options: options,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Jawaban tidak boleh kosong";
+                }
+                return null;
+              },
+              onSaved: (value) async {
+                if (value!.isNotEmpty) {
+                  for (var item in value) {
+                    currentJawabanSurvey.add(item as JawabanSurvey);
+                  }
+                }
+              },
+            ),
+          ],
+        );
       default:
-        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          FilledTextField(
-            title: "$number. $soal",
-          ),
-        ]);
+        var initialValue = initialJawabanSurvey
+            .firstWhereOrNull((element) => element.soalId == soalId.toString());
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FilledTextField(
+              title: "$number. $soal",
+              initialValue: initialValue?.jawabanLainnya ?? "",
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return "Jawaban tidak boleh kosong";
+                }
+                return null;
+              },
+              onSaved: (value) async {
+                currentJawabanSurvey.add(
+                  JawabanSurvey(
+                    soalId: soalId.toString(),
+                    kodeUnikSurvey: survey.kodeUnik.toString(),
+                    kategoriSoalId: currentKategoriSoal.id.toString(),
+                    jawabanLainnya: value,
+                  ),
+                );
+              },
+            ),
+          ],
+        );
     }
   }
 
-  @override
-  void onInit() async {
-    survey = Get.arguments;
-    currentCategoryId = survey.kategoriSelanjutnya!;
-    await getKategoriSoal();
-    currentCategoryTitle.value = kategoriSoal
-        .firstWhere((element) => element.id.toString() == currentCategoryId)
-        .nama;
+  Future submitForm() async {
+    isLoadingNext.value = true;
+    try {
+      if (formKey.currentState!.validate()) {
+        currentJawabanSurvey.clear();
+        formKey.currentState!.save();
+
+        if (initialJawabanSurvey.isNotEmpty) {
+          for (var item in initialJawabanSurvey) {
+            await DioClient().deleteJawabanSurvey(
+              token: token,
+              id: item.id.toString(),
+            );
+          }
+        }
+
+        for (var item in currentJawabanSurvey) {
+          await DioClient().createJawabanSurvey(token: token, data: item);
+        }
+
+        await nextCategory();
+        successScackbar("Data berhasil disimpan");
+      }
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
+    isLoadingNext.value = false;
+  }
+
+  Future nextCategory() async {
+    currentOrder++;
+    await refreshPage();
+  }
+
+  Future previousCategory() async {
+    currentOrder--;
+    await refreshPage();
+  }
+
+  Future updateSurvey() async {
+    await DioClient().updateSurvey(
+      token: token,
+      data: {
+        "kode_unik": survey.kodeUnik,
+        "kode_unik_responden": survey.kodeUnikResponden,
+        "nama_survey_id": survey.namaSurveyId,
+        "profile_id": survey.profileId,
+        "kategori_selanjutnya": kategoriSoal
+            .firstWhere((element) =>
+                element.urutan ==
+                (survey.isSelesai == "0" ? currentOrder.toString() : "1"))
+            .id
+            .toString(),
+        "is_selesai": survey.isSelesai,
+      },
+    );
+  }
+
+  Future refreshPage() async {
+    isLoading.value = true;
+    soalAndJawaban.clear();
+    if (currentOrder == kategoriSoal.length) {
+      survey.isSelesai == "1";
+      await updateSurvey();
+      Get.back();
+      return;
+    }
+    currentKategoriSoal = kategoriSoal
+        .firstWhere((element) => element.urutan == currentOrder.toString());
+    title.value = currentKategoriSoal.nama;
+    survey.kategoriSelanjutnya = currentKategoriSoal.id.toString();
+    await updateSurvey();
+    await getJawabanSurvey();
     await getSoal();
     await getJawabanSoal();
-    log(soalAndJawaban.toString());
+    currentJawabanSurvey = [];
     isLoading.value = false;
-    super.onInit();
   }
 }

@@ -217,7 +217,7 @@ class SyncDataController {
     try {
       // Get jawabanSoal form server
       List<JawabanSoal>? jawabanSoal =
-          await DioClient().getAllJawabanSoal(token: token);
+          await DioClient().getJawabanSoal(token: token);
       if (jawabanSoal != null) {
         pullJawabanSoal(jawabanSoal);
       } else {

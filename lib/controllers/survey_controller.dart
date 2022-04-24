@@ -33,7 +33,7 @@ class SurveyController extends GetxController {
   var isLoadingFilter = false.obs;
   String typeSurvey = "";
   String statusSurvey = "";
-  late int kodeUnikResponden;
+  late String kodeUnikResponden;
   late int namaSurveyId;
   List<Survey> surveys = [];
   List<Responden> responden = [];
@@ -200,7 +200,7 @@ class SurveyController extends GetxController {
     }
   }
 
-  Future deleteSurvey({required int id}) async {
+  Future deleteSurvey({required dynamic kodeUnik}) async {
     final prefs = await SharedPreferences.getInstance();
     bool offlineMode = prefs.getBool('offline_mode') ?? false;
     isLoading.value = true;
@@ -209,9 +209,9 @@ class SurveyController extends GetxController {
       try {
         await DioClient().deleteSurvey(
           token: token,
-          id: id,
+          kodeUnik: kodeUnik,
         );
-        surveys.removeWhere((element) => element.id == id);
+        surveys.removeWhere((element) => element.kodeUnik == kodeUnik);
       } on DioError catch (e) {
         handleError(error: e);
       }

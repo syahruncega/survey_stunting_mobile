@@ -183,8 +183,10 @@ class SurveyScreen extends StatelessWidget {
                               keyboardType: TextInputType.number,
                               controller: surveyController.respondenTEC,
                               items: surveyController.responden
-                                  .map((e) =>
-                                      {"label": e.kartuKeluarga, "value": e.id})
+                                  .map((e) => {
+                                        "label": e.kartuKeluarga,
+                                        "value": e.kodeUnik
+                                      })
                                   .toList(),
                               onSuggestionSelected:
                                   (Map<String, dynamic> suggestion) {
@@ -259,7 +261,8 @@ class SurveyScreen extends StatelessWidget {
                                     onPressed: () async {
                                       Get.back();
                                       await surveyController.deleteSurvey(
-                                        id: surveyController.surveys[index].id!,
+                                        kodeUnik: surveyController
+                                            .surveys[index].kodeUnik!,
                                       );
                                     },
                                   ),
