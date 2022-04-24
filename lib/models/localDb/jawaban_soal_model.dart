@@ -24,4 +24,12 @@ class JawabanSoalModel {
 
   final soal = ToOne<SoalModel>();
   // final jawabanSurvey = ToOne<JawabanSurveyModel>();
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "jawaban": jawaban.toString(),
+        "is_lainnya": isLainnya.toString(),
+        "soal_Id": soalId.toString(),
+        "updated_at": lastModified.toString(),
+      };
 }

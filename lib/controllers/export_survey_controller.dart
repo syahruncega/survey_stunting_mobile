@@ -10,16 +10,25 @@ import 'package:get_storage/get_storage.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
 import 'package:survey_stunting/models/jawaban_survey.dart';
 import 'package:survey_stunting/models/kategori_soal.dart';
+import 'package:survey_stunting/models/localDb/jawaban_soal_model.dart';
+import 'package:survey_stunting/models/localDb/jawaban_survey_model.dart';
+import 'package:survey_stunting/models/localDb/kategori_soal_model.dart';
+import 'package:survey_stunting/models/localDb/nama_survey_mode.dart';
+import 'package:survey_stunting/models/localDb/soal_model.dart';
+import 'package:survey_stunting/models/localDb/survey_model.dart';
 import 'package:survey_stunting/models/nama_survey.dart';
 import 'package:survey_stunting/models/soal.dart';
 import 'package:survey_stunting/models/survey.dart';
 import 'package:survey_stunting/models/survey_parameters.dart';
 import 'package:survey_stunting/services/dio_client.dart';
 import 'package:survey_stunting/services/handle_errors.dart';
+
+import '../models/localDb/helpers.dart';
 
 class ExportSurveyController extends GetxController {
   final namaSurveyTEC = TextEditingController();
@@ -33,26 +42,44 @@ class ExportSurveyController extends GetxController {
   List<JawabanSurvey> jawabanSurvey = [];
   List<JawabanSoal> jawabanSoal = [];
   String token = GetStorage().read("token");
+  int userId = GetStorage().read("userId");
 
   final namaSurveyIdError = "".obs;
 
   Future getSurvey({required dynamic namaSurveyId}) async {
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
     isLoaded.value = false;
-    try {
-      List<Survey>? response = await DioClient().getSurvey(
-        token: token,
-        queryParameters: SurveyParameters(
-          namaSurveyId: namaSurveyId,
-          status: "selesai",
-        ),
-      );
-      surveys = response!;
-    } on DioError catch (e) {
-      if (e.response?.statusCode == 404) {
-        surveys = [];
-      } else {
-        handleError(error: e);
+    if (!offlineMode) {
+      debugPrint('EXPORT : get survey online');
+      try {
+        List<Survey>? response = await DioClient().getSurvey(
+          token: token,
+          queryParameters: SurveyParameters(
+            namaSurveyId: namaSurveyId,
+            status: "selesai",
+          ),
+        );
+        surveys = response!;
+      } on DioError catch (e) {
+        if (e.response?.statusCode == 404) {
+          surveys = [];
+        } else {
+          handleError(error: e);
+        }
       }
+    } else {
+      debugPrint('EXPORT : get survey offline');
+      var profileData =
+          await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
+      int profileId = profileData!.id!;
+      List<SurveysModel>? localSurveys_ = await DbHelper.getDetailSurvey(
+        Objectbox.store_,
+        profileId: profileId,
+        isSelesai: 1,
+        namaSurveyId: namaSurveyId,
+      );
+      surveys = localSurveys_.map((e) => Survey.fromJson(e.toJson())).toList();
     }
     isLoaded.value = true;
   }
@@ -604,60 +631,117 @@ class ExportSurveyController extends GetxController {
   }
 
   Future getKategoriSoal() async {
-    try {
-      List<KategoriSoal>? response = await DioClient()
-          .getKategoriSoal(token: token, namaSurveyId: namaSurveyId);
-      kategoriSoal = response!;
-      debugPrint(response.toString());
-    } on DioError catch (e) {
-      if (e.response?.statusCode == 404) {
-        kategoriSoal = [];
-      } else {
-        handleError(error: e);
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    if (!offlineMode) {
+      debugPrint('get kategori soal online');
+      try {
+        List<KategoriSoal>? response = await DioClient()
+            .getKategoriSoal(token: token, namaSurveyId: namaSurveyId);
+        kategoriSoal = response!;
+        debugPrint(response.toString());
+      } on DioError catch (e) {
+        if (e.response?.statusCode == 404) {
+          kategoriSoal = [];
+        } else {
+          handleError(error: e);
+        }
       }
+    } else {
+      debugPrint('get kategori soal offline');
+      List<KategoriSoalModel>? kategoriSoalLocal =
+          await DbHelper.getKategoriSoalByNamaSurveyId(Objectbox.store_,
+              namaSurveyId: int.parse(namaSurveyId));
+      kategoriSoal = kategoriSoalLocal
+          .map((e) => KategoriSoal.fromJson(e.toJson()))
+          .toList();
     }
   }
 
   Future getSoal() async {
-    try {
-      List<Soal>? response = await DioClient().getSoal(token: token);
-      soal = response!;
-    } on DioError catch (e) {
-      handleError(error: e);
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    if (!offlineMode) {
+      debugPrint('get soal online');
+      try {
+        List<Soal>? response = await DioClient().getSoal(token: token);
+        soal = response!;
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      debugPrint('get soal offline');
+      List<SoalModel> soalLocal = await DbHelper.getSoal(Objectbox.store_);
+      soal = soalLocal.map((e) => Soal.fromJson(e.toJson())).toList();
     }
   }
 
   Future getJawabanSurvey({required String kodeUnikSurvey}) async {
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
     if (jawabanSurvey.isNotEmpty) {
       jawabanSurvey.clear();
     }
-    try {
-      List<JawabanSurvey>? response = await DioClient()
-          .getJawabanSurvey(token: token, kodeUnikSurvey: kodeUnikSurvey);
-      jawabanSurvey = response!;
-    } on DioError catch (e) {
-      handleError(error: e);
+    if (!offlineMode) {
+      debugPrint('get jawaban survey online');
+      try {
+        List<JawabanSurvey>? response = await DioClient()
+            .getJawabanSurvey(token: token, kodeUnikSurvey: kodeUnikSurvey);
+        jawabanSurvey = response!;
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      debugPrint('get jawaban survey offline');
+      List<JawabanSurveyModel>? jawabanSurveyLocal =
+          await DbHelper.getJawabanSurveyByKodeUnikSurveyId(Objectbox.store_,
+              kodeUnikSurveyId: int.parse(kodeUnikSurvey));
+      jawabanSurvey = jawabanSurveyLocal
+          .map((e) => JawabanSurvey.fromJson(e.toJson()))
+          .toList();
     }
   }
 
   Future getJawabanSoal() async {
-    try {
-      List<JawabanSoal>? response =
-          await DioClient().getJawabanSoal(token: token);
-      jawabanSoal = response!;
-    } on DioError catch (e) {
-      handleError(error: e);
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    if (!offlineMode) {
+      debugPrint('get jawaban soal online');
+      try {
+        List<JawabanSoal>? response =
+            await DioClient().getJawabanSoal(token: token);
+        jawabanSoal = response!;
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      debugPrint('get jawaban soal offline');
+      List<JawabanSoalModel>? jawabanSoalLocal =
+          await DbHelper.getJawabanSoal(Objectbox.store_);
+      jawabanSoal = jawabanSoalLocal
+          .map((e) => JawabanSoal.fromJson(e.toJson()))
+          .toList();
     }
   }
 
   Future getNamaSurvey() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
     namaSurvey.value = [];
-    try {
-      List<NamaSurvey>? response =
-          await DioClient().getNamaSurvey(token: token);
-      namaSurvey.value = response!;
-    } on DioError catch (e) {
-      handleError(error: e);
+    if (!offlineMode) {
+      debugPrint('get nama survey online');
+      try {
+        List<NamaSurvey>? response =
+            await DioClient().getNamaSurvey(token: token);
+        namaSurvey.value = response!;
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      debugPrint('get nama survey offline');
+      List<NamaSurveyModel>? localNamaSurvey =
+          await DbHelper.getNamaSurvey(Objectbox.store_);
+      namaSurvey.value = localNamaSurvey;
     }
   }
 

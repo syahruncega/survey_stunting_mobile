@@ -31,4 +31,14 @@ class SoalModel {
 
   @Backlink()
   final jawabanSurvey = ToMany<JawabanSurveyModel>();
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "soal": soal.toString(),
+        "urutan": urutan.toString(),
+        "tipe_jawaban": tipeJawaban.toString(),
+        "is_numerik": isNumerik.toString(),
+        "kategori_soal_id": kategoriSoalId.toString(),
+        "updated_at": lastModified.toString(),
+      };
 }
