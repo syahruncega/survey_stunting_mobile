@@ -791,9 +791,12 @@ class DbHelper {
   }
 
   /// put kelurahan
-  static Future<int> putKelurahan(Store store, KelurahanModel kelurahan) async {
-    kelurahan.kecamatan.targetId = kelurahan.kecamatanId;
-    return store.box<KelurahanModel>().put(kelurahan);
+  static Future<List<int>> putKelurahan(
+      Store store, List<KelurahanModel> kelurahan) async {
+    for (var kel in kelurahan) {
+      kel.kecamatan.targetId = kel.kecamatanId;
+    }
+    return store.box<KelurahanModel>().putMany(kelurahan);
   }
 
   /// delete all kelurahan

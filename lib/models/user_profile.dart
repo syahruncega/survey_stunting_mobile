@@ -20,7 +20,9 @@ class UserProfile {
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
         message: json["message"],
-        data: Data.fromJson(json["data"]),
+        data: json['data'] != null
+            ? Data.fromJson(json["data"])
+            : Data.fromJson(json),
       );
 
   Map<String, dynamic> toJson() => {
@@ -81,7 +83,9 @@ class Data {
         nomorHp: json["nomor_hp"],
         email: json["email"],
         deletedAt: json["deleted_at"],
-        createdAt: DateTime.parse(json["created_at"]),
+        createdAt: json["created_at"] != null
+            ? DateTime.parse(json["created_at"])
+            : DateTime.parse(json["updated_at"]),
         updatedAt: json["updated_at"],
       );
 

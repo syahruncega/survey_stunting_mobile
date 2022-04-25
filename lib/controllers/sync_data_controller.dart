@@ -56,7 +56,6 @@ class SyncDataController {
     // await syncJawabanSoal();
     // await syncResponden();
     // await syncSurvey();
-    // await syncJawabanSurvey();
   }
 
   Future syncDataProfile() async {
@@ -452,6 +451,7 @@ class SyncDataController {
   void pullKelurahan(List<Kelurahan> kelurahan) async {
     // delete kelurahan berfore pull
     await DbHelper.deleteAllKelurahan(store_);
+    List<KelurahanModel> nKelurahan = [];
     for (var kel in kelurahan) {
       KelurahanModel kelurahanModel = KelurahanModel(
         id: kel.id,
@@ -459,8 +459,9 @@ class SyncDataController {
         kecamatanId: int.parse(kel.kecamatanId),
         lastModified: DateTime.now().toString(),
       );
-      await DbHelper.putKelurahan(store_, kelurahanModel);
+      nKelurahan.add(kelurahanModel);
     }
+    await DbHelper.putKelurahan(store_, nKelurahan);
     debugPrint("kelurahan data has been pulled from server to local");
   }
 
@@ -568,6 +569,7 @@ class SyncDataController {
       );
       await DbHelper.putSurvey(store_, surveyModel);
     }
+    await syncJawabanSurvey();
     debugPrint("survey data has been pulled from server to local");
   }
 

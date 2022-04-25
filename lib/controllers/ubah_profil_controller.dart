@@ -3,18 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_stunting/components/error_scackbar.dart';
 import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/kabupaten.dart';
 import 'package:survey_stunting/models/kecamatan.dart';
 import 'package:survey_stunting/models/kelurahan.dart';
+import 'package:survey_stunting/models/localDb/helpers.dart';
+import 'package:survey_stunting/models/localDb/kecamatan_model.dart';
+import 'package:survey_stunting/models/localDb/provinsi_model.dart';
 import 'package:survey_stunting/models/provinsi.dart';
 import 'package:survey_stunting/models/user_profile.dart';
 import 'package:survey_stunting/services/dio_client.dart';
 import 'package:survey_stunting/services/handle_errors.dart';
 
+import '../models/localDb/kabupaten_model.dart';
+import '../models/localDb/kelurahan_model.dart';
+import '../models/localDb/profile_model.dart';
+
 class UbahProfilController extends GetxController {
   String token = GetStorage().read("token");
+  int userId = GetStorage().read("userId");
 
   final namaLengkapTextController = TextEditingController();
   final jenisKelaminTextController = TextEditingController();
@@ -67,29 +76,62 @@ class UbahProfilController extends GetxController {
   );
 
   Future getUserProfile() async {
-    try {
-      UserProfile? response = await DioClient().getProfile(token: token);
-      profileData.value = response!;
-      provinsiId = int.parse(profileData.value.data!.provinsi);
-      kabupatenId = int.parse(profileData.value.data!.kabupatenKota);
-      kecamatanId = int.parse(profileData.value.data!.kecamatan);
-      kelurahanId = int.parse(profileData.value.data!.desaKelurahan);
-    } on DioError catch (e) {
-      handleError(error: e);
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    if (!offlineMode) {
+      debugPrint('get user profile online');
+      try {
+        UserProfile? response = await DioClient().getProfile(token: token);
+        profileData.value = response!;
+        provinsiId = int.parse(profileData.value.data!.provinsi);
+        kabupatenId = int.parse(profileData.value.data!.kabupatenKota);
+        kecamatanId = int.parse(profileData.value.data!.kecamatan);
+        kelurahanId = int.parse(profileData.value.data!.desaKelurahan);
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      debugPrint('get user profile local');
+      ProfileModel? localProfile =
+          await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
+      if (localProfile != null) {
+        profileData.value = UserProfile.fromJson(localProfile.toJson());
+        provinsiId = int.parse(profileData.value.data!.provinsi);
+        kabupatenId = int.parse(profileData.value.data!.kabupatenKota);
+        kecamatanId = int.parse(profileData.value.data!.kecamatan);
+        kelurahanId = int.parse(profileData.value.data!.desaKelurahan);
+      } else {
+        debugPrint('data profile not found on local, please sync from server');
+      }
     }
   }
 
   Future getProvinsi() async {
-    try {
-      List<Provinsi>? response = await DioClient().getProvinsi(
-        token: token,
-      );
-      provinsi.value = response!;
-    } on DioError catch (e) {
-      if (e.response?.statusCode == 404) {
-        provinsi.value = [];
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    if (!offlineMode) {
+      debugPrint('get provinsi online');
+      try {
+        List<Provinsi>? response = await DioClient().getProvinsi(
+          token: token,
+        );
+        provinsi.value = response!;
+      } on DioError catch (e) {
+        if (e.response?.statusCode == 404) {
+          provinsi.value = [];
+        } else {
+          handleError(error: e);
+        }
+      }
+    } else {
+      debugPrint('get provinsi local');
+      List<ProvinsiModel>? localProvinsi =
+          await DbHelper.getProvinsi(Objectbox.store_);
+      if (localProvinsi.isNotEmpty) {
+        provinsi.value = localProvinsi;
       } else {
-        handleError(error: e);
+        provinsi.value = [];
+        debugPrint('data provinsi not found on local, please sync from server');
       }
     }
   }
@@ -97,17 +139,34 @@ class UbahProfilController extends GetxController {
   Future getKabupaten() async {
     kabupaten.value = [];
     kabupatenTEC.text = "";
-    try {
-      List<Kabupaten>? response = await DioClient().getKabupaten(
-        token: token,
-        provinsiId: provinsiId.toString(),
-      );
-      kabupaten.value = response!;
-    } on DioError catch (e) {
-      if (e.response?.statusCode == 404) {
-        kabupaten.value = [];
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    if (!offlineMode) {
+      debugPrint('get kabupaten online');
+      try {
+        List<Kabupaten>? response = await DioClient().getKabupaten(
+          token: token,
+          provinsiId: provinsiId.toString(),
+        );
+        kabupaten.value = response!;
+      } on DioError catch (e) {
+        if (e.response?.statusCode == 404) {
+          kabupaten.value = [];
+        } else {
+          handleError(error: e);
+        }
+      }
+    } else {
+      debugPrint('get kabupaten local');
+      List<KabupatenModel>? localKabupaten =
+          await DbHelper.getKabupatenByProvinsiId(Objectbox.store_,
+              provinsiId: provinsiId);
+      if (localKabupaten.isNotEmpty) {
+        kabupaten.value = localKabupaten;
       } else {
-        handleError(error: e);
+        kabupaten.value = [];
+        debugPrint(
+            'data kabupaten not found on local, please sync from server');
       }
     }
   }
@@ -115,17 +174,34 @@ class UbahProfilController extends GetxController {
   Future getKecamatan() async {
     kecamatan.value = [];
     kecamatanTEC.text = "";
-    try {
-      List<Kecamatan>? response = await DioClient().getKecamatan(
-        token: token,
-        kabupatenId: kabupatenId.toString(),
-      );
-      kecamatan.value = response!;
-    } on DioError catch (e) {
-      if (e.response?.statusCode == 404) {
-        kecamatan.value = [];
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    if (!offlineMode) {
+      debugPrint('get kecamatan online');
+      try {
+        List<Kecamatan>? response = await DioClient().getKecamatan(
+          token: token,
+          kabupatenId: kabupatenId.toString(),
+        );
+        kecamatan.value = response!;
+      } on DioError catch (e) {
+        if (e.response?.statusCode == 404) {
+          kecamatan.value = [];
+        } else {
+          handleError(error: e);
+        }
+      }
+    } else {
+      debugPrint('get kecamatan local');
+      List<KecamatanModel>? localKecamatan =
+          await DbHelper.getKecamatanByKabupatenId(Objectbox.store_,
+              kabupatenId: kabupatenId);
+      if (localKecamatan.isNotEmpty) {
+        kecamatan.value = localKecamatan;
       } else {
-        handleError(error: e);
+        kecamatan.value = [];
+        debugPrint(
+            'data kecamatan not found on local, please sync from server');
       }
     }
   }
@@ -133,17 +209,34 @@ class UbahProfilController extends GetxController {
   Future getKelurahan() async {
     kelurahan.value = [];
     kelurahanTEC.text = "";
-    try {
-      List<Kelurahan>? response = await DioClient().getKelurahan(
-        token: token,
-        kecamatanId: kecamatanId.toString(),
-      );
-      kelurahan.value = response!;
-    } on DioError catch (e) {
-      if (e.response?.statusCode == 404) {
-        kelurahan.value = [];
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    if (!offlineMode) {
+      debugPrint('get kelurahan online');
+      try {
+        List<Kelurahan>? response = await DioClient().getKelurahan(
+          token: token,
+          kecamatanId: kecamatanId.toString(),
+        );
+        kelurahan.value = response!;
+      } on DioError catch (e) {
+        if (e.response?.statusCode == 404) {
+          kelurahan.value = [];
+        } else {
+          handleError(error: e);
+        }
+      }
+    } else {
+      debugPrint('get kelurahan local');
+      List<KelurahanModel>? localKelurahan =
+          await DbHelper.getKelurahanByKecamatanId(Objectbox.store_,
+              kecamatanId: kecamatanId);
+      if (localKelurahan.isNotEmpty) {
+        kelurahan.value = localKelurahan;
       } else {
-        handleError(error: e);
+        kelurahan.value = [];
+        debugPrint(
+            'data kelurahan not found on local, please sync from server');
       }
     }
   }
@@ -157,33 +250,64 @@ class UbahProfilController extends GetxController {
     required String nomorHp,
     required String email,
   }) async {
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
     if (validate()) {
-      try {
+      if (!offlineMode) {
+        debugPrint('update user profile online');
+        try {
+          profileUpdateStatus.value = 'waiting';
+          bool response = await DioClient().updateProfile(
+            token: token,
+            nama: nama,
+            jenisKelamin: jenisKelamin,
+            tempatLahir: tempatLahir,
+            tglLahir: tglLahir,
+            alamat: alamat,
+            provinsi: provinsiId.toString(),
+            kabupaten: kabupatenId.toString(),
+            kecamatan: kecamatanId.toString(),
+            kelurahan: kelurahanId.toString(),
+            nomorHp: nomorHp,
+            email: email,
+            updatedAt: DateTime.now().toString(),
+          );
+          if (response) {
+            profileUpdateStatus.value = 'successful';
+            successScackbar('Profile berhasil diupdate.');
+          } else {
+            profileUpdateStatus.value = 'failed';
+            errorScackbar('Update profile gagal.');
+          }
+        } on DioError catch (e) {
+          handleError(error: e);
+        }
+      } else {
+        debugPrint('update profile local');
         profileUpdateStatus.value = 'waiting';
-        bool response = await DioClient().updateProfile(
-          token: token,
-          nama: nama,
-          jenisKelamin: jenisKelamin,
-          tempatLahir: tempatLahir,
-          tglLahir: tglLahir,
-          alamat: alamat,
-          provinsi: provinsiId.toString(),
-          kabupaten: kabupatenId.toString(),
-          kecamatan: kecamatanId.toString(),
-          kelurahan: kelurahanId.toString(),
-          nomorHp: nomorHp,
-          email: email,
-          updatedAt: DateTime.now().toString(),
-        );
-        if (response) {
+        ProfileModel profile = ProfileModel(
+            id: profileData.value.data!.id,
+            namaLengkap: nama,
+            jenisKelamin: jenisKelamin,
+            tempatLahir: tempatLahir,
+            tanggalLahir: tglLahir,
+            alamat: alamat,
+            provinsiId: provinsiId.toString(),
+            kabupatenId: kabupatenId.toString(),
+            kecamatanId: kecamatanId.toString(),
+            kelurahanId: kelurahanId.toString(),
+            nomorHp: nomorHp,
+            email: email,
+            userId: userId,
+            lastModified: DateTime.now().toString());
+        int response = await DbHelper.putProfile(Objectbox.store_, profile);
+        if (response > 0) {
           profileUpdateStatus.value = 'successful';
           successScackbar('Profile berhasil diupdate.');
         } else {
           profileUpdateStatus.value = 'failed';
           errorScackbar('Update profile gagal.');
         }
-      } on DioError catch (e) {
-        handleError(error: e);
       }
     } else {
       debugPrint('validation failed');
@@ -306,8 +430,8 @@ class UbahProfilController extends GetxController {
     await getUserProfile();
     await getProvinsi();
     await getKabupaten();
-    await getKelurahan();
     await getKecamatan();
+    await getKelurahan();
     displayUserData();
     super.onInit();
   }
