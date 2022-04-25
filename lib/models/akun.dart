@@ -19,7 +19,9 @@ class Akun {
 
   factory Akun.fromJson(Map<String, dynamic> json) => Akun(
         message: json["message"],
-        data: DataAkun.fromJson(json["data"]),
+        data: json["data"] != null
+            ? DataAkun.fromJson(json["data"])
+            : DataAkun.fromJson(json),
       );
 
   Map<String, dynamic> toJson() => {

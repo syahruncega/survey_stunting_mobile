@@ -54,6 +54,7 @@ dependencies:
   objectbox_flutter_libs: any
   shared_preferences: ^2.0.13
   flutter_form_builder: ^7.1.1
+  crypt: ^4.2.1
 
 dev_dependencies:
   flutter_test:

@@ -1,15 +1,20 @@
+import 'package:crypt/crypt.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_stunting/components/error_scackbar.dart';
 import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/akun.dart';
+import 'package:survey_stunting/models/localDb/helpers.dart';
+import 'package:survey_stunting/models/localDb/user_model.dart';
 import 'package:survey_stunting/services/dio_client.dart';
 import 'package:survey_stunting/services/handle_errors.dart';
 
 class UbahAkunController extends GetxController {
   String token = GetStorage().read("token");
+  int userId = GetStorage().read("userId");
 
   final username = TextEditingController();
   final password = TextEditingController();
@@ -51,24 +56,53 @@ class UbahAkunController extends GetxController {
   }
 
   Future updateAkun({required String username, String? password}) async {
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
     if (validate()) {
-      try {
+      if (!offlineMode) {
+        debugPrint('update akun online');
+        try {
+          akunUpdateStatus.value = 'waiting';
+          bool response = await DioClient().updateAkun(
+            token: token,
+            username: username,
+            password: password,
+            updatedAt: DateTime.now().toString(),
+          );
+          if (response) {
+            akunUpdateStatus.value = 'successful';
+            successScackbar("Akun berhasil diupdate");
+          } else {
+            akunUpdateStatus.value = 'failed';
+            errorScackbar('Update akun gagal, Username sudah ada.');
+          }
+        } on DioError catch (e) {
+          handleError(error: e);
+        }
+      } else {
+        debugPrint('update akun local');
         akunUpdateStatus.value = 'waiting';
-        bool response = await DioClient().updateAkun(
-          token: token,
+        var password_ = Crypt.sha256('password');
+        var userData = UserModel(
+          id: userId,
           username: username,
-          password: password,
-          updatedAt: DateTime.now().toString(),
+          password: password_.toString(),
+          status: '1',
+          role: 'Surveyor',
+          lastModified: DateTime.now().toString(),
         );
-        if (response) {
-          akunUpdateStatus.value = 'successful';
-          successScackbar("Akun berhasil diupdate");
-        } else {
+        UserModel? nUser =
+            await DbHelper.getUserById(Objectbox.store_, id: userId);
+        if (nUser != null && nUser.username == username) {
           akunUpdateStatus.value = 'failed';
           errorScackbar('Update akun gagal, Username sudah ada.');
+        } else {
+          int user = await DbHelper.putUser(Objectbox.store_, userData);
+          if (user > 0) {
+            akunUpdateStatus.value = 'successful';
+            successScackbar("Akun berhasil diupdate");
+          }
         }
-      } on DioError catch (e) {
-        handleError(error: e);
       }
     } else {
       debugPrint('update akun validation failed');
@@ -77,15 +111,29 @@ class UbahAkunController extends GetxController {
 
   Future getUserAkun() async {
     isLoading.value = true;
-    try {
-      Akun response = await DioClient().getAkun(token: token);
-      akunData.value = response;
-      if (akunData.value.data != null) {
+    final prefs = await SharedPreferences.getInstance();
+    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    if (!offlineMode) {
+      debugPrint('get user online');
+      try {
+        Akun response = await DioClient().getAkun(token: token);
+        akunData.value = response;
+        if (akunData.value.data != null) {
+          username.text = akunData.value.data!.username;
+        }
+        isLoading.value = false;
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      debugPrint('get user local');
+      UserModel? localUser =
+          await DbHelper.getUserById(Objectbox.store_, id: userId);
+      if (localUser != null) {
+        akunData.value = Akun.fromJson(localUser.toJson());
         username.text = akunData.value.data!.username;
       }
       isLoading.value = false;
-    } on DioError catch (e) {
-      handleError(error: e);
     }
   }
 
