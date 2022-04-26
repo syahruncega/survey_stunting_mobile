@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_stunting/components/error_scackbar.dart';
 import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/kabupaten.dart';
@@ -20,6 +19,7 @@ import 'package:survey_stunting/services/handle_errors.dart';
 import '../models/localDb/kabupaten_model.dart';
 import '../models/localDb/kelurahan_model.dart';
 import '../models/localDb/profile_model.dart';
+import '../consts/globals_lib.dart' as global;
 
 class UbahProfilController extends GetxController {
   String token = GetStorage().read("token");
@@ -76,9 +76,8 @@ class UbahProfilController extends GetxController {
   );
 
   Future getUserProfile() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
-    if (!offlineMode) {
+    bool connect = await global.isConnected();
+    if (connect) {
       debugPrint('get user profile online');
       try {
         UserProfile? response = await DioClient().getProfile(token: token);
@@ -107,9 +106,8 @@ class UbahProfilController extends GetxController {
   }
 
   Future getProvinsi() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
-    if (!offlineMode) {
+    bool connect = await global.isConnected();
+    if (connect) {
       debugPrint('get provinsi online');
       try {
         List<Provinsi>? response = await DioClient().getProvinsi(
@@ -139,9 +137,8 @@ class UbahProfilController extends GetxController {
   Future getKabupaten() async {
     kabupaten.value = [];
     kabupatenTEC.text = "";
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
-    if (!offlineMode) {
+    bool connect = await global.isConnected();
+    if (connect) {
       debugPrint('get kabupaten online');
       try {
         List<Kabupaten>? response = await DioClient().getKabupaten(
@@ -174,9 +171,8 @@ class UbahProfilController extends GetxController {
   Future getKecamatan() async {
     kecamatan.value = [];
     kecamatanTEC.text = "";
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
-    if (!offlineMode) {
+    bool connect = await global.isConnected();
+    if (connect) {
       debugPrint('get kecamatan online');
       try {
         List<Kecamatan>? response = await DioClient().getKecamatan(
@@ -209,9 +205,8 @@ class UbahProfilController extends GetxController {
   Future getKelurahan() async {
     kelurahan.value = [];
     kelurahanTEC.text = "";
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
-    if (!offlineMode) {
+    bool connect = await global.isConnected();
+    if (connect) {
       debugPrint('get kelurahan online');
       try {
         List<Kelurahan>? response = await DioClient().getKelurahan(
@@ -250,10 +245,9 @@ class UbahProfilController extends GetxController {
     required String nomorHp,
     required String email,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    bool connect = await global.isConnected();
     if (validate()) {
-      if (!offlineMode) {
+      if (connect) {
         debugPrint('update user profile online');
         try {
           profileUpdateStatus.value = 'waiting';

@@ -10,7 +10,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
 import 'package:survey_stunting/models/jawaban_survey.dart';
@@ -27,6 +26,8 @@ import 'package:survey_stunting/models/survey.dart';
 import 'package:survey_stunting/models/survey_parameters.dart';
 import 'package:survey_stunting/services/dio_client.dart';
 import 'package:survey_stunting/services/handle_errors.dart';
+
+import '../consts/globals_lib.dart' as global;
 
 import '../models/localDb/helpers.dart';
 
@@ -47,10 +48,9 @@ class ExportSurveyController extends GetxController {
   final namaSurveyIdError = "".obs;
 
   Future getSurvey({required dynamic namaSurveyId}) async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    bool connect = await global.isConnected();
     isLoaded.value = false;
-    if (!offlineMode) {
+    if (connect) {
       debugPrint('EXPORT : get survey online');
       try {
         List<Survey>? response = await DioClient().getSurvey(
@@ -631,9 +631,8 @@ class ExportSurveyController extends GetxController {
   }
 
   Future getKategoriSoal() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
-    if (!offlineMode) {
+    bool connect = await global.isConnected();
+    if (connect) {
       debugPrint('get kategori soal online');
       try {
         List<KategoriSoal>? response = await DioClient()
@@ -659,9 +658,8 @@ class ExportSurveyController extends GetxController {
   }
 
   Future getSoal() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
-    if (!offlineMode) {
+    bool connect = await global.isConnected();
+    if (connect) {
       debugPrint('get soal online');
       try {
         List<Soal>? response = await DioClient().getSoal(token: token);
@@ -677,12 +675,11 @@ class ExportSurveyController extends GetxController {
   }
 
   Future getJawabanSurvey({required String kodeUnikSurvey}) async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    bool connect = await global.isConnected();
     if (jawabanSurvey.isNotEmpty) {
       jawabanSurvey.clear();
     }
-    if (!offlineMode) {
+    if (connect) {
       debugPrint('get jawaban survey online');
       try {
         List<JawabanSurvey>? response = await DioClient()
@@ -703,9 +700,8 @@ class ExportSurveyController extends GetxController {
   }
 
   Future getJawabanSoal() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
-    if (!offlineMode) {
+    bool connect = await global.isConnected();
+    if (connect) {
       debugPrint('get jawaban soal online');
       try {
         List<JawabanSoal>? response =
@@ -725,10 +721,9 @@ class ExportSurveyController extends GetxController {
   }
 
   Future getNamaSurvey() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    bool connect = await global.isConnected();
     namaSurvey.value = [];
-    if (!offlineMode) {
+    if (connect) {
       debugPrint('get nama survey online');
       try {
         List<NamaSurvey>? response =

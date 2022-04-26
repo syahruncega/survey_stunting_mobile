@@ -12,6 +12,8 @@ import '../models/localDb/helpers.dart';
 import '../services/dio_client.dart';
 import '../services/handle_errors.dart';
 
+import '../consts/globals_lib.dart' as global;
+
 class LayoutController extends GetxController {
   var scaffoldKey = GlobalKey<ScaffoldState>();
   DateTime backButtonPressedTime = DateTime.now();
@@ -53,35 +55,15 @@ class LayoutController extends GetxController {
 
   Future checkConnection() async {
     log('checking connection..');
+    bool connect = await global.isConnected();
     final prefs = await SharedPreferences.getInstance();
-    try {
-      bool response = await DioClient().testConnection(
-        token: GetStorage().read("token"),
-      );
-      if (response) {
-        prefs.setBool("offline_mode", false);
-        bool firstInstall_ = await firstInstall();
-        if (firstInstall_) {
-          debugPrint('FIRST_INSTALL');
-          SyncDataController(store_: Objectbox.store_).syncDataFromServer();
-          prefs.setBool('first_install', false);
-        }
-      } else {
-        prefs.setBool("offline_mode", true);
-        Fluttertoast.showToast(
-          msg: "Tidak ada koneksi Internet",
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-        );
+    if (connect) {
+      bool firstInstall_ = await firstInstall();
+      if (firstInstall_) {
+        debugPrint('FIRST_INSTALL');
+        SyncDataController(store_: Objectbox.store_).syncDataFromServer();
+        prefs.setBool('first_install', false);
       }
-    } on DioError catch (e) {
-      prefs.setBool("offline_mode", true);
-      Fluttertoast.showToast(
-        msg: "Tidak ada koneksi Internet",
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-      );
-      handleError(error: e);
     }
   }
 

@@ -3,7 +3,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_stunting/components/error_scackbar.dart';
 import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/akun.dart';
@@ -11,6 +10,7 @@ import 'package:survey_stunting/models/localDb/helpers.dart';
 import 'package:survey_stunting/models/localDb/user_model.dart';
 import 'package:survey_stunting/services/dio_client.dart';
 import 'package:survey_stunting/services/handle_errors.dart';
+import '../consts/globals_lib.dart' as global;
 
 class UbahAkunController extends GetxController {
   String token = GetStorage().read("token");
@@ -56,10 +56,9 @@ class UbahAkunController extends GetxController {
   }
 
   Future updateAkun({required String username, String? password}) async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    bool connect = await global.isConnected();
     if (validate()) {
-      if (!offlineMode) {
+      if (connect) {
         debugPrint('update akun online');
         try {
           akunUpdateStatus.value = 'waiting';
@@ -111,9 +110,8 @@ class UbahAkunController extends GetxController {
 
   Future getUserAkun() async {
     isLoading.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
-    if (!offlineMode) {
+    bool connect = await global.isConnected();
+    if (connect) {
       debugPrint('get user online');
       try {
         Akun response = await DioClient().getAkun(token: token);

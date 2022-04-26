@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/nama_survey.dart';
 import 'package:survey_stunting/models/responden.dart';
@@ -20,6 +19,8 @@ import '../models/localDb/helpers.dart';
 import '../models/localDb/nama_survey_mode.dart';
 import '../models/localDb/responden_model.dart';
 import '../models/localDb/survey_model.dart';
+
+import '../consts/globals_lib.dart' as global;
 
 class SurveyController extends GetxController {
   final typeSurveyEditingController = TextEditingController();
@@ -43,10 +44,9 @@ class SurveyController extends GetxController {
   int userId = GetStorage().read("userId");
 
   Future getSurvey({SurveyParameters? queryParameters}) async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    bool connect = await global.isConnected();
     isLoading.value = true;
-    if (!offlineMode) {
+    if (connect) {
       debugPrint('get online survey');
       try {
         List<Survey>? response = await DioClient().getSurvey(
@@ -90,9 +90,8 @@ class SurveyController extends GetxController {
   }
 
   Future getResponden() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
-    if (!offlineMode) {
+    bool connect = await global.isConnected();
+    if (connect) {
       debugPrint('get online responden');
       try {
         List<Responden>? response = await DioClient().getResponden(
@@ -116,9 +115,8 @@ class SurveyController extends GetxController {
   }
 
   Future getNamaSurvey() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
-    if (!offlineMode) {
+    bool connect = await global.isConnected();
+    if (connect) {
       debugPrint('get online nama survey');
       try {
         List<NamaSurvey>? response = await DioClient().getNamaSurvey(
@@ -157,13 +155,12 @@ class SurveyController extends GetxController {
   }
 
   Future submitForm() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    bool connect = await global.isConnected();
     var profileData =
         await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
     int profileId = profileData!.id!;
     if (validate()) {
-      if (!offlineMode) {
+      if (connect) {
         debugPrint('create survey online');
         try {
           Survey data = Survey(
@@ -201,10 +198,9 @@ class SurveyController extends GetxController {
   }
 
   Future deleteSurvey({required dynamic kodeUnik}) async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
+    bool connect = await global.isConnected();
     isLoading.value = true;
-    if (!offlineMode) {
+    if (connect) {
       debugPrint('delete online survey');
       try {
         await DioClient().deleteSurvey(
