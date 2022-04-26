@@ -15,6 +15,7 @@ import '../consts/globals_lib.dart' as global;
 class UbahAkunController extends GetxController {
   String token = GetStorage().read("token");
   int userId = GetStorage().read("userId");
+  late bool isConnect;
 
   final username = TextEditingController();
   final password = TextEditingController();
@@ -56,9 +57,8 @@ class UbahAkunController extends GetxController {
   }
 
   Future updateAkun({required String username, String? password}) async {
-    bool connect = await global.isConnected();
     if (validate()) {
-      if (connect) {
+      if (isConnect) {
         debugPrint('update akun online');
         try {
           akunUpdateStatus.value = 'waiting';
@@ -110,8 +110,7 @@ class UbahAkunController extends GetxController {
 
   Future getUserAkun() async {
     isLoading.value = true;
-    bool connect = await global.isConnected();
-    if (connect) {
+    if (isConnect) {
       debugPrint('get user online');
       try {
         Akun response = await DioClient().getAkun(token: token);
@@ -135,8 +134,13 @@ class UbahAkunController extends GetxController {
     }
   }
 
+  Future checkConnection() async {
+    isConnect = await global.isConnected();
+  }
+
   @override
   void onInit() async {
+    await checkConnection();
     await getUserAkun();
     super.onInit();
   }

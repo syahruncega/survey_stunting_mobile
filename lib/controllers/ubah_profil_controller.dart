@@ -24,6 +24,7 @@ import '../consts/globals_lib.dart' as global;
 class UbahProfilController extends GetxController {
   String token = GetStorage().read("token");
   int userId = GetStorage().read("userId");
+  late bool isConnect;
 
   final namaLengkapTextController = TextEditingController();
   final jenisKelaminTextController = TextEditingController();
@@ -76,8 +77,7 @@ class UbahProfilController extends GetxController {
   );
 
   Future getUserProfile() async {
-    bool connect = await global.isConnected();
-    if (connect) {
+    if (isConnect) {
       debugPrint('get user profile online');
       try {
         UserProfile? response = await DioClient().getProfile(token: token);
@@ -106,8 +106,7 @@ class UbahProfilController extends GetxController {
   }
 
   Future getProvinsi() async {
-    bool connect = await global.isConnected();
-    if (connect) {
+    if (isConnect) {
       debugPrint('get provinsi online');
       try {
         List<Provinsi>? response = await DioClient().getProvinsi(
@@ -137,8 +136,7 @@ class UbahProfilController extends GetxController {
   Future getKabupaten() async {
     kabupaten.value = [];
     kabupatenTEC.text = "";
-    bool connect = await global.isConnected();
-    if (connect) {
+    if (isConnect) {
       debugPrint('get kabupaten online');
       try {
         List<Kabupaten>? response = await DioClient().getKabupaten(
@@ -171,8 +169,7 @@ class UbahProfilController extends GetxController {
   Future getKecamatan() async {
     kecamatan.value = [];
     kecamatanTEC.text = "";
-    bool connect = await global.isConnected();
-    if (connect) {
+    if (isConnect) {
       debugPrint('get kecamatan online');
       try {
         List<Kecamatan>? response = await DioClient().getKecamatan(
@@ -205,8 +202,7 @@ class UbahProfilController extends GetxController {
   Future getKelurahan() async {
     kelurahan.value = [];
     kelurahanTEC.text = "";
-    bool connect = await global.isConnected();
-    if (connect) {
+    if (isConnect) {
       debugPrint('get kelurahan online');
       try {
         List<Kelurahan>? response = await DioClient().getKelurahan(
@@ -245,9 +241,8 @@ class UbahProfilController extends GetxController {
     required String nomorHp,
     required String email,
   }) async {
-    bool connect = await global.isConnected();
     if (validate()) {
-      if (connect) {
+      if (isConnect) {
         debugPrint('update user profile online');
         try {
           profileUpdateStatus.value = 'waiting';
@@ -419,8 +414,13 @@ class UbahProfilController extends GetxController {
     isLoaded.value = true;
   }
 
+  Future checkConnection() async {
+    isConnect = await global.isConnected();
+  }
+
   @override
   void onInit() async {
+    await checkConnection();
     await getUserProfile();
     await getProvinsi();
     await getKabupaten();

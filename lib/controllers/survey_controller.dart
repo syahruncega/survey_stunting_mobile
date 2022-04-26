@@ -42,11 +42,11 @@ class SurveyController extends GetxController {
   String token = GetStorage().read("token");
   Session session = sessionFromJson(GetStorage().read("session"));
   int userId = GetStorage().read("userId");
+  late bool isConnect;
 
   Future getSurvey({SurveyParameters? queryParameters}) async {
-    bool connect = await global.isConnected();
     isLoading.value = true;
-    if (connect) {
+    if (isConnect) {
       debugPrint('get online survey');
       try {
         List<Survey>? response = await DioClient().getSurvey(
@@ -90,8 +90,7 @@ class SurveyController extends GetxController {
   }
 
   Future getResponden() async {
-    bool connect = await global.isConnected();
-    if (connect) {
+    if (isConnect) {
       debugPrint('get online responden');
       try {
         List<Responden>? response = await DioClient().getResponden(
@@ -115,8 +114,7 @@ class SurveyController extends GetxController {
   }
 
   Future getNamaSurvey() async {
-    bool connect = await global.isConnected();
-    if (connect) {
+    if (isConnect) {
       debugPrint('get online nama survey');
       try {
         List<NamaSurvey>? response = await DioClient().getNamaSurvey(
@@ -155,12 +153,11 @@ class SurveyController extends GetxController {
   }
 
   Future submitForm() async {
-    bool connect = await global.isConnected();
     var profileData =
         await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
     int profileId = profileData!.id!;
     if (validate()) {
-      if (connect) {
+      if (isConnect) {
         debugPrint('create survey online');
         try {
           Survey data = Survey(
@@ -198,9 +195,8 @@ class SurveyController extends GetxController {
   }
 
   Future deleteSurvey({required dynamic kodeUnik}) async {
-    bool connect = await global.isConnected();
     isLoading.value = true;
-    if (connect) {
+    if (isConnect) {
       debugPrint('delete online survey');
       try {
         await DioClient().deleteSurvey(
@@ -241,8 +237,13 @@ class SurveyController extends GetxController {
     return uniqueCode;
   }
 
+  Future checkConnection() async {
+    isConnect = await global.isConnected();
+  }
+
   @override
   void onInit() async {
+    await checkConnection();
     await getSurvey();
     statusSurveyEditingController.addListener(_setToEmpty);
     typeSurveyEditingController.addListener(_setToEmpty);

@@ -23,11 +23,11 @@ class BerandaController extends GetxController {
 
   String token = GetStorage().read("token");
   int userId = GetStorage().read("userId");
+  late bool isConnect;
 
   Future getSurvey({String? search}) async {
-    bool connect = await global.isConnected();
     isLoadedSurvey.value = false;
-    if (connect) {
+    if (isConnect) {
       try {
         List<Survey>? response = await DioClient().getSurvey(
           token: token,
@@ -62,9 +62,8 @@ class BerandaController extends GetxController {
   }
 
   Future getTotalSurvey() async {
-    bool connect = await global.isConnected();
     isLoadedTotalSurvey.value = false;
-    if (connect) {
+    if (isConnect) {
       try {
         TotalSurvey? response = await DioClient().getTotalSurvey(token: token);
         totalSurvey = response!;
@@ -83,8 +82,13 @@ class BerandaController extends GetxController {
     isLoadedTotalSurvey.value = true;
   }
 
+  Future checkConnection() async {
+    isConnect = await global.isConnected();
+  }
+
   @override
   void onInit() async {
+    await checkConnection();
     await getSurvey();
     await getTotalSurvey();
     super.onInit();

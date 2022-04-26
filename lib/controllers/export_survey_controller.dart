@@ -44,13 +44,13 @@ class ExportSurveyController extends GetxController {
   List<JawabanSoal> jawabanSoal = [];
   String token = GetStorage().read("token");
   int userId = GetStorage().read("userId");
+  late bool isConnect;
 
   final namaSurveyIdError = "".obs;
 
   Future getSurvey({required dynamic namaSurveyId}) async {
-    bool connect = await global.isConnected();
     isLoaded.value = false;
-    if (connect) {
+    if (isConnect) {
       debugPrint('EXPORT : get survey online');
       try {
         List<Survey>? response = await DioClient().getSurvey(
@@ -631,8 +631,7 @@ class ExportSurveyController extends GetxController {
   }
 
   Future getKategoriSoal() async {
-    bool connect = await global.isConnected();
-    if (connect) {
+    if (isConnect) {
       debugPrint('get kategori soal online');
       try {
         List<KategoriSoal>? response = await DioClient()
@@ -658,8 +657,7 @@ class ExportSurveyController extends GetxController {
   }
 
   Future getSoal() async {
-    bool connect = await global.isConnected();
-    if (connect) {
+    if (isConnect) {
       debugPrint('get soal online');
       try {
         List<Soal>? response = await DioClient().getSoal(token: token);
@@ -675,11 +673,10 @@ class ExportSurveyController extends GetxController {
   }
 
   Future getJawabanSurvey({required String kodeUnikSurvey}) async {
-    bool connect = await global.isConnected();
     if (jawabanSurvey.isNotEmpty) {
       jawabanSurvey.clear();
     }
-    if (connect) {
+    if (isConnect) {
       debugPrint('get jawaban survey online');
       try {
         List<JawabanSurvey>? response = await DioClient()
@@ -700,8 +697,7 @@ class ExportSurveyController extends GetxController {
   }
 
   Future getJawabanSoal() async {
-    bool connect = await global.isConnected();
-    if (connect) {
+    if (isConnect) {
       debugPrint('get jawaban soal online');
       try {
         List<JawabanSoal>? response =
@@ -721,9 +717,8 @@ class ExportSurveyController extends GetxController {
   }
 
   Future getNamaSurvey() async {
-    bool connect = await global.isConnected();
     namaSurvey.value = [];
-    if (connect) {
+    if (isConnect) {
       debugPrint('get nama survey online');
       try {
         List<NamaSurvey>? response =
@@ -740,8 +735,13 @@ class ExportSurveyController extends GetxController {
     }
   }
 
+  Future checkConnection() async {
+    isConnect = await global.isConnected();
+  }
+
   @override
   void onInit() async {
+    await checkConnection();
     await getSurvey(namaSurveyId: namaSurveyId);
     await getNamaSurvey();
     await _checkPermission();
