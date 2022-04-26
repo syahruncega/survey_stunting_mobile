@@ -60,7 +60,12 @@ class LayoutController extends GetxController {
       );
       if (response) {
         prefs.setBool("offline_mode", false);
-        SyncDataController(store_: Objectbox.store_).syncDataFromServer();
+        bool firstInstall_ = await firstInstall();
+        if (firstInstall_) {
+          debugPrint('FIRST_INSTALL');
+          SyncDataController(store_: Objectbox.store_).syncDataFromServer();
+          prefs.setBool('first_install', false);
+        }
       } else {
         prefs.setBool("offline_mode", true);
         Fluttertoast.showToast(
@@ -78,6 +83,11 @@ class LayoutController extends GetxController {
       );
       handleError(error: e);
     }
+  }
+
+  Future<bool> firstInstall() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool("first_install") ?? true;
   }
 
   @override

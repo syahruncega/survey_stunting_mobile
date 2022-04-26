@@ -44,18 +44,18 @@ class SyncDataController {
   SyncDataController({required this.store_});
 
   Future syncDataFromServer() async {
-    // await syncDataUser();
-    // await syncDataProfile();
-    // await syncDataProvinsi();
-    // await syncDataKabupaten();
-    // await syncDataKecamatan();
-    // await syncDataKelurahan();
-    // await syncNamaSurvey();
-    // await syncKategoriSoal();
-    // await syncSoal();
-    // await syncJawabanSoal();
-    // await syncResponden();
-    // await syncSurvey();
+    await syncDataUser();
+    await syncDataProfile();
+    await syncDataProvinsi();
+    await syncDataKabupaten();
+    await syncDataKecamatan();
+    await syncDataKelurahan();
+    await syncNamaSurvey();
+    await syncKategoriSoal();
+    await syncSoal();
+    await syncJawabanSoal();
+    await syncResponden();
+    await syncSurvey();
   }
 
   Future syncDataProfile() async {
