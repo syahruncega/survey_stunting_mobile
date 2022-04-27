@@ -48,8 +48,8 @@ class LayoutController extends GetxController {
 
   @override
   void onInit() async {
-    objectbox = await Objectbox.create();
-    SyncDataController(store_: objectbox.store).syncDataFromServer();
+    // objectbox = await Objectbox.create();
+    // SyncDataController(store_: objectbox.store).syncDataFromServer();
     Future.delayed(const Duration(milliseconds: 1500), () {
       canExit = true;
     });
