@@ -61,8 +61,11 @@ class LayoutController extends GetxController {
       bool firstInstall_ = await firstInstall();
       if (firstInstall_) {
         debugPrint('FIRST_INSTALL');
-        SyncDataController(store_: Objectbox.store_).syncDataFromServer();
+        SyncDataController(store_: Objectbox.store_).pullDataFromServer();
         prefs.setBool('first_install', false);
+      } else {
+        debugPrint('ALREADY INSTALLED BEFORE');
+        SyncDataController(store_: Objectbox.store_).syncData();
       }
     }
   }

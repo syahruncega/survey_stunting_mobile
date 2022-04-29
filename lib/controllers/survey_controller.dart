@@ -66,7 +66,7 @@ class SurveyController extends GetxController {
       var profileData =
           await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
       int profileId = profileData!.id!;
-      List<SurveysModel>? localSurveys_ = await DbHelper.getDetailSurvey(
+      List<SurveyModel>? localSurveys_ = await DbHelper.getDetailSurvey(
         Objectbox.store_,
         profileId: profileId,
         isSelesai: (statusSurvey == "selesai")
@@ -186,7 +186,7 @@ class SurveyController extends GetxController {
           kategoriSelanjutnya: 11,
           lastModified: DateTime.now().toString(),
         );
-        await DbHelper.putSurvey(Objectbox.store_, data);
+        await DbHelper.putSurvey(Objectbox.store_, [data]);
         isLoading.value = false;
         Get.toNamed(RouteName.isiSurvey, arguments: data);
         successScackbar("Survey berhasil disimpan");

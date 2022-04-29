@@ -73,7 +73,7 @@ class ExportSurveyController extends GetxController {
       var profileData =
           await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
       int profileId = profileData!.id!;
-      List<SurveysModel>? localSurveys_ = await DbHelper.getDetailSurvey(
+      List<SurveyModel>? localSurveys_ = await DbHelper.getDetailSurvey(
         Objectbox.store_,
         profileId: profileId,
         isSelesai: 1,

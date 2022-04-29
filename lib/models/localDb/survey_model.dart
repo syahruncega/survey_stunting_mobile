@@ -16,6 +16,9 @@ class SurveyModel {
   int? namaSurveyId;
   int? profileId;
   String lastModified;
+  RespondenModel? respondenModel;
+  NamaSurveyModel? namaSurveyModel;
+  ProfileModel? profileModel;
 
   SurveyModel({
     this.id,
@@ -26,6 +29,9 @@ class SurveyModel {
     this.namaSurveyId,
     this.profileId,
     required this.lastModified,
+    this.respondenModel,
+    this.namaSurveyModel,
+    this.profileModel,
   });
 
   final kodeUnikResponden = ToOne<RespondenModel>();
@@ -34,34 +40,20 @@ class SurveyModel {
 
   @Backlink()
   final jawabanSurvey = ToMany<JawabanSurveyModel>();
-}
 
-class SurveysModel {
-  int id;
-  int kodeUnik;
-  int? kategoriSelanjutnya;
-  int isSelesai;
-  int kodeUnikResponden;
-  int namaSurveyId;
-  int profileId;
-  String lastModified;
-  RespondenModel? respondenModel;
-  NamaSurveyModel? namaSurveyModel;
-  ProfileModel? profileModel;
-
-  SurveysModel({
-    required this.id,
-    required this.kodeUnik,
-    this.kategoriSelanjutnya,
-    required this.isSelesai,
-    required this.kodeUnikResponden,
-    required this.namaSurveyId,
-    required this.profileId,
-    required this.lastModified,
-    this.respondenModel,
-    this.namaSurveyModel,
-    this.profileModel,
-  });
+  factory SurveyModel.fromJson(Map<String, dynamic> json) => SurveyModel(
+        id: json["id"],
+        kodeUnik: json["kode_unik"],
+        kategoriSelanjutnya: json["kategori_selanjutnya"],
+        isSelesai: json["is_selesai"],
+        kodeUnikRespondenId: json["kode_unik_responden"],
+        namaSurveyId: json["nama_survey_id"],
+        profileId: json["profile_id"],
+        lastModified: json["updated_at"],
+        // respondenModel: RespondenModel.fromJson(json["responden"]),
+        // namaSurveyModel: NamaSurveyModel.fromJson(json["nama_survey"]),
+        // profileModel: ProfileModel.fromJson(json["profile"]),
+      );
 
   Map<String, dynamic> toJson() => {
         "id": id,
