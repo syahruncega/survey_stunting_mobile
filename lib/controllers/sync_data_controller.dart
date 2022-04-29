@@ -60,18 +60,18 @@ class SyncDataController {
   }
 
   Future pullDataFromServer() async {
-    pullUser();
-    pullProfile();
-    pullProvinsi();
-    pullKabupaten();
-    pullKecamatan();
-    pullKelurahan();
-    pullNamaSurvey();
-    pullKategoriSoal();
-    pullSoal();
-    pullJawabanSoal();
-    pullResponden();
-    pullSurvey();
+    await pullUser();
+    await pullProfile();
+    await pullProvinsi();
+    await pullKabupaten();
+    await pullKecamatan();
+    await pullKelurahan();
+    await pullNamaSurvey();
+    await pullKategoriSoal();
+    await pullSoal();
+    await pullJawabanSoal();
+    await pullResponden();
+    await pullSurvey();
   }
 
   Future syncDataProfile() async {
@@ -103,7 +103,7 @@ class SyncDataController {
           } else if (time == -1) {
             // local data is less than server data
             debugPrint("Local data is less than server data");
-            pullProfile();
+            await pullProfile();
           } else {
             // local data is equal to server data
             debugPrint("Local data is equal to server data");
@@ -112,7 +112,7 @@ class SyncDataController {
           // local profile not exist
           // pull data from server
           debugPrint("local data not exist. pull data from server");
-          pullProfile();
+          await pullProfile();
         }
       } else {
         debugPrint("profile data not found on server");
@@ -149,7 +149,7 @@ class SyncDataController {
           } else if (time == -1) {
             // local data is less than server data
             debugPrint("Local data is less than server data");
-            pullUser();
+            await pullUser();
           } else {
             // local data is equal to server data
             debugPrint("Local data is equal to server data");
@@ -158,7 +158,7 @@ class SyncDataController {
           // local user not exist
           // pull data from server
           debugPrint("local data not exist. pull data from server");
-          pullUser();
+          await pullUser();
         }
       } else {
         debugPrint("user data not found on server");
@@ -173,7 +173,7 @@ class SyncDataController {
       // Get provinsi form server
       List<Provinsi>? provinsi = await DioClient().getProvinsi(token: token);
       if (provinsi != null) {
-        pullProvinsi(provinsiData: provinsi);
+        await pullProvinsi(provinsiData: provinsi);
       } else {
         debugPrint("provinsi data not found on server");
       }
@@ -188,7 +188,7 @@ class SyncDataController {
       List<Kabupaten>? kabupaten =
           await DioClient().getAllKabupaten(token: token);
       if (kabupaten != null) {
-        pullKabupaten(kabupatenData: kabupaten);
+        await pullKabupaten(kabupatenData: kabupaten);
       } else {
         debugPrint("kabupaten data not found on server");
       }
@@ -203,7 +203,7 @@ class SyncDataController {
       List<Kecamatan>? kecamatan =
           await DioClient().getAllKecamatan(token: token);
       if (kecamatan != null) {
-        pullKecamatan(kecamatanData: kecamatan);
+        await pullKecamatan(kecamatanData: kecamatan);
       } else {
         debugPrint("kecamatan data not found on server");
       }
@@ -218,7 +218,7 @@ class SyncDataController {
       List<Kelurahan>? kelurahan =
           await DioClient().getAllKelurahan(token: token);
       if (kelurahan != null) {
-        pullKelurahan(kelurahanData: kelurahan);
+        await pullKelurahan(kelurahanData: kelurahan);
       } else {
         debugPrint("kelurahan data not found on server");
       }
@@ -234,7 +234,7 @@ class SyncDataController {
       List<JawabanSoal>? jawabanSoal =
           await DioClient().getJawabanSoal(token: token);
       if (jawabanSoal != null) {
-        pullJawabanSoal(jawabanSoalData: jawabanSoal);
+        await pullJawabanSoal(jawabanSoalData: jawabanSoal);
       } else {
         debugPrint("jawabanSoal data not found on server");
       }
@@ -248,7 +248,7 @@ class SyncDataController {
       // Get soal form server
       List<Soal>? soal = await DioClient().getAllSoal(token: token);
       if (soal != null) {
-        pullSoal(soalData: soal);
+        await pullSoal(soalData: soal);
       } else {
         debugPrint("soal data not found on server");
       }
@@ -263,7 +263,7 @@ class SyncDataController {
       List<KategoriSoal>? kategoriSoal =
           await DioClient().getAllKategoriSoal(token: token);
       if (kategoriSoal != null) {
-        pullKategoriSoal(kategoriSoalData: kategoriSoal);
+        await pullKategoriSoal(kategoriSoalData: kategoriSoal);
       } else {
         debugPrint("kategoriSoal data not found on server");
       }
@@ -278,7 +278,7 @@ class SyncDataController {
       List<NamaSurvey>? namaSurvey =
           await DioClient().getNamaSurvey(token: token);
       if (namaSurvey != null) {
-        pullNamaSurvey(namaSurveyData: namaSurvey);
+        await pullNamaSurvey(namaSurveyData: namaSurvey);
       } else {
         debugPrint("namaSurvey data not found on server");
       }
@@ -292,7 +292,7 @@ class SyncDataController {
       // Get responden form server
       List<Responden>? responden = await DioClient().getResponden(token: token);
       if (responden != null) {
-        pullResponden(respondenData: responden);
+        await pullResponden(respondenData: responden);
       } else {
         debugPrint("responden data not found on server");
       }
@@ -416,7 +416,7 @@ class SyncDataController {
     }
   }
 
-  void pullProfile() async {
+  Future pullProfile() async {
     try {
       // Get profile form server
       UserProfile userProfile = await DioClient().getProfile(token: token);
@@ -503,7 +503,7 @@ class SyncDataController {
 
   /// Pull data user from server
   /// Params : userAkun , id to update(only if update data)
-  void pullUser() async {
+  Future pullUser() async {
     try {
       Akun? userAkun = await DioClient().getAkun(token: token);
       var userData = userAkun?.data;
@@ -555,7 +555,7 @@ class SyncDataController {
     }
   }
 
-  void pullProvinsi({List<Provinsi>? provinsiData}) async {
+  Future pullProvinsi({List<Provinsi>? provinsiData}) async {
     List<ProvinsiModel> nProvinsi = [];
     if (provinsiData == null) {
       try {
@@ -605,7 +605,7 @@ class SyncDataController {
     // debugPrint("provinsi data has been pulled from server to local");
   }
 
-  void pullKabupaten({List<Kabupaten>? kabupatenData}) async {
+  Future pullKabupaten({List<Kabupaten>? kabupatenData}) async {
     List<KabupatenModel> nKabupaten = [];
     if (kabupatenData == null) {
       try {
@@ -647,7 +647,7 @@ class SyncDataController {
     }
   }
 
-  void pullKecamatan({List<Kecamatan>? kecamatanData}) async {
+  Future pullKecamatan({List<Kecamatan>? kecamatanData}) async {
     List<KecamatanModel> nKecamatan = [];
     if (kecamatanData == null) {
       try {
@@ -689,7 +689,7 @@ class SyncDataController {
     }
   }
 
-  void pullKelurahan({List<Kelurahan>? kelurahanData}) async {
+  Future pullKelurahan({List<Kelurahan>? kelurahanData}) async {
     List<KelurahanModel> nKelurahan = [];
     if (kelurahanData == null) {
       try {
@@ -731,7 +731,7 @@ class SyncDataController {
     }
   }
 
-  void pullJawabanSoal({List<JawabanSoal>? jawabanSoalData}) async {
+  Future pullJawabanSoal({List<JawabanSoal>? jawabanSoalData}) async {
     List<JawabanSoalModel> nJawabanSoal = [];
     if (jawabanSoalData == null) {
       try {
@@ -775,7 +775,7 @@ class SyncDataController {
     }
   }
 
-  void pullSoal({List<Soal>? soalData}) async {
+  Future pullSoal({List<Soal>? soalData}) async {
     List<SoalModel> nSoal = [];
     if (soalData == null) {
       try {
@@ -822,7 +822,7 @@ class SyncDataController {
     }
   }
 
-  void pullKategoriSoal({List<KategoriSoal>? kategoriSoalData}) async {
+  Future pullKategoriSoal({List<KategoriSoal>? kategoriSoalData}) async {
     List<KategoriSoalModel> nKategoriSoal = [];
     if (kategoriSoalData == null) {
       try {
@@ -866,7 +866,7 @@ class SyncDataController {
     }
   }
 
-  void pullNamaSurvey({List<NamaSurvey>? namaSurveyData}) async {
+  Future pullNamaSurvey({List<NamaSurvey>? namaSurveyData}) async {
     List<NamaSurveyModel> nNamaSurvey = [];
     if (namaSurveyData == null) {
       try {
@@ -908,7 +908,7 @@ class SyncDataController {
     }
   }
 
-  void pullResponden({List<Responden>? respondenData}) async {
+  Future pullResponden({List<Responden>? respondenData}) async {
     List<RespondenModel> nResponden = [];
     if (respondenData == null) {
       try {
@@ -962,7 +962,7 @@ class SyncDataController {
     }
   }
 
-  void pullSurvey({List<SurveyModel>? surveyData}) async {
+  Future pullSurvey({List<SurveyModel>? surveyData}) async {
     List<SurveyModel> nSurvey = [];
     if (surveyData == null) {
       try {
@@ -1013,7 +1013,7 @@ class SyncDataController {
     }
   }
 
-  void pullJawabanSurvey(List<JawabanSurvey> jawabanSurvey) async {
+  Future pullJawabanSurvey(List<JawabanSurvey> jawabanSurvey) async {
     // delete jawaban survey berfore pull
     await DbHelper.deleteAllJawabanSurvey(store_);
     List<JawabanSurveyModel> nJawabanSurvey = [];

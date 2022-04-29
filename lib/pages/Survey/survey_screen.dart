@@ -96,9 +96,8 @@ class SurveyScreen extends StatelessWidget {
                         onCancel: () {},
                         textCancel: "Batal",
                         textConfirm: "Proses",
-                        content: Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.start,
-                          runSpacing: size.height * 0.03,
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             FilledAutocomplete(
                               title: "Jenis Survey",
@@ -118,6 +117,7 @@ class SurveyScreen extends StatelessWidget {
                                     suggestion["value"];
                               },
                             ),
+                            const SizedBox(height: 20),
                             FilledAutocomplete(
                               title: "Status Survey",
                               hintText: "Pilih status survey",
@@ -171,9 +171,8 @@ class SurveyScreen extends StatelessWidget {
                       textCancel: "Batal",
                       cancelTextColor: Theme.of(context).colorScheme.primary,
                       textConfirm: "Tambah Survey",
-                      content: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.start,
-                        runSpacing: size.height * 0.03,
+                      content: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Obx(
                             () => FilledAutocomplete(
@@ -197,6 +196,7 @@ class SurveyScreen extends StatelessWidget {
                               },
                             ),
                           ),
+                          const SizedBox(height: 20),
                           Obx(
                             () => FilledAutocomplete(
                               title: "Nama Survey",
@@ -218,6 +218,7 @@ class SurveyScreen extends StatelessWidget {
                               },
                             ),
                           ),
+                          const SizedBox(height: 20),
                           Center(
                             child: CustomElevatedButton(
                               label: "Tambah Responden",

@@ -1,16 +1,12 @@
 import 'dart:developer';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/state_manager.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_stunting/controllers/sync_data_controller.dart';
 
 import '../models/localDb/helpers.dart';
-import '../services/dio_client.dart';
-import '../services/handle_errors.dart';
 
 import '../consts/globals_lib.dart' as global;
 

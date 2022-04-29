@@ -36,7 +36,7 @@ class BerandaScreen extends StatelessWidget {
               ),
               Obx(
                 () => SizedBox(
-                  height: 80,
+                  height: 90,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: [
