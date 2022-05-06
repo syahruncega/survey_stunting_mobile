@@ -43,12 +43,12 @@ class SurveyModel {
 
   factory SurveyModel.fromJson(Map<String, dynamic> json) => SurveyModel(
         id: json["id"],
-        kodeUnik: json["kode_unik"],
-        kategoriSelanjutnya: json["kategori_selanjutnya"],
-        isSelesai: json["is_selesai"],
-        kodeUnikRespondenId: json["kode_unik_responden"],
-        namaSurveyId: json["nama_survey_id"],
-        profileId: json["profile_id"],
+        kodeUnik: int.parse(json["kode_unik"]),
+        kategoriSelanjutnya: int.tryParse(json["kategori_selanjutnya"]),
+        isSelesai: int.parse(json["is_selesai"]),
+        kodeUnikRespondenId: int.parse(json["kode_unik_responden"]),
+        namaSurveyId: int.parse(json["nama_survey_id"]),
+        profileId: int.parse(json["profile_id"]),
         lastModified: json["updated_at"],
         // respondenModel: RespondenModel.fromJson(json["responden"]),
         // namaSurveyModel: NamaSurveyModel.fromJson(json["nama_survey"]),

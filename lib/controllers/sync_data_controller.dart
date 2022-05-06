@@ -45,18 +45,18 @@ class SyncDataController {
   SyncDataController({required this.store_});
 
   Future syncData() async {
-    await syncDataUser();
-    await syncDataProfile();
-    await syncDataProvinsi();
-    await syncDataKabupaten();
-    await syncDataKecamatan();
-    await syncDataKelurahan();
-    await syncNamaSurvey();
-    await syncKategoriSoal();
-    await syncSoal();
-    await syncJawabanSoal();
-    await syncResponden();
-    await syncSurvey();
+    // await syncDataUser();
+    // await syncDataProfile();
+    // await syncDataProvinsi();
+    // await syncDataKabupaten();
+    // await syncDataKecamatan();
+    // await syncDataKelurahan();
+    // await syncNamaSurvey();
+    // await syncKategoriSoal();
+    // await syncSoal();
+    // await syncJawabanSoal();
+    //   await syncResponden();
+    //   await syncSurvey();
   }
 
   Future pullDataFromServer() async {
@@ -987,6 +987,7 @@ class SyncDataController {
           }
           await DbHelper.putSurvey(store_, nSurvey);
           debugPrint("survey data has been pulled from server to local");
+          await syncJawabanSurvey();
         } else {
           debugPrint("survey data not found on server");
         }

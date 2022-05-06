@@ -188,7 +188,8 @@ class SurveyController extends GetxController {
         );
         await DbHelper.putSurvey(Objectbox.store_, [data]);
         isLoading.value = false;
-        Get.toNamed(RouteName.isiSurvey, arguments: data);
+        Get.toNamed(RouteName.isiSurvey,
+            arguments: Survey.fromJson(data.toJson()));
         successScackbar("Survey berhasil disimpan");
       }
     }

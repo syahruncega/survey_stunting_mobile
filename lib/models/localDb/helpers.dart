@@ -360,12 +360,21 @@ class DbHelper {
   static Future<List<JawabanSurveyModel>> getJawabanSurveyByKodeUnikSurveyId(
     Store store, {
     required int kodeUnikSurveyId,
+    int? kategoriSoalId,
   }) async {
     final jawabanSurveys = await getJawabanSurvey(store);
-    return jawabanSurveys
-        .where((jawabanSurvey) =>
-            jawabanSurvey.kodeUnikSurvey.targetId == kodeUnikSurveyId)
-        .toList();
+    if (kategoriSoalId == null) {
+      return jawabanSurveys
+          .where((jawabanSurvey) =>
+              jawabanSurvey.kodeUnikSurvey.targetId == kodeUnikSurveyId)
+          .toList();
+    } else {
+      return jawabanSurveys
+          .where((jawabanSurvey) =>
+              jawabanSurvey.kodeUnikSurvey.targetId == kodeUnikSurveyId &&
+              jawabanSurvey.kategoriSoal.targetId == kategoriSoalId)
+          .toList();
+    }
   }
 
   /// Get jawabanSurvey by kategoriSoalId
