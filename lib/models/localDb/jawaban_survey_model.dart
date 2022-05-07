@@ -48,9 +48,9 @@ class JawabanSurveyModel {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "soal_id": soalId.toString(),
-        "kode_unik_survey": kodeUnikSurveyId.toString(),
-        "kategori_soal_id": kategoriSoalId.toString(),
+        "soal_id": soal.targetId.toString(),
+        "kode_unik_survey": kodeUnikSurvey.targetId.toString(),
+        "kategori_soal_id": kategoriSoal.targetId.toString(),
         "jawaban_soal_id": jawabanSoalId.toString(),
         "jawaban_lainnya": jawabanLainnya.toString(),
         "updated_at": lastModified.toString(),
