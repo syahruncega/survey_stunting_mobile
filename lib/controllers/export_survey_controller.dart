@@ -169,7 +169,7 @@ class ExportSurveyController extends GetxController {
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 1, rowIndex: 1 + rowIndex))
-          .value = s.kodeUnikResponden;
+          .value = s.responden!.kodeUnik;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
