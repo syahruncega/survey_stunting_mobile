@@ -74,11 +74,7 @@ class SurveyController extends GetxController {
             : (statusSurvey == "belum_selesai")
                 ? 0
                 : null,
-        namaSurveyId: (typeSurvey == "pre")
-            ? "2"
-            : (typeSurvey == "post")
-                ? "1"
-                : null,
+        namaSurveyId: typeSurvey,
         keyword: searchSurveyEditingController.text == ""
             ? null
             : searchSurveyEditingController.text,
@@ -248,6 +244,15 @@ class SurveyController extends GetxController {
     await getSurvey();
     statusSurveyEditingController.addListener(_setToEmpty);
     typeSurveyEditingController.addListener(_setToEmpty);
+    searchSurveyEditingController.addListener(() {
+      getSurvey(
+        queryParameters: SurveyParameters(
+          search: searchSurveyEditingController.text,
+          status: statusSurvey,
+          namaSurveyId: typeSurvey,
+        ),
+      );
+    });
     super.onInit();
   }
 

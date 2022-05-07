@@ -458,55 +458,72 @@ class DbHelper {
     String? keyword,
   }) async {
     final surveys = await getSurvey(store);
-    if (isSelesai == null) {
-      if (keyword == null) {
-        return surveys
-            .where((survey) => survey.profile.targetId == profileId)
-            .toList();
-      } else {
-        List<SurveyModel> filteredSurveys = surveys
-            .where((survey) => survey.profile.targetId == profileId)
-            .toList();
 
-        filteredSurveys.retainWhere((survey) =>
-            survey.namaSurvey.target!.nama
-                .toString()
-                .toLowerCase()
-                .contains(keyword.toString().toLowerCase()) ||
-            survey.profile.target!.namaLengkap
-                .toString()
-                .toLowerCase()
-                .contains(keyword.toString().toLowerCase()) ||
-            survey.kodeUnikResponden.target!.kartuKeluarga
-                .toString()
-                .toLowerCase()
-                .contains(keyword.toString().toLowerCase()));
-        return filteredSurveys;
+    if (namaSurveyId != null && namaSurveyId != "") {
+      if (isSelesai != null) {
+        if (keyword != null) {
+          List<SurveyModel> filteredSurveys = surveys
+              .where((survey) =>
+                  survey.profile.targetId == profileId &&
+                  survey.isSelesai == isSelesai &&
+                  survey.namaSurvey.targetId == int.parse(namaSurveyId))
+              .toList();
+
+          filteredSurveys.retainWhere((survey) =>
+              survey.namaSurvey.target!.nama
+                  .toString()
+                  .toLowerCase()
+                  .contains(keyword.toString().toLowerCase()) ||
+              survey.profile.target!.namaLengkap
+                  .toString()
+                  .toLowerCase()
+                  .contains(keyword.toString().toLowerCase()));
+          return filteredSurveys;
+        } else {
+          return surveys
+              .where((survey) =>
+                  survey.profile.targetId == profileId &&
+                  survey.namaSurvey.targetId == int.parse(namaSurveyId) &&
+                  survey.isSelesai == isSelesai)
+              .toList();
+        }
+      } else {
+        return surveys
+            .where((survey) =>
+                survey.profile.targetId == profileId &&
+                survey.namaSurvey.targetId == int.parse(namaSurveyId))
+            .toList();
       }
     } else {
-      if (keyword == null) {
-        return surveys
-            .where((survey) =>
-                survey.profile.targetId == profileId &&
-                survey.isSelesai == isSelesai)
-            .toList();
-      } else {
-        List<SurveyModel> filteredSurveys = surveys
-            .where((survey) =>
-                survey.profile.targetId == profileId &&
-                survey.isSelesai == isSelesai)
-            .toList();
+      if (isSelesai != null) {
+        if (keyword != null) {
+          List<SurveyModel> filteredSurveys = surveys
+              .where((survey) =>
+                  survey.profile.targetId == profileId &&
+                  survey.isSelesai == isSelesai)
+              .toList();
 
-        filteredSurveys.retainWhere((survey) =>
-            survey.namaSurvey.target!.nama
-                .toString()
-                .toLowerCase()
-                .contains(keyword.toString().toLowerCase()) ||
-            survey.profile.target!.namaLengkap
-                .toString()
-                .toLowerCase()
-                .contains(keyword.toString().toLowerCase()));
-        return filteredSurveys;
+          filteredSurveys.retainWhere((survey) =>
+              survey.namaSurvey.target!.nama
+                  .toString()
+                  .toLowerCase()
+                  .contains(keyword.toString().toLowerCase()) ||
+              survey.profile.target!.namaLengkap
+                  .toString()
+                  .toLowerCase()
+                  .contains(keyword.toString().toLowerCase()));
+          return filteredSurveys;
+        } else {
+          return surveys
+              .where((survey) =>
+                  survey.profile.targetId == profileId &&
+                  survey.isSelesai == isSelesai)
+              .toList();
+        }
+      } else {
+        return surveys
+            .where((survey) => survey.profile.targetId == profileId)
+            .toList();
       }
     }
   }
