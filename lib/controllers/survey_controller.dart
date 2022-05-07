@@ -244,14 +244,13 @@ class SurveyController extends GetxController {
     await getSurvey();
     statusSurveyEditingController.addListener(_setToEmpty);
     typeSurveyEditingController.addListener(_setToEmpty);
-    searchSurveyEditingController.addListener(() {
-      getSurvey(
-        queryParameters: SurveyParameters(
-          search: searchSurveyEditingController.text,
-          status: statusSurvey,
-          namaSurveyId: typeSurvey,
-        ),
-      );
+    searchSurveyEditingController.addListener(() async {
+      await getSurvey(
+          queryParameters: SurveyParameters(
+        search: searchSurveyEditingController.text,
+        status: statusSurvey,
+        namaSurveyId: typeSurvey,
+      ));
     });
     super.onInit();
   }
@@ -262,6 +261,7 @@ class SurveyController extends GetxController {
     typeSurveyEditingController.dispose();
     respondenTEC.dispose();
     namaSurveyTEC.dispose();
+    searchSurveyEditingController.dispose();
     super.dispose();
   }
 }

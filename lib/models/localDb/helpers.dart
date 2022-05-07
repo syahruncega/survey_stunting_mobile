@@ -461,7 +461,7 @@ class DbHelper {
 
     if (namaSurveyId != null && namaSurveyId != "") {
       if (isSelesai != null) {
-        if (keyword != null) {
+        if (keyword != null && keyword != "") {
           List<SurveyModel> filteredSurveys = surveys
               .where((survey) =>
                   survey.profile.targetId == profileId &&
@@ -475,6 +475,10 @@ class DbHelper {
                   .toLowerCase()
                   .contains(keyword.toString().toLowerCase()) ||
               survey.profile.target!.namaLengkap
+                  .toString()
+                  .toLowerCase()
+                  .contains(keyword.toString().toLowerCase()) ||
+              survey.kodeUnikResponden.target!.kartuKeluarga
                   .toString()
                   .toLowerCase()
                   .contains(keyword.toString().toLowerCase()));
@@ -494,37 +498,58 @@ class DbHelper {
                 survey.namaSurvey.targetId == int.parse(namaSurveyId))
             .toList();
       }
-    } else {
-      if (isSelesai != null) {
-        if (keyword != null) {
-          List<SurveyModel> filteredSurveys = surveys
-              .where((survey) =>
-                  survey.profile.targetId == profileId &&
-                  survey.isSelesai == isSelesai)
-              .toList();
+    } else if (isSelesai != null) {
+      if (keyword != null && keyword != "") {
+        List<SurveyModel> filteredSurveys = surveys
+            .where((survey) =>
+                survey.profile.targetId == profileId &&
+                survey.isSelesai == isSelesai)
+            .toList();
 
-          filteredSurveys.retainWhere((survey) =>
-              survey.namaSurvey.target!.nama
-                  .toString()
-                  .toLowerCase()
-                  .contains(keyword.toString().toLowerCase()) ||
-              survey.profile.target!.namaLengkap
-                  .toString()
-                  .toLowerCase()
-                  .contains(keyword.toString().toLowerCase()));
-          return filteredSurveys;
-        } else {
-          return surveys
-              .where((survey) =>
-                  survey.profile.targetId == profileId &&
-                  survey.isSelesai == isSelesai)
-              .toList();
-        }
+        filteredSurveys.retainWhere((survey) =>
+            survey.namaSurvey.target!.nama
+                .toString()
+                .toLowerCase()
+                .contains(keyword.toString().toLowerCase()) ||
+            survey.profile.target!.namaLengkap
+                .toString()
+                .toLowerCase()
+                .contains(keyword.toString().toLowerCase()) ||
+            survey.kodeUnikResponden.target!.kartuKeluarga
+                .toString()
+                .toLowerCase()
+                .contains(keyword.toString().toLowerCase()));
+        return filteredSurveys;
       } else {
         return surveys
-            .where((survey) => survey.profile.targetId == profileId)
+            .where((survey) =>
+                survey.profile.targetId == profileId &&
+                survey.isSelesai == isSelesai)
             .toList();
       }
+    } else if (keyword != null && keyword != "") {
+      List<SurveyModel> filteredSurveys = surveys
+          .where((survey) => survey.profile.targetId == profileId)
+          .toList();
+
+      filteredSurveys.retainWhere((survey) =>
+          survey.namaSurvey.target!.nama
+              .toString()
+              .toLowerCase()
+              .contains(keyword.toString().toLowerCase()) ||
+          survey.profile.target!.namaLengkap
+              .toString()
+              .toLowerCase()
+              .contains(keyword.toString().toLowerCase()) ||
+          survey.kodeUnikResponden.target!.kartuKeluarga
+              .toString()
+              .toLowerCase()
+              .contains(keyword.toString().toLowerCase()));
+      return filteredSurveys;
+    } else {
+      return surveys
+          .where((survey) => survey.profile.targetId == profileId)
+          .toList();
     }
   }
 
@@ -599,6 +624,9 @@ class DbHelper {
         profileModel: profile,
       ));
     }
+    log('DIMAN ::' + namaSurveyId.toString());
+    log('DIMAN ::' + isSelesai.toString());
+    log('DIMAN ::' + keyword.toString());
     return allSurveys;
   }
 
