@@ -909,6 +909,7 @@ class SyncDataController {
   }
 
   Future pullResponden({List<Responden>? respondenData}) async {
+    int id = await getIdResponden();
     List<RespondenModel> nResponden = [];
     if (respondenData == null) {
       try {
@@ -918,7 +919,7 @@ class SyncDataController {
         if (responden != null) {
           for (var resp in responden) {
             RespondenModel respondenModel = RespondenModel(
-              id: resp.id,
+              id: id,
               kodeUnik: int.parse(resp.kodeUnik!),
               kartuKeluarga: int.parse(resp.kartuKeluarga),
               alamat: resp.alamat,
@@ -943,7 +944,7 @@ class SyncDataController {
     } else {
       for (var resp in respondenData) {
         RespondenModel respondenModel = RespondenModel(
-          id: resp.id,
+          id: id,
           kodeUnik: int.parse(resp.kodeUnik!),
           kartuKeluarga: int.parse(resp.kartuKeluarga),
           alamat: resp.alamat,
@@ -964,6 +965,7 @@ class SyncDataController {
 
   Future pullSurvey({List<SurveyModel>? surveyData}) async {
     List<SurveyModel> nSurvey = [];
+    int id = await getIdSurvey();
     if (surveyData == null) {
       try {
         // Get responden form server
@@ -971,7 +973,7 @@ class SyncDataController {
         if (survey != null) {
           for (var surv in survey) {
             SurveyModel surveyModel = SurveyModel(
-              id: surv.id,
+              id: id,
               kodeUnik: int.parse(surv.kodeUnik!),
               kategoriSelanjutnya: surv.kategoriSelanjutnya != null
                   ? int.parse(surv.kategoriSelanjutnya!)
@@ -997,7 +999,7 @@ class SyncDataController {
     } else {
       for (var s in surveyData) {
         SurveyModel surveyModel = SurveyModel(
-          id: s.id,
+          id: id,
           kodeUnik: s.kodeUnik,
           kategoriSelanjutnya: s.kategoriSelanjutnya,
           isSelesai: s.isSelesai,
@@ -1018,9 +1020,10 @@ class SyncDataController {
     // delete jawaban survey berfore pull
     await DbHelper.deleteAllJawabanSurvey(store_);
     List<JawabanSurveyModel> nJawabanSurvey = [];
+    int id = await getIdJawabanSurvey();
     for (var jawaban in jawabanSurvey) {
       JawabanSurveyModel jawabanSurveyModel = JawabanSurveyModel(
-        id: jawaban.id,
+        id: id,
         jawabanLainnya:
             jawaban.jawabanLainnya != null ? jawaban.jawabanLainnya! : null,
         soalId: int.parse(jawaban.soalId),
@@ -1035,6 +1038,23 @@ class SyncDataController {
     }
     await DbHelper.putJawabanSurvey(store_, nJawabanSurvey);
     debugPrint("jawaban survey data has been pulled from server to local");
+  }
+
+  Future<int> getIdResponden() async {
+    List<RespondenModel>? localResponden =
+        await DbHelper.getResponden(Objectbox.store_);
+    return localResponden.length + 1;
+  }
+
+  Future<int> getIdSurvey() async {
+    List<SurveyModel>? localSurvey = await DbHelper.getSurvey(Objectbox.store_);
+    return localSurvey.length + 1;
+  }
+
+  Future<int> getIdJawabanSurvey() async {
+    List<JawabanSurveyModel>? localJawabanSurvey =
+        await DbHelper.getJawabanSurvey(Objectbox.store_);
+    return localJawabanSurvey.length + 1;
   }
 
   /// Comparing between two dates
