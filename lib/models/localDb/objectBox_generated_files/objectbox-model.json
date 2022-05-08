@@ -62,6 +62,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "448:7801288791329027794",
+
           "relationTarget": "SoalModel"
         },
         {
@@ -70,6 +71,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "450:8691373144257994613",
+
           "relationTarget": "KategoriSoalModel"
         },
         {
@@ -83,6 +85,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "449:1499611605729197591",
+
           "relationTarget": "SurveyModel"
         },
         {
@@ -121,6 +124,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "451:5465783635163364363",
+
           "relationTarget": "ProvinsiModel"
         },
         {
@@ -158,6 +162,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "452:8608454381320906002",
+
           "relationTarget": "NamaSurveyModel"
         },
         {
@@ -190,6 +195,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "453:1932998845863035278",
+
           "relationTarget": "KabupatenModel"
         },
         {
@@ -222,6 +228,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "454:2227518809651950188",
+
           "relationTarget": "KecamatanModel"
         },
         {
@@ -333,6 +340,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "455:767461048588977724",
+
           "relationTarget": "UserModel"
         },
         {
@@ -404,6 +412,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "456:5098466790321724071",
+
           "relationTarget": "ProvinsiModel"
         },
         {
@@ -412,6 +421,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "457:39005334857558041",
+
           "relationTarget": "KabupatenModel"
         },
         {
@@ -420,6 +430,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "458:731335771113284649",
+
           "relationTarget": "KecamatanModel"
         },
         {
@@ -428,6 +439,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "459:6527302049084804152",
+
           "relationTarget": "KelurahanModel"
         },
         {
@@ -475,6 +487,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "460:9086923083751620282",
+
           "relationTarget": "KategoriSoalModel"
         },
         {
@@ -517,6 +530,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "462:1887364318583638254",
+
           "relationTarget": "NamaSurveyModel"
         },
         {
@@ -525,6 +539,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "463:5512272160662929285",
+
           "relationTarget": "ProfileModel"
         },
         {
@@ -533,6 +548,7 @@
           "type": 11,
           "flags": 520,
           "indexId": "461:4513130374066917546",
+
           "relationTarget": "RespondenModel"
         },
         {
@@ -585,6 +601,7 @@
   ],
   "lastEntityId": "13:7531561072196323262",
   "lastIndexId": "463:5512272160662929285",
+
   "lastRelationId": "1:1618954337856120993",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

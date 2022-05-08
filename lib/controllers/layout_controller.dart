@@ -74,6 +74,7 @@ class LayoutController extends GetxController {
   @override
   void onInit() async {
     await checkConnection();
+
     Future.delayed(const Duration(milliseconds: 1500), () {
       canExit = true;
     });
