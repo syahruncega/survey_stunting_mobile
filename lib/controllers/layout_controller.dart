@@ -1,11 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/state_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_stunting/controllers/sync_data_controller.dart';
 
 import '../models/localDb/helpers.dart';
 
-late final Objectbox objectbox;
+import '../consts/globals_lib.dart' as global;
 
 class LayoutController extends GetxController {
   var scaffoldKey = GlobalKey<ScaffoldState>();
@@ -46,10 +49,32 @@ class LayoutController extends GetxController {
     scaffoldKey.currentState?.openEndDrawer();
   }
 
+  Future checkConnection() async {
+    log('checking connection..');
+    bool connect = await global.isConnected();
+    final prefs = await SharedPreferences.getInstance();
+    if (connect) {
+      bool firstInstall_ = await firstInstall();
+      if (firstInstall_) {
+        debugPrint('FIRST_INSTALL');
+        SyncDataController(store_: Objectbox.store_).pullDataFromServer();
+        prefs.setBool('first_install', false);
+      } else {
+        debugPrint('ALREADY INSTALLED BEFORE');
+        SyncDataController(store_: Objectbox.store_).syncData();
+      }
+    }
+  }
+
+  Future<bool> firstInstall() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool("first_install") ?? true;
+  }
+
   @override
   void onInit() async {
-    // objectbox = await Objectbox.create();
-    // SyncDataController(store_: objectbox.store).syncDataFromServer();
+    await checkConnection();
+
     Future.delayed(const Duration(milliseconds: 1500), () {
       canExit = true;
     });

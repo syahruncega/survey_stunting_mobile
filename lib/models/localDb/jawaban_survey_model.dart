@@ -7,8 +7,9 @@ import 'survey_model.dart';
 
 @Entity()
 class JawabanSurveyModel {
+  @Id(assignable: true)
   int? id = 0;
-  String jawabanLainnya;
+  String? jawabanLainnya;
   int? soalId;
   int? kodeUnikSurveyId;
   int? kategoriSoalId;
@@ -17,7 +18,7 @@ class JawabanSurveyModel {
 
   JawabanSurveyModel({
     this.id,
-    required this.jawabanLainnya,
+    this.jawabanLainnya,
     this.soalId,
     this.kodeUnikSurveyId,
     this.kategoriSoalId,
@@ -31,4 +32,27 @@ class JawabanSurveyModel {
 
   // @Backlink()
   final jawabanSoal = ToMany<JawabanSoalModel>();
+
+  factory JawabanSurveyModel.fromJson(Map<String, dynamic> json) =>
+      JawabanSurveyModel(
+        id: json["id"],
+        soalId: int.parse(json["soal_id"]),
+        kodeUnikSurveyId: int.parse(json["kode_unik_survey"]),
+        kategoriSoalId: int.parse(json["kategori_soal_id"]),
+        jawabanSoalId: json["jawaban_soal_id"] != null
+            ? int.parse(json["jawaban_soal_id"])
+            : null,
+        jawabanLainnya: json["jawaban_lainnya"],
+        lastModified: DateTime.now().toString(),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "soal_id": soal.targetId.toString(),
+        "kode_unik_survey": kodeUnikSurvey.targetId.toString(),
+        "kategori_soal_id": kategoriSoal.targetId.toString(),
+        "jawaban_soal_id": jawabanSoalId.toString(),
+        "jawaban_lainnya": jawabanLainnya.toString(),
+        "updated_at": lastModified.toString(),
+      };
 }

@@ -63,6 +63,24 @@ class DioClient {
     }
   }
 
+  Future testConnection({required String token}) async {
+    try {
+      Response response = await _dio.get(
+        "/connection",
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      if (response.statusCode == 200) {
+        return true;
+      }
+      return false;
+    } on DioError catch (e) {
+      log('Error check Connection: $e');
+      rethrow;
+    }
+  }
+
   Future<List<Survey>?> getSurvey({
     required String token,
     SurveyParameters? queryParameters,
@@ -432,19 +450,17 @@ class DioClient {
     }
   }
 
-
-  Future<List<JawabanSurvey>?> getJawabanSurvey({
-    required String token,
-    required String kodeUnikSurvey,
-    String? soalId,
-    String? kategoriSoalId,
-  }) async {
-
+Future<List<JawabanSurvey>?> getJawabanSurvey(
+      {required String token,
+      String? kodeUnikSurvey,
+      String? soalId,
+      String? kategoriSoalId}) async {
     try {
       Response response = await _dio.get(
         "/jawaban_survey",
         queryParameters: {
-          "kode_unik_survey": int.parse(kodeUnikSurvey),
+          "kode_unik_survey":
+              kodeUnikSurvey != null ? int.parse(kodeUnikSurvey) : null,
           "kategori_soal_id":
               kategoriSoalId != null ? int.parse(kategoriSoalId) : null,
           "soal_id": soalId != null ? int.parse(soalId) : null,
