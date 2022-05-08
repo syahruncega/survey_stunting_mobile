@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:survey_stunting/components/error_scackbar.dart';
 import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/kabupaten.dart';
 import 'package:survey_stunting/models/kecamatan.dart';
@@ -126,6 +127,15 @@ class TambahRespondenController extends GetxController {
         }
       } else {
         debugPrint('add responden local');
+        List<RespondenModel> nResponden =
+            await DbHelper.getResponden(Objectbox.store_);
+        var responden = nResponden.firstWhereOrNull(
+            (resp) => resp.kartuKeluarga == int.parse(kartuKeluargaTEC.text));
+        if (responden != null) {
+          errorScackbar('Responden sudah ada');
+          return;
+        }
+
         int uniqueCode = await generateUniqueCode();
         int id = await getIdResponden();
         RespondenModel respondenModel = RespondenModel(

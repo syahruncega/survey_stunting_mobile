@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:survey_stunting/components/error_scackbar.dart';
 import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/nama_survey.dart';
 import 'package:survey_stunting/models/responden.dart';
@@ -172,6 +173,15 @@ class SurveyController extends GetxController {
         }
       } else {
         debugPrint('create survey offline');
+        List<SurveyModel> nSurvey = await DbHelper.getSurvey(Objectbox.store_);
+        var survey = nSurvey.firstWhereOrNull((element) =>
+            element.kodeUnikResponden.targetId ==
+                int.parse(kodeUnikResponden) &&
+            element.namaSurvey.targetId == namaSurveyId);
+        if (survey != null) {
+          errorScackbar('Survey sudah ada');
+          return;
+        }
         int uniqueCode = await generateUniqueCode();
         SurveyModel data = SurveyModel(
           kodeUnik: uniqueCode,
@@ -206,7 +216,9 @@ class SurveyController extends GetxController {
       }
     } else {
       debugPrint('delete local survey' + kodeUnik.toString());
-      // await DbHelper.deleteSurvey(Objectbox.store_, id: id);
+      await DbHelper.deleteSurvey(Objectbox.store_,
+          kodeUnik: int.parse(kodeUnik));
+      surveys.removeWhere((element) => element.kodeUnik == kodeUnik);
     }
     isLoading.value = false;
   }

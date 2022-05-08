@@ -649,11 +649,11 @@ class DbHelper {
   }
 
   /// delete survey
-  static Future<bool> deleteSurvey(Store store, {required int id}) async {
-    final survey = await getSurveyById(store, id: id);
-    int kodeUnikSurvey = survey!.kodeUnik;
+  static Future<bool> deleteSurvey(Store store, {required int kodeUnik}) async {
+    final survey = await getSurveyByKodeUnik(store, kodeUnik: kodeUnik);
+    int id = survey.id!;
     final jawabanSurvey = await getJawabanSurveyByKodeUnikSurveyId(store,
-        kodeUnikSurveyId: kodeUnikSurvey);
+        kodeUnikSurveyId: kodeUnik);
     if (jawabanSurvey.isNotEmpty) {
       for (var jawaban in jawabanSurvey) {
         await deleteJawabanSurvey(store, id: jawaban.id!);
