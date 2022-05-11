@@ -70,6 +70,26 @@ class ProfilScreen extends StatelessWidget {
             leading: Padding(
               padding: const EdgeInsets.only(top: 2),
               child: SvgPicture.asset(
+                "assets/icons/bold/sincronize.svg",
+                height: 26,
+                color: Theme.of(context).textTheme.bodyText1!.color,
+              ),
+            ),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            title: const Text("Sinkronisasi"),
+            subtitle: const Text("Siknronisasi data"),
+            onTap: () => Get.toNamed(RouteName.sinkronisasi),
+            dense: true,
+            trailing: SvgPicture.asset(
+              "assets/icons/outline/arrow-right.svg",
+              color: Theme.of(context).textTheme.bodyText1!.color,
+            ),
+          ),
+          ListTile(
+            leading: Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: SvgPicture.asset(
                 "assets/icons/bold/logout.svg",
                 height: 26,
                 color: Theme.of(context).errorColor,

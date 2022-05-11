@@ -89,6 +89,10 @@ class IsiSurveyController extends GetxController {
         kodeUnikSurveyId: int.parse(survey.kodeUnik!),
         kategoriSoalId: currentKategoriSoal.id,
       );
+      if (jawabanSurveyModel.isEmpty) {
+        initialJawabanSurvey = [];
+        return;
+      }
       initialJawabanSurvey = jawabanSurveyModel
           .map((e) => JawabanSurvey.fromJson(e.toJson()))
           .toList();
@@ -418,10 +422,12 @@ class IsiSurveyController extends GetxController {
       debugPrint('update survey local');
       var surveyModel = SurveyModel(
         id: survey.id,
-        kategoriSelanjutnya: survey.kategoriSelanjutnya != null
-            ? int.parse(survey.kategoriSelanjutnya!)
-            : null,
-        kodeUnikRespondenId: int.parse(survey.responden!.kodeUnik.toString()),
+        kategoriSelanjutnya: kategoriSoal
+            .firstWhere((element) =>
+                element.urutan ==
+                (survey.isSelesai == "0" ? currentOrder.toString() : "1"))
+            .id,
+        kodeUnikRespondenId: int.parse(survey.kodeUnikResponden),
         namaSurveyId: int.parse(survey.namaSurveyId),
         profileId: int.parse(survey.profileId),
         kodeUnik: int.parse(survey.kodeUnik!),
