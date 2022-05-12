@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:survey_stunting/models/akun.dart';
@@ -44,19 +45,30 @@ class SyncDataController {
 
   SyncDataController({required this.store_});
 
-  Future syncData() async {
-    // await syncDataUser();
-    // await syncDataProfile();
-    // await syncDataProvinsi();
-    // await syncDataKabupaten();
-    // await syncDataKecamatan();
-    // await syncDataKelurahan();
-    // await syncNamaSurvey();
-    // await syncKategoriSoal();
-    // await syncSoal();
-    // await syncJawabanSoal();
-    //   await syncResponden();
-    //   await syncSurvey();
+  Future syncData({required bool syncAll}) async {
+    if (syncAll) {
+      // await syncDataUser();
+      // await syncDataProfile();
+      // await syncDataProvinsi();
+      // await syncDataKabupaten();
+      // await syncDataKecamatan();
+      // await syncDataKelurahan();
+      // await syncNamaSurvey();
+      // await syncKategoriSoal();
+      // await syncSoal();
+      // await syncJawabanSoal();
+      await syncResponden();
+      // await syncSurvey();
+    } else {
+      // await syncDataUser();
+      // await syncDataProfile();
+      // await syncNamaSurvey();
+      // await syncKategoriSoal();
+      // await syncSoal();
+      // await syncJawabanSoal();
+      // await syncResponden();
+      // await syncSurvey();
+    }
   }
 
   Future pullDataFromServer() async {
@@ -70,7 +82,7 @@ class SyncDataController {
     await pullKategoriSoal();
     await pullSoal();
     await pullJawabanSoal();
-    await pullResponden();
+    await pullResponden(isCreate: true);
     await pullSurvey();
   }
 
@@ -289,10 +301,118 @@ class SyncDataController {
 
   Future syncResponden() async {
     try {
-      // Get responden form server
-      List<Responden>? responden = await DioClient().getResponden(token: token);
-      if (responden != null) {
-        await pullResponden(respondenData: responden);
+      List<RespondenModel> serverToPullCreate = [];
+      List<RespondenModel> serverToPullUpdate = [];
+      List<Responden> localToPushCreate = [];
+      List<Responden> localToPushUpdate = [];
+
+      // Get user form server
+      List<Responden>? respondens =
+          await DioClient().getResponden(token: token);
+      List<RespondenModel> localResponden = await DbHelper.getResponden(store_);
+
+      if (respondens != null) {
+        if (localResponden.isNotEmpty) {
+          for (var responden in respondens) {
+            try {
+              RespondenModel? nLocalResponden = localResponden.singleWhere(
+                  (element) =>
+                      element.kodeUnik == int.parse(responden.kodeUnik!));
+              // check, if responden on server not updated yet
+              if (responden.updatedAt == null) {
+                // skip this responden
+                continue;
+              }
+              // compare local responden with server responden
+              debugPrint(
+                  "local responden exist. compare local with server data[loop server]");
+              DateTime localTime = DateTime.parse(nLocalResponden.lastModified);
+              DateTime serverTime = responden.updatedAt!;
+              int time = compareTime(localTime, serverTime);
+              if (time == 1) {
+                // local data is greater than server data
+                debugPrint(
+                    "Local data is greater than server data[loop server]");
+                localToPushUpdate
+                    .add(Responden.fromJson(nLocalResponden.toJson()));
+              } else if (time == -1) {
+                // local data is less than server data
+                debugPrint("Local data is less than server data[loop server]");
+                serverToPullUpdate
+                    .add(RespondenModel.fromJson(responden.toJson()));
+              } else {
+                // local data is equal to server data
+                debugPrint("Local data is equal to server data[loop server]");
+              }
+            } catch (e) {
+              serverToPullCreate
+                  .add(RespondenModel.fromJson(responden.toJson()));
+              continue;
+            }
+          }
+
+          for (var _localResponden in localResponden) {
+            try {
+              Responden? nServerResponden = respondens.singleWhere((element) =>
+                  element.kodeUnik == _localResponden.kodeUnik.toString());
+              // check, if responden on local not updated yet
+              if (nServerResponden.updatedAt == null) {
+                // skip this responden
+                continue;
+              }
+              // compare local user with server user
+              debugPrint(
+                  "server responden exist. compare server with local data[loop local]");
+              DateTime localTime = DateTime.parse(_localResponden.lastModified);
+              DateTime serverTime = nServerResponden.updatedAt!;
+              int time = compareTime(localTime, serverTime);
+              if (time == 1) {
+                // local data is greater than server data
+                debugPrint(
+                    "Local data is greater than server data[loop local]");
+                localToPushUpdate
+                    .add(Responden.fromJson(_localResponden.toJson()));
+              } else if (time == -1) {
+                // local data is less than server data
+                debugPrint("Local data is less than server data[loop local]");
+                serverToPullUpdate
+                    .add(RespondenModel.fromJson(nServerResponden.toJson()));
+              } else {
+                // local data is equal to server data
+                debugPrint("Local data is equal to server data[loop local]");
+              }
+            } catch (e) {
+              localToPushCreate
+                  .add(Responden.fromJson(_localResponden.toJson()));
+              continue;
+            }
+          }
+
+          if (localToPushCreate.isNotEmpty) {
+            pushResponden(localToPushCreate.toSet().toList(), isCreate: true);
+          }
+
+          if (localToPushUpdate.isNotEmpty) {
+            pushResponden(localToPushUpdate.toSet().toList(), isCreate: false);
+          }
+
+          if (serverToPullCreate.isNotEmpty) {
+            pullResponden(
+                respondenData: serverToPullCreate.toSet().toList(),
+                isCreate: true);
+          }
+
+          if (serverToPullUpdate.isNotEmpty) {
+            pullResponden(
+                respondenData: serverToPullUpdate.toSet().toList(),
+                isCreate: false);
+          }
+        } else {
+          // local user not exist
+          // pull data from server
+          debugPrint("local data not exist. pull data from server");
+          pullResponden(isCreate: true);
+        }
       } else {
         debugPrint("responden data not found on server");
       }
@@ -499,6 +619,16 @@ class SyncDataController {
       await DioClient().createSurvey(token: token, data: survey);
     }
     successScackbar('Sync Data Survey selesai.');
+  }
+
+  void pushResponden(List<Responden> respondenData,
+      {required bool isCreate}) async {
+    if (isCreate) {
+      for (var responden in respondenData) {
+        await DioClient().createResponden(token: token, data: responden);
+      }
+      successScackbar('Sync Data Responden selesai.');
+    }
   }
 
   /// Pull data user from server
@@ -908,7 +1038,8 @@ class SyncDataController {
     }
   }
 
-  Future pullResponden({List<Responden>? respondenData}) async {
+  Future pullResponden(
+      {List<RespondenModel>? respondenData, required bool isCreate}) async {
     int id = await getIdResponden();
     List<RespondenModel> nResponden = [];
     if (respondenData == null) {
@@ -931,8 +1062,8 @@ class SyncDataController {
               lastModified: DateTime.now().toString(),
             );
             nResponden.add(respondenModel);
+            id += 1;
           }
-          await DbHelper.deleteAllResponden(store_);
           await DbHelper.putResponden(store_, nResponden);
           debugPrint("responden data has been pulled from server to local");
         } else {
@@ -942,24 +1073,48 @@ class SyncDataController {
         handleError(error: e);
       }
     } else {
-      for (var resp in respondenData) {
-        RespondenModel respondenModel = RespondenModel(
-          id: id,
-          kodeUnik: int.parse(resp.kodeUnik!),
-          kartuKeluarga: int.parse(resp.kartuKeluarga),
-          alamat: resp.alamat,
-          nomorHp: resp.nomorHp.toString(),
-          provinsiId: int.parse(resp.provinsiId),
-          kabupatenId: int.parse(resp.kabupatenKotaId),
-          kecamatanId: int.parse(resp.kecamatanId),
-          kelurahanId: int.parse(resp.desaKelurahanId),
-          lastModified: DateTime.now().toString(),
-        );
-        nResponden.add(respondenModel);
+      if (isCreate) {
+        for (var resp in respondenData) {
+          RespondenModel respondenModel = RespondenModel(
+            id: id,
+            kodeUnik: resp.kodeUnik,
+            kartuKeluarga: resp.kartuKeluarga,
+            alamat: resp.alamat,
+            nomorHp: resp.nomorHp.toString(),
+            provinsiId: resp.provinsiId,
+            kabupatenId: resp.kabupatenId,
+            kecamatanId: resp.kecamatanId,
+            kelurahanId: resp.kelurahanId,
+            lastModified: DateTime.now().toString(),
+          );
+          nResponden.add(respondenModel);
+          id += 1;
+        }
+        await DbHelper.putResponden(store_, nResponden);
+        debugPrint(
+            "responden data has been pulled(created) from server to local");
+      } else {
+        // get id of local responden
+        for (var item in respondenData) {
+          int idToUpdate = await getCurrentRespondenId(kodeUnik: item.kodeUnik);
+          RespondenModel respondenModel = RespondenModel(
+              id: idToUpdate,
+              kodeUnik: item.kodeUnik,
+              kartuKeluarga: item.kartuKeluarga,
+              alamat: item.alamat,
+              nomorHp: item.nomorHp,
+              provinsiId: item.provinsiId,
+              kabupatenId: item.kabupatenId,
+              kecamatanId: item.kecamatanId,
+              kelurahanId: item.kelurahanId,
+              lastModified: DateTime.now().toString());
+          nResponden.add(respondenModel);
+        }
+        // update data
+        await DbHelper.putResponden(store_, nResponden);
+        debugPrint(
+            "responden data has been pulled(updated) from server to local");
       }
-      await DbHelper.deleteAllResponden(store_);
-      await DbHelper.putResponden(store_, nResponden);
-      debugPrint("responden data has been pulled from server to local");
     }
   }
 
@@ -1044,6 +1199,14 @@ class SyncDataController {
     List<RespondenModel>? localResponden =
         await DbHelper.getResponden(Objectbox.store_);
     return localResponden.length + 1;
+  }
+
+  Future<int> getCurrentRespondenId({required int kodeUnik}) async {
+    RespondenModel responden = await DbHelper.getRespondenByKodeUnik(
+        Objectbox.store_,
+        kodeUnik: kodeUnik);
+    int id = responden.id!;
+    return id;
   }
 
   Future<int> getIdSurvey() async {

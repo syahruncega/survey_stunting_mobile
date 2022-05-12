@@ -41,6 +41,19 @@ class RespondenModel {
   @Backlink()
   final survey = ToMany<SurveyModel>();
 
+  factory RespondenModel.fromJson(Map<String, dynamic> json) => RespondenModel(
+        id: json["id"],
+        kodeUnik: int.parse(json["kode_unik"]),
+        kartuKeluarga: int.parse(json["kartu_keluarga"]),
+        alamat: json["alamat"],
+        provinsiId: int.parse(json["provinsi_id"]),
+        kabupatenId: int.parse(json["kabupaten_kota_id"]),
+        kecamatanId: int.parse(json["kecamatan_id"]),
+        kelurahanId: int.parse(json["desa_kelurahan_id"]),
+        nomorHp: json["nomor_hp"],
+        lastModified: json["updated_at"],
+      );
+
   Map<String, dynamic> toJson() => {
         "id": id,
         "kode_unik": kodeUnik.toString(),
