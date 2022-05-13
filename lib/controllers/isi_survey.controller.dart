@@ -354,7 +354,7 @@ class IsiSurveyController extends GetxController {
           }
 
           for (var item in currentJawabanSurvey) {
-            await DioClient().createJawabanSurvey(token: token, data: item);
+            await DioClient().createJawabanSurvey(token: token, data: [item]);
           }
 
           await nextCategory();

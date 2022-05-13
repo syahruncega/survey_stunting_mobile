@@ -115,13 +115,6 @@ class DbHelper {
     return store.box<UserModel>().get(id);
   }
 
-  /// get user by profileId
-  // static Future<UserModel?> getUserByProfileId(Store store,
-  //     {required int profileId}) async {
-  //   final users = await getUser(store);
-  //   return users.firstWhere((user) => user.profile.targetId == profileId);
-  // }
-
   /// param :
   /// id (int) - id of the user
   /// return :
@@ -301,18 +294,6 @@ class DbHelper {
         .toList();
   }
 
-  /// Get jawabanSoal by jawabanSurveyId
-  // static Future<List<JawabanSoalModel>> getJawabanSoalByJawabanSurveyId(
-  //   Store store, {
-  //   required int jawabanSurveyId,
-  // }) async {
-  //   final jawabanSoals = await getJawabanSoal(store);
-  //   return jawabanSoals
-  //       .where((jawabanSoal) =>
-  //           jawabanSoal.jawabanSurvey.targetId == jawabanSurveyId)
-  //       .toList();
-  // }
-
   /// delete all jawabanSoal
   static Future<int> deleteAllJawabanSoal(Store store) async {
     return store.box<JawabanSoalModel>().removeAll();
@@ -404,6 +385,20 @@ class DbHelper {
   static Future<bool> deleteJawabanSurvey(Store store,
       {required int id}) async {
     return store.box<JawabanSurveyModel>().remove(id);
+  }
+
+  /// delete jawaban survey
+  static Future<int> deleteJawabanSurveyByKodeUnikSurvey(Store store,
+      {required int kodeUnikSurvey}) async {
+    List<int> ids = [];
+    final jawabanSurvey = await getJawabanSurveyByKodeUnikSurveyId(store,
+        kodeUnikSurveyId: kodeUnikSurvey);
+    if (jawabanSurvey.isNotEmpty) {
+      for (var item in jawabanSurvey) {
+        ids.add(item.id!);
+      }
+    }
+    return store.box<JawabanSurveyModel>().removeMany(ids);
   }
 
   /// delete all jawaban survey
@@ -624,9 +619,6 @@ class DbHelper {
         profileModel: profile,
       ));
     }
-    log('DIMAN ::' + namaSurveyId.toString());
-    log('DIMAN ::' + isSelesai.toString());
-    log('DIMAN ::' + keyword.toString());
     return allSurveys;
   }
 
@@ -665,25 +657,6 @@ class DbHelper {
   /// delete all survey
   static Future<int> deleteAllSurvey(Store store) async {
     return store.box<SurveyModel>().removeAll();
-  }
-
-  static Future<dynamic> getTest(Store store, int profileId, int userId) async {
-    // Get survey with kodeUnik = 92230298
-    // Get Responden object id with kodeUnikResponden = 11223344
-    // Get namaSurvey with id = 1
-    // Get profile with id = 1
-    QueryBuilder<ProfileModel> builder =
-        store.box<ProfileModel>().query(ProfileModel_.id.equals(profileId));
-    // builder.link(SurveyModel_.kodeUnikResponden,
-    //     RespondenModel_.kodeUnik.equals(11223344));
-    builder.link(ProfileModel_.user, UserModel_.id.equals(userId));
-    // builder.link(SurveyModel_.profile, ProfileModel_.id.equals(1));
-    Query<ProfileModel> query = builder.build();
-    List<dynamic> result = query.find();
-
-    log(result.toString());
-    query.close();
-    return result;
   }
 
   //? Responden
