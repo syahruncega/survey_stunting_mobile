@@ -305,8 +305,20 @@ class SyncDataController {
     try {
       // Get soal form server
       List<Soal>? soal = await DioClient().getAllSoal(token: token);
+      // Get soal local
+      List<SoalModel> localSoal = await DbHelper.getSoal(store_);
       if (soal != null) {
-        await pullSoal(soalData: soal);
+        if (localSoal.isNotEmpty) {
+          int index = 0;
+          for (var item in soal) {
+            if (item.id != localSoal[index].id) {
+              await pullSoal(soalData: [item]);
+            }
+            index += 1;
+          }
+        } else {
+          await pullSoal(soalData: soal);
+        }
       } else {
         debugPrint("soal data not found on server");
       }
@@ -320,8 +332,21 @@ class SyncDataController {
       // Get kategoriSoal form server
       List<KategoriSoal>? kategoriSoal =
           await DioClient().getAllKategoriSoal(token: token);
+      // Get kategori soal local
+      List<KategoriSoalModel> localKategoriSoal =
+          await DbHelper.getKategoriSoal(store_);
       if (kategoriSoal != null) {
-        await pullKategoriSoal(kategoriSoalData: kategoriSoal);
+        if (localKategoriSoal.isNotEmpty) {
+          int index = 0;
+          for (var item in kategoriSoal) {
+            if (item.id != localKategoriSoal[index].id) {
+              await pullKategoriSoal(kategoriSoalData: [item]);
+            }
+            index += 1;
+          }
+        } else {
+          await pullKategoriSoal(kategoriSoalData: kategoriSoal);
+        }
       } else {
         debugPrint("kategoriSoal data not found on server");
       }
@@ -1053,7 +1078,6 @@ class SyncDataController {
         );
         nKategoriSoal.add(kategoriSoalModel);
       }
-      await DbHelper.deleteAllKategoriSoal(store_);
       await DbHelper.putKategoriSoal(store_, nKategoriSoal);
       debugPrint("kategori soal data has been pulled from server to local");
     }
