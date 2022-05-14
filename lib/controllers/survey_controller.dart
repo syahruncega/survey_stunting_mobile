@@ -169,7 +169,12 @@ class SurveyController extends GetxController {
           Get.toNamed(RouteName.isiSurvey, arguments: response![0]);
           successScackbar("Survey berhasil disimpan");
         } on DioError catch (e) {
-          handleError(error: e);
+          if (e.response?.statusCode == 302) {
+            errorScackbar(
+                'Survey dengan responden tersebut sudah ada. Silahkan pilih responden lain.');
+          } else {
+            handleError(error: e);
+          }
         }
       } else {
         debugPrint('create survey offline');

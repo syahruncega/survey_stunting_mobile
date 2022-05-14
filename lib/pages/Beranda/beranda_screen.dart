@@ -6,6 +6,7 @@ import 'package:survey_stunting/components/filled_text_field.dart';
 import 'package:survey_stunting/components/not_found.dart';
 import 'package:survey_stunting/components/survey_item.dart';
 import 'package:survey_stunting/controllers/beranda_controller.dart';
+import 'package:survey_stunting/routes/route_name.dart';
 
 class BerandaScreen extends StatelessWidget {
   const BerandaScreen({Key? key}) : super(key: key);
@@ -122,6 +123,9 @@ class BerandaScreen extends StatelessWidget {
                                 key: UniqueKey(),
                                 enabled: false,
                                 survey: berandaController.surveys[index],
+                                onTap: () => Get.toNamed(RouteName.isiSurvey,
+                                    arguments:
+                                        berandaController.surveys[index]),
                               );
                             },
                           )
