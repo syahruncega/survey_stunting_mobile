@@ -107,8 +107,8 @@ class IsiSurveyController extends GetxController {
     if (isConnect) {
       debugPrint('get kategori soal online');
       try {
-        List<KategoriSoal>? response = await DioClient().getKategoriSoal(
-            token: token, namaSurveyId: survey.namaSurvey!.id.toString());
+        List<KategoriSoal>? response = await DioClient()
+            .getKategoriSoal(token: token, namaSurveyId: survey.namaSurveyId);
         kategoriSoal = response!;
       } on DioError catch (e) {
         handleError(error: e);
@@ -118,7 +118,7 @@ class IsiSurveyController extends GetxController {
       List<KategoriSoalModel> kategoriSoalModel =
           await DbHelper.getKategoriSoalByNamaSurveyId(
         Objectbox.store_,
-        namaSurveyId: int.parse(survey.namaSurveyId),
+        namaSurveyId: survey.namaSurvey!.id,
       );
       kategoriSoal = kategoriSoalModel
           .map((e) => KategoriSoal.fromJson(e.toJson()))
