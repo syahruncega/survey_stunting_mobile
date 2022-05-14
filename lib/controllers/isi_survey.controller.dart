@@ -73,7 +73,11 @@ class IsiSurveyController extends GetxController {
           kodeUnikSurvey: survey.kodeUnik!,
           kategoriSoalId: currentKategoriSoal.id.toString(),
         );
-        initialJawabanSurvey = response!;
+        if (response != null) {
+          initialJawabanSurvey = response;
+        } else {
+          initialJawabanSurvey = [];
+        }
       } on DioError catch (e) {
         if (e.response!.statusCode == 404) {
           initialJawabanSurvey = [];
@@ -89,6 +93,10 @@ class IsiSurveyController extends GetxController {
         kodeUnikSurveyId: int.parse(survey.kodeUnik!),
         kategoriSoalId: currentKategoriSoal.id,
       );
+      if (jawabanSurveyModel.isEmpty) {
+        initialJawabanSurvey = [];
+        return;
+      }
       initialJawabanSurvey = jawabanSurveyModel
           .map((e) => JawabanSurvey.fromJson(e.toJson()))
           .toList();
@@ -99,8 +107,8 @@ class IsiSurveyController extends GetxController {
     if (isConnect) {
       debugPrint('get kategori soal online');
       try {
-        List<KategoriSoal>? response = await DioClient().getKategoriSoal(
-            token: token, namaSurveyId: survey.namaSurvey!.id.toString());
+        List<KategoriSoal>? response = await DioClient()
+            .getKategoriSoal(token: token, namaSurveyId: survey.namaSurveyId);
         kategoriSoal = response!;
       } on DioError catch (e) {
         handleError(error: e);
@@ -110,7 +118,7 @@ class IsiSurveyController extends GetxController {
       List<KategoriSoalModel> kategoriSoalModel =
           await DbHelper.getKategoriSoalByNamaSurveyId(
         Objectbox.store_,
-        namaSurveyId: int.parse(survey.namaSurveyId),
+        namaSurveyId: survey.namaSurvey!.id,
       );
       kategoriSoal = kategoriSoalModel
           .map((e) => KategoriSoal.fromJson(e.toJson()))
@@ -350,7 +358,7 @@ class IsiSurveyController extends GetxController {
           }
 
           for (var item in currentJawabanSurvey) {
-            await DioClient().createJawabanSurvey(token: token, data: item);
+            await DioClient().createJawabanSurvey(token: token, data: [item]);
           }
 
           await nextCategory();
@@ -418,10 +426,12 @@ class IsiSurveyController extends GetxController {
       debugPrint('update survey local');
       var surveyModel = SurveyModel(
         id: survey.id,
-        kategoriSelanjutnya: survey.kategoriSelanjutnya != null
-            ? int.parse(survey.kategoriSelanjutnya!)
-            : null,
-        kodeUnikRespondenId: int.parse(survey.responden!.kodeUnik.toString()),
+        kategoriSelanjutnya: kategoriSoal
+            .firstWhere((element) =>
+                element.urutan ==
+                (survey.isSelesai == "0" ? currentOrder.toString() : "1"))
+            .id,
+        kodeUnikRespondenId: int.parse(survey.kodeUnikResponden),
         namaSurveyId: int.parse(survey.namaSurveyId),
         profileId: int.parse(survey.profileId),
         kodeUnik: int.parse(survey.kodeUnik!),

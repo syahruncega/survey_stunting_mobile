@@ -7,11 +7,14 @@ import 'package:survey_stunting/bindings/ubah_akun_binding.dart';
 import 'package:survey_stunting/bindings/ubah_profil_binding.dart';
 import 'package:survey_stunting/pages/Isi-Survey/isi_survey_screen.dart';
 import 'package:survey_stunting/pages/Login/login_screen.dart';
+import 'package:survey_stunting/pages/Sinkronisasi/sinkronisasi_screen.dart';
 import 'package:survey_stunting/pages/Tambah-Responden/tambah_responden_screen.dart';
 import 'package:survey_stunting/pages/Ubah-Akun/ubah_akun_screen.dart';
 import 'package:survey_stunting/pages/Ubah-Profil/ubah_profil_screen.dart';
 import 'package:survey_stunting/pages/layout.dart';
 import 'package:survey_stunting/routes/route_name.dart';
+
+import '../bindings/sinkronisasi_binding.dart';
 
 class AppPage {
   static final pages = [
@@ -44,6 +47,11 @@ class AppPage {
       name: RouteName.ubahAkun,
       page: () => const UbahAkunScreen(),
       binding: UbahAkunBinding(),
+    ),
+    GetPage(
+      name: RouteName.sinkronisasi,
+      page: () => const SinkronisasiScreen(),
+      binding: SinkronisasiBinding(),
     ),
   ];
 }

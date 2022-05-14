@@ -450,7 +450,7 @@ class DioClient {
     }
   }
 
-Future<List<JawabanSurvey>?> getJawabanSurvey(
+  Future<List<JawabanSurvey>?> getJawabanSurvey(
       {required String token,
       String? kodeUnikSurvey,
       String? soalId,
@@ -472,24 +472,30 @@ Future<List<JawabanSurvey>?> getJawabanSurvey(
       return listJawabanSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error get jawaban survey: $e');
-      rethrow;
+      if (e.response?.statusCode == 404) {
+        log(e.response!.statusMessage.toString());
+        return null;
+      } else {
+        rethrow;
+      }
     }
   }
 
-  Future<JawabanSurvey>? createJawabanSurvey({
+  Future<List<JawabanSurvey>>? createJawabanSurvey({
     required String token,
-    required JawabanSurvey data,
+    required List<JawabanSurvey> data,
   }) async {
     try {
       Response response = await _dio.post(
         "/jawaban_survey",
-        data: jawabanSurveyToJson(data),
+        data: listJawabanSurveyToJson(data),
+        // data: jawabanSurveyToJson(data),
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
       );
       log("$response");
-      return jawabanSurveyFromJson(getData(response.data));
+      return listJawabanSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error create jawaban survey: $e');
       rethrow;
@@ -517,12 +523,16 @@ Future<List<JawabanSurvey>?> getJawabanSurvey(
 
   Future deleteJawabanSurvey({
     required String token,
-    required String id,
+    String? id,
+    int? kodeUnikSurvey,
   }) async {
     try {
       await _dio.delete(
         "/jawaban_survey",
-        data: {"id": id},
+        data: {
+          "id": id,
+          "kode_unik_survey": kodeUnikSurvey,
+        },
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
