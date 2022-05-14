@@ -16,6 +16,9 @@ class SurveyModel {
   int? namaSurveyId;
   int? profileId;
   String lastModified;
+  RespondenModel? respondenModel;
+  NamaSurveyModel? namaSurveyModel;
+  ProfileModel? profileModel;
 
   SurveyModel({
     this.id,
@@ -26,6 +29,9 @@ class SurveyModel {
     this.namaSurveyId,
     this.profileId,
     required this.lastModified,
+    this.respondenModel,
+    this.namaSurveyModel,
+    this.profileModel,
   });
 
   final kodeUnikResponden = ToOne<RespondenModel>();
@@ -34,41 +40,27 @@ class SurveyModel {
 
   @Backlink()
   final jawabanSurvey = ToMany<JawabanSurveyModel>();
-}
 
-class SurveysModel {
-  int id;
-  int kodeUnik;
-  int? kategoriSelanjutnya;
-  int isSelesai;
-  int kodeUnikResponden;
-  int namaSurveyId;
-  int profileId;
-  String lastModified;
-  RespondenModel? respondenModel;
-  NamaSurveyModel? namaSurveyModel;
-  ProfileModel? profileModel;
-
-  SurveysModel({
-    required this.id,
-    required this.kodeUnik,
-    this.kategoriSelanjutnya,
-    required this.isSelesai,
-    required this.kodeUnikResponden,
-    required this.namaSurveyId,
-    required this.profileId,
-    required this.lastModified,
-    this.respondenModel,
-    this.namaSurveyModel,
-    this.profileModel,
-  });
+  factory SurveyModel.fromJson(Map<String, dynamic> json) => SurveyModel(
+        id: json["id"],
+        kodeUnik: int.parse(json["kode_unik"]),
+        kategoriSelanjutnya: int.tryParse(json["kategori_selanjutnya"]),
+        isSelesai: int.parse(json["is_selesai"]),
+        kodeUnikRespondenId: int.parse(json["kode_unik_responden"]),
+        namaSurveyId: int.parse(json["nama_survey_id"]),
+        profileId: int.parse(json["profile_id"]),
+        lastModified: json["updated_at"],
+        // respondenModel: RespondenModel.fromJson(json["responden"]),
+        // namaSurveyModel: NamaSurveyModel.fromJson(json["nama_survey"]),
+        // profileModel: ProfileModel.fromJson(json["profile"]),
+      );
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "kode_unik_responden": kodeUnikResponden.toString(),
+        "kode_unik_responden": kodeUnikResponden.targetId.toString(),
         "kode_unik": kodeUnik.toString(),
-        "nama_survey_id": namaSurveyId.toString(),
-        "profile_id": profileId.toString(),
+        "nama_survey_id": namaSurvey.targetId.toString(),
+        "profile_id": profile.targetId.toString(),
         "kategori_selanjutnya": kategoriSelanjutnya.toString(),
         "is_selesai": isSelesai.toString(),
         "updated_at": lastModified.toString(),

@@ -1,16 +1,14 @@
 import 'dart:developer';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/state_manager.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_stunting/controllers/sync_data_controller.dart';
 
 import '../models/localDb/helpers.dart';
-import '../services/dio_client.dart';
-import '../services/handle_errors.dart';
+
+import '../consts/globals_lib.dart' as global;
 
 class LayoutController extends GetxController {
   var scaffoldKey = GlobalKey<ScaffoldState>();
@@ -53,36 +51,30 @@ class LayoutController extends GetxController {
 
   Future checkConnection() async {
     log('checking connection..');
+    bool connect = await global.isConnected();
     final prefs = await SharedPreferences.getInstance();
-    try {
-      bool response = await DioClient().testConnection(
-        token: GetStorage().read("token"),
-      );
-      if (response) {
-        prefs.setBool("offline_mode", false);
-        SyncDataController(store_: Objectbox.store_).syncDataFromServer();
+    if (connect) {
+      bool firstInstall_ = await firstInstall();
+      if (firstInstall_) {
+        debugPrint('FIRST_INSTALL');
+        SyncDataController(store_: Objectbox.store_).pullDataFromServer();
+        prefs.setBool('first_install', false);
       } else {
-        prefs.setBool("offline_mode", true);
-        Fluttertoast.showToast(
-          msg: "Tidak ada koneksi Internet",
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-        );
+        debugPrint('ALREADY INSTALLED BEFORE');
+        SyncDataController(store_: Objectbox.store_).syncData(syncAll: false);
       }
-    } on DioError catch (e) {
-      prefs.setBool("offline_mode", true);
-      Fluttertoast.showToast(
-        msg: "Tidak ada koneksi Internet",
-        backgroundColor: Colors.black,
-        textColor: Colors.white,
-      );
-      handleError(error: e);
     }
+  }
+
+  Future<bool> firstInstall() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool("first_install") ?? true;
   }
 
   @override
   void onInit() async {
     await checkConnection();
+
     Future.delayed(const Duration(milliseconds: 1500), () {
       canExit = true;
     });

@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:survey_stunting/components/error_scackbar.dart';
 import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/nama_survey.dart';
 import 'package:survey_stunting/models/responden.dart';
@@ -20,6 +20,8 @@ import '../models/localDb/helpers.dart';
 import '../models/localDb/nama_survey_mode.dart';
 import '../models/localDb/responden_model.dart';
 import '../models/localDb/survey_model.dart';
+
+import '../consts/globals_lib.dart' as global;
 
 class SurveyController extends GetxController {
   final typeSurveyEditingController = TextEditingController();
@@ -41,12 +43,11 @@ class SurveyController extends GetxController {
   String token = GetStorage().read("token");
   Session session = sessionFromJson(GetStorage().read("session"));
   int userId = GetStorage().read("userId");
+  late bool isConnect;
 
   Future getSurvey({SurveyParameters? queryParameters}) async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
     isLoading.value = true;
-    if (!offlineMode) {
+    if (isConnect) {
       debugPrint('get online survey');
       try {
         List<Survey>? response = await DioClient().getSurvey(
@@ -66,7 +67,7 @@ class SurveyController extends GetxController {
       var profileData =
           await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
       int profileId = profileData!.id!;
-      List<SurveysModel>? localSurveys_ = await DbHelper.getDetailSurvey(
+      List<SurveyModel>? localSurveys_ = await DbHelper.getDetailSurvey(
         Objectbox.store_,
         profileId: profileId,
         isSelesai: (statusSurvey == "selesai")
@@ -74,11 +75,7 @@ class SurveyController extends GetxController {
             : (statusSurvey == "belum_selesai")
                 ? 0
                 : null,
-        namaSurveyId: (typeSurvey == "pre")
-            ? "2"
-            : (typeSurvey == "post")
-                ? "1"
-                : null,
+        namaSurveyId: typeSurvey,
         keyword: searchSurveyEditingController.text == ""
             ? null
             : searchSurveyEditingController.text,
@@ -90,9 +87,7 @@ class SurveyController extends GetxController {
   }
 
   Future getResponden() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
-    if (!offlineMode) {
+    if (isConnect) {
       debugPrint('get online responden');
       try {
         List<Responden>? response = await DioClient().getResponden(
@@ -116,9 +111,7 @@ class SurveyController extends GetxController {
   }
 
   Future getNamaSurvey() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
-    if (!offlineMode) {
+    if (isConnect) {
       debugPrint('get online nama survey');
       try {
         List<NamaSurvey>? response = await DioClient().getNamaSurvey(
@@ -157,13 +150,11 @@ class SurveyController extends GetxController {
   }
 
   Future submitForm() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
     var profileData =
         await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
     int profileId = profileData!.id!;
     if (validate()) {
-      if (!offlineMode) {
+      if (isConnect) {
         debugPrint('create survey online');
         try {
           Survey data = Survey(
@@ -182,6 +173,15 @@ class SurveyController extends GetxController {
         }
       } else {
         debugPrint('create survey offline');
+        List<SurveyModel> nSurvey = await DbHelper.getSurvey(Objectbox.store_);
+        var survey = nSurvey.firstWhereOrNull((element) =>
+            element.kodeUnikResponden.targetId ==
+                int.parse(kodeUnikResponden) &&
+            element.namaSurvey.targetId == namaSurveyId);
+        if (survey != null) {
+          errorScackbar('Survey sudah ada');
+          return;
+        }
         int uniqueCode = await generateUniqueCode();
         SurveyModel data = SurveyModel(
           kodeUnik: uniqueCode,
@@ -192,19 +192,18 @@ class SurveyController extends GetxController {
           kategoriSelanjutnya: 11,
           lastModified: DateTime.now().toString(),
         );
-        await DbHelper.putSurvey(Objectbox.store_, data);
+        await DbHelper.putSurvey(Objectbox.store_, [data]);
         isLoading.value = false;
-        Get.toNamed(RouteName.isiSurvey, arguments: data);
+        Get.toNamed(RouteName.isiSurvey,
+            arguments: Survey.fromJson(data.toJson()));
         successScackbar("Survey berhasil disimpan");
       }
     }
   }
 
   Future deleteSurvey({required dynamic kodeUnik}) async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
     isLoading.value = true;
-    if (!offlineMode) {
+    if (isConnect) {
       debugPrint('delete online survey');
       try {
         await DioClient().deleteSurvey(
@@ -217,7 +216,9 @@ class SurveyController extends GetxController {
       }
     } else {
       debugPrint('delete local survey' + kodeUnik.toString());
-      // await DbHelper.deleteSurvey(Objectbox.store_, id: id);
+      await DbHelper.deleteSurvey(Objectbox.store_,
+          kodeUnik: int.parse(kodeUnik));
+      surveys.removeWhere((element) => element.kodeUnik == kodeUnik);
     }
     isLoading.value = false;
   }
@@ -245,11 +246,24 @@ class SurveyController extends GetxController {
     return uniqueCode;
   }
 
+  Future checkConnection() async {
+    isConnect = await global.isConnected();
+  }
+
   @override
   void onInit() async {
+    await checkConnection();
     await getSurvey();
     statusSurveyEditingController.addListener(_setToEmpty);
     typeSurveyEditingController.addListener(_setToEmpty);
+    searchSurveyEditingController.addListener(() async {
+      await getSurvey(
+          queryParameters: SurveyParameters(
+        search: searchSurveyEditingController.text,
+        status: statusSurvey,
+        namaSurveyId: typeSurvey,
+      ));
+    });
     super.onInit();
   }
 
@@ -259,6 +273,7 @@ class SurveyController extends GetxController {
     typeSurveyEditingController.dispose();
     respondenTEC.dispose();
     namaSurveyTEC.dispose();
+    searchSurveyEditingController.dispose();
     super.dispose();
   }
 }

@@ -27,4 +27,12 @@ class KategoriSoalModel {
 
   @Backlink()
   final jawabanSurvey = ToMany<JawabanSurveyModel>();
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "urutan": urutan.toString(),
+        "nama": nama.toString(),
+        "nama_survey_id": namaSurveyId.toString(),
+        "updated_at": lastModified.toString(),
+      };
 }

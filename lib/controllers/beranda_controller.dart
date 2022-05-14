@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_stunting/models/survey.dart';
 import 'package:survey_stunting/models/survey_parameters.dart';
 import 'package:survey_stunting/models/total_survey.dart';
@@ -13,6 +12,7 @@ import 'package:survey_stunting/services/handle_errors.dart';
 
 import '../models/localDb/helpers.dart';
 import '../models/localDb/survey_model.dart';
+import '../consts/globals_lib.dart' as global;
 
 class BerandaController extends GetxController {
   final searchSurveyEditingController = TextEditingController();
@@ -23,12 +23,11 @@ class BerandaController extends GetxController {
 
   String token = GetStorage().read("token");
   int userId = GetStorage().read("userId");
+  late bool isConnect;
 
   Future getSurvey({String? search}) async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
     isLoadedSurvey.value = false;
-    if (!offlineMode) {
+    if (isConnect) {
       try {
         List<Survey>? response = await DioClient().getSurvey(
           token: token,
@@ -51,7 +50,7 @@ class BerandaController extends GetxController {
       var profileData =
           await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
       int profileId = profileData!.id!;
-      List<SurveysModel>? localSurveys_ = await DbHelper.getDetailSurvey(
+      List<SurveyModel>? localSurveys_ = await DbHelper.getDetailSurvey(
         Objectbox.store_,
         profileId: profileId,
         isSelesai: 0,
@@ -63,10 +62,8 @@ class BerandaController extends GetxController {
   }
 
   Future getTotalSurvey() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool offlineMode = prefs.getBool('offline_mode') ?? false;
     isLoadedTotalSurvey.value = false;
-    if (!offlineMode) {
+    if (isConnect) {
       try {
         TotalSurvey? response = await DioClient().getTotalSurvey(token: token);
         totalSurvey = response!;
@@ -85,8 +82,13 @@ class BerandaController extends GetxController {
     isLoadedTotalSurvey.value = true;
   }
 
+  Future checkConnection() async {
+    isConnect = await global.isConnected();
+  }
+
   @override
   void onInit() async {
+    await checkConnection();
     await getSurvey();
     await getTotalSurvey();
     super.onInit();

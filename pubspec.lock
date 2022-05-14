@@ -155,6 +155,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  crypt:
+    dependency: "direct main"
+    description:
+      name: crypt
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.2.1"
   crypto:
     dependency: transitive
     description:
@@ -673,35 +680,35 @@ packages:
       name: shared_preferences
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.13"
+    version: "2.0.15"
   shared_preferences_android:
     dependency: transitive
     description:
       name: shared_preferences_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.11"
+    version: "2.0.12"
   shared_preferences_ios:
     dependency: transitive
     description:
       name: shared_preferences_ios
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.1"
   shared_preferences_linux:
     dependency: transitive
     description:
       name: shared_preferences_linux
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.1"
   shared_preferences_macos:
     dependency: transitive
     description:
       name: shared_preferences_macos
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.3"
+    version: "2.0.4"
   shared_preferences_platform_interface:
     dependency: transitive
     description:
@@ -715,14 +722,14 @@ packages:
       name: shared_preferences_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.3"
+    version: "2.0.4"
   shared_preferences_windows:
     dependency: transitive
     description:
       name: shared_preferences_windows
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.1"
   shelf:
     dependency: transitive
     description:

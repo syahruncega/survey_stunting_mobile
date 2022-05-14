@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:survey_stunting/models/akun.dart';
@@ -40,23 +41,53 @@ import '../services/handle_errors.dart';
 class SyncDataController {
   Store store_;
   String token = GetStorage().read("token");
+  int userId = GetStorage().read("userId");
+  List<int> kodeUnikSurvey = [];
 
   SyncDataController({required this.store_});
 
-  Future syncDataFromServer() async {
-    // await syncDataUser();
-    // await syncDataProfile();
-    // await syncDataProvinsi();
-    // await syncDataKabupaten();
-    // await syncDataKecamatan();
-    // await syncDataKelurahan();
-    // await syncNamaSurvey();
-    // await syncKategoriSoal();
-    // await syncSoal();
-    // await syncJawabanSoal();
-    // await syncResponden();
-    // await syncSurvey();
-    // await syncJawabanSurvey();
+  Future syncData({required bool syncAll}) async {
+    if (syncAll) {
+      await syncDataUser();
+      await syncDataProfile();
+      await syncDataProvinsi();
+      await syncDataKabupaten();
+      await syncDataKecamatan();
+      await syncDataKelurahan();
+      await syncNamaSurvey();
+      await syncKategoriSoal();
+      await syncSoal();
+      await syncJawabanSoal();
+      await syncResponden();
+      await syncSurvey();
+      await syncJawabanSurvey();
+    } else {
+      await syncDataUser();
+      await syncDataProfile();
+      await syncNamaSurvey();
+      await syncKategoriSoal();
+      await syncSoal();
+      await syncJawabanSoal();
+      await syncResponden();
+      await syncSurvey();
+      await syncJawabanSurvey();
+    }
+  }
+
+  Future pullDataFromServer() async {
+    await pullUser();
+    await pullProfile();
+    await pullProvinsi();
+    await pullKabupaten();
+    await pullKecamatan();
+    await pullKelurahan();
+    await pullNamaSurvey();
+    await pullKategoriSoal();
+    await pullSoal();
+    await pullJawabanSoal();
+    await pullResponden(isCreate: true);
+    await pullSurvey(isCreate: true);
+    await pullJawabanSurvey();
   }
 
   Future syncDataProfile() async {
@@ -72,7 +103,7 @@ class SyncDataController {
           // local profile exist
           // check, if server profileData not updated yet
           if (profileData.updatedAt == null) {
-            pullProfile(userProfile);
+            pushProfile(localProfile);
             return;
           }
 
@@ -88,16 +119,13 @@ class SyncDataController {
           } else if (time == -1) {
             // local data is less than server data
             debugPrint("Local data is less than server data");
-            pullProfile(userProfile);
-          } else {
-            // local data is equal to server data
-            debugPrint("Local data is equal to server data");
+            await pullProfile();
           }
         } else {
           // local profile not exist
           // pull data from server
           debugPrint("local data not exist. pull data from server");
-          pullProfile(userProfile);
+          await pullProfile();
         }
       } else {
         debugPrint("profile data not found on server");
@@ -119,7 +147,7 @@ class SyncDataController {
           // local user exist
           // check, if server profileData not updated yet
           if (userData.updatedAt == null) {
-            pullUser(userAkun);
+            pushUser(localUser);
             return;
           }
           // compare local user with server user
@@ -134,16 +162,13 @@ class SyncDataController {
           } else if (time == -1) {
             // local data is less than server data
             debugPrint("Local data is less than server data");
-            pullUser(userAkun);
-          } else {
-            // local data is equal to server data
-            debugPrint("Local data is equal to server data");
+            await pullUser();
           }
         } else {
           // local user not exist
           // pull data from server
           debugPrint("local data not exist. pull data from server");
-          pullUser(userAkun);
+          await pullUser();
         }
       } else {
         debugPrint("user data not found on server");
@@ -157,8 +182,20 @@ class SyncDataController {
     try {
       // Get provinsi form server
       List<Provinsi>? provinsi = await DioClient().getProvinsi(token: token);
+      // Get provinsi local
+      List<ProvinsiModel> localProvinsi = await DbHelper.getProvinsi(store_);
       if (provinsi != null) {
-        pullProvinsi(provinsi);
+        if (localProvinsi.isNotEmpty) {
+          int index = 0;
+          for (var item in provinsi) {
+            if (item.id != localProvinsi[index].id) {
+              await pullProvinsi(provinsiData: [item]);
+            }
+            index += 1;
+          }
+        } else {
+          await pullProvinsi(provinsiData: provinsi);
+        }
       } else {
         debugPrint("provinsi data not found on server");
       }
@@ -172,8 +209,20 @@ class SyncDataController {
       // Get kabupaten form server
       List<Kabupaten>? kabupaten =
           await DioClient().getAllKabupaten(token: token);
+      // Get local kabupaten
+      List<KabupatenModel> localKabupaten = await DbHelper.getKabupaten(store_);
       if (kabupaten != null) {
-        pullKabupaten(kabupaten);
+        if (localKabupaten.isNotEmpty) {
+          int index = 0;
+          for (var item in kabupaten) {
+            if (item.id != localKabupaten[index].id) {
+              await pullKabupaten(kabupatenData: [item]);
+            }
+            index += 1;
+          }
+        } else {
+          await pullKabupaten(kabupatenData: kabupaten);
+        }
       } else {
         debugPrint("kabupaten data not found on server");
       }
@@ -187,8 +236,20 @@ class SyncDataController {
       // Get kecamatan form server
       List<Kecamatan>? kecamatan =
           await DioClient().getAllKecamatan(token: token);
+      // Get local kecamatan
+      List<KecamatanModel> localKecamatan = await DbHelper.getKecamatan(store_);
       if (kecamatan != null) {
-        pullKecamatan(kecamatan);
+        if (localKecamatan.isNotEmpty) {
+          int index = 0;
+          for (var item in kecamatan) {
+            if (item.id != localKecamatan[index].id) {
+              await pullKecamatan(kecamatanData: [item]);
+            }
+            index += 1;
+          }
+        } else {
+          await pullKecamatan(kecamatanData: kecamatan);
+        }
       } else {
         debugPrint("kecamatan data not found on server");
       }
@@ -202,8 +263,20 @@ class SyncDataController {
       // Get kelurahan form server
       List<Kelurahan>? kelurahan =
           await DioClient().getAllKelurahan(token: token);
+      // Get local kelurahan
+      List<KelurahanModel> localKelurahan = await DbHelper.getKelurahan(store_);
       if (kelurahan != null) {
-        pullKelurahan(kelurahan);
+        if (localKelurahan.isNotEmpty) {
+          int index = 0;
+          for (var item in kelurahan) {
+            if (item.id != localKelurahan[index].id) {
+              await pullKelurahan(kelurahanData: [item]);
+            }
+            index += 1;
+          }
+        } else {
+          await pullKelurahan(kelurahanData: kelurahan);
+        }
       } else {
         debugPrint("kelurahan data not found on server");
       }
@@ -219,7 +292,7 @@ class SyncDataController {
       List<JawabanSoal>? jawabanSoal =
           await DioClient().getJawabanSoal(token: token);
       if (jawabanSoal != null) {
-        pullJawabanSoal(jawabanSoal);
+        await pullJawabanSoal(jawabanSoalData: jawabanSoal);
       } else {
         debugPrint("jawabanSoal data not found on server");
       }
@@ -233,7 +306,7 @@ class SyncDataController {
       // Get soal form server
       List<Soal>? soal = await DioClient().getAllSoal(token: token);
       if (soal != null) {
-        pullSoal(soal);
+        await pullSoal(soalData: soal);
       } else {
         debugPrint("soal data not found on server");
       }
@@ -248,7 +321,7 @@ class SyncDataController {
       List<KategoriSoal>? kategoriSoal =
           await DioClient().getAllKategoriSoal(token: token);
       if (kategoriSoal != null) {
-        pullKategoriSoal(kategoriSoal);
+        await pullKategoriSoal(kategoriSoalData: kategoriSoal);
       } else {
         debugPrint("kategoriSoal data not found on server");
       }
@@ -262,8 +335,21 @@ class SyncDataController {
       // Get namaSurvey form server
       List<NamaSurvey>? namaSurvey =
           await DioClient().getNamaSurvey(token: token);
+      // get local data namaSurvey
+      List<NamaSurveyModel>? localNamaSurvey =
+          await DbHelper.getNamaSurvey(store_);
       if (namaSurvey != null) {
-        pullNamaSurvey(namaSurvey);
+        if (localNamaSurvey.isNotEmpty) {
+          int index = 0;
+          for (var item in namaSurvey) {
+            if (item.id != localNamaSurvey[index].id) {
+              await pullNamaSurvey(namaSurveyData: [item]);
+            }
+            index += 1;
+          }
+        } else {
+          await pullNamaSurvey(namaSurveyData: namaSurvey);
+        }
       } else {
         debugPrint("namaSurvey data not found on server");
       }
@@ -274,10 +360,113 @@ class SyncDataController {
 
   Future syncResponden() async {
     try {
-      // Get responden form server
-      List<Responden>? responden = await DioClient().getResponden(token: token);
-      if (responden != null) {
-        pullResponden(responden);
+      List<RespondenModel> serverToPullCreate = [];
+      List<RespondenModel> serverToPullUpdate = [];
+      List<Responden> localToPushCreate = [];
+      List<Responden> localToPushUpdate = [];
+      // List<RespondenModel> localToKeep = [];
+
+      // Get user form server
+      List<Responden>? respondens =
+          await DioClient().getResponden(token: token);
+      List<RespondenModel> localResponden = await DbHelper.getResponden(store_);
+
+      if (respondens != null) {
+        if (localResponden.isNotEmpty) {
+          for (var responden in respondens) {
+            try {
+              RespondenModel? nLocalResponden = localResponden.singleWhere(
+                  (element) =>
+                      element.kodeUnik == int.parse(responden.kodeUnik!));
+              // check, if responden on server not updated yet
+              if (responden.updatedAt == null) {
+                // skip this responden
+                continue;
+              }
+              // compare local responden with server responden
+              debugPrint(
+                  "local responden exist. compare local with server data[loop server]");
+              DateTime localTime = DateTime.parse(nLocalResponden.lastModified);
+              DateTime serverTime = responden.updatedAt!;
+              int time = compareTime(localTime, serverTime);
+              if (time == 1) {
+                // local data is greater than server data
+                debugPrint(
+                    "Local data is greater than server data[loop server]");
+                localToPushUpdate
+                    .add(Responden.fromJson(nLocalResponden.toJson()));
+              } else if (time == -1) {
+                // local data is less than server data
+                debugPrint("Local data is less than server data[loop server]");
+                serverToPullUpdate
+                    .add(RespondenModel.fromJson(responden.toJson()));
+              }
+            } catch (e) {
+              serverToPullCreate
+                  .add(RespondenModel.fromJson(responden.toJson()));
+              continue;
+            }
+          }
+
+          for (var _localResponden in localResponden) {
+            try {
+              Responden? nServerResponden = respondens.singleWhere((element) =>
+                  element.kodeUnik == _localResponden.kodeUnik.toString());
+              // check, if responden on local not updated yet
+              if (nServerResponden.updatedAt == null) {
+                // skip this responden
+                continue;
+              }
+              // compare local user with server user
+              debugPrint(
+                  "server responden exist. compare server with local data[loop local]");
+              DateTime localTime = DateTime.parse(_localResponden.lastModified);
+              DateTime serverTime = nServerResponden.updatedAt!;
+              int time = compareTime(localTime, serverTime);
+              if (time == 1) {
+                // local data is greater than server data
+                debugPrint(
+                    "Local data is greater than server data[loop local]");
+                localToPushUpdate
+                    .add(Responden.fromJson(_localResponden.toJson()));
+              } else if (time == -1) {
+                // local data is less than server data
+                debugPrint("Local data is less than server data[loop local]");
+                serverToPullUpdate
+                    .add(RespondenModel.fromJson(nServerResponden.toJson()));
+              }
+            } catch (e) {
+              localToPushCreate
+                  .add(Responden.fromJson(_localResponden.toJson()));
+              continue;
+            }
+          }
+
+          if (localToPushCreate.isNotEmpty) {
+            pushResponden(localToPushCreate.toSet().toList(), isCreate: true);
+          }
+
+          if (localToPushUpdate.isNotEmpty) {
+            pushResponden(localToPushUpdate.toSet().toList(), isCreate: false);
+          }
+
+          if (serverToPullCreate.isNotEmpty) {
+            await pullResponden(
+                respondenData: serverToPullCreate.toSet().toList(),
+                isCreate: true);
+          }
+
+          if (serverToPullUpdate.isNotEmpty) {
+            await pullResponden(
+                respondenData: serverToPullUpdate.toSet().toList(),
+                isCreate: false);
+          }
+        } else {
+          // local user not exist
+          // pull data from server
+          debugPrint("local data responden not exist. pull data from server");
+          await pullResponden(isCreate: true);
+        }
       } else {
         debugPrint("responden data not found on server");
       }
@@ -287,11 +476,105 @@ class SyncDataController {
   }
 
   Future syncSurvey() async {
+    var profileData =
+        await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
+    int userProfileId = profileData!.id!;
+
     try {
-      // Get survey form server
-      List<Survey>? survey = await DioClient().getSurvey(token: token);
-      if (survey != null) {
-        pullSurvey(survey);
+      List<SurveyModel> serverToPullCreate = [];
+      List<SurveyModel> serverToPullUpdate = [];
+      List<Survey> localToPushCreate = [];
+      List<Survey> localToPushUpdate = [];
+
+      // Get user form server
+      List<Survey>? surveys = await DioClient().getSurvey(token: token);
+      List<SurveyModel> localSurveys =
+          await DbHelper.getSurveyByProfileId(store_, profileId: userProfileId);
+
+      if (surveys != null) {
+        if (localSurveys.isNotEmpty) {
+          for (var survey in surveys) {
+            try {
+              SurveyModel? nLocalSurvey = localSurveys.singleWhere(
+                  (element) => element.kodeUnik == int.parse(survey.kodeUnik!));
+              if (survey.updatedAt == null) {
+                localToPushUpdate.add(Survey.fromJson(nLocalSurvey.toJson()));
+                continue;
+              }
+              // compare local user with server user
+              debugPrint("local survey exist. compare local with server data");
+              DateTime localTime = DateTime.parse(nLocalSurvey.lastModified);
+              DateTime serverTime = survey.updatedAt!;
+              int time = compareTime(localTime, serverTime);
+              if (time == 1) {
+                // local data is greater than server data
+                debugPrint("Local data is greater than server data");
+                localToPushUpdate.add(Survey.fromJson(nLocalSurvey.toJson()));
+              } else if (time == -1) {
+                // local data is less than server data
+                debugPrint("Local data is less than server data");
+                serverToPullUpdate.add(SurveyModel.fromJson(survey.toJson()));
+              }
+            } catch (e) {
+              serverToPullCreate.add(SurveyModel.fromJson(survey.toJson()));
+              continue;
+            }
+          }
+
+          for (var localSurvey in localSurveys) {
+            try {
+              Survey? nServerSurvey = surveys.singleWhere((element) =>
+                  element.kodeUnik == localSurvey.kodeUnik.toString());
+              if (nServerSurvey.updatedAt == null) {
+                localToPushUpdate.add(Survey.fromJson(localSurvey.toJson()));
+                continue;
+              }
+              // compare local user with server user
+              debugPrint("server survey exist. compare server with local data");
+              DateTime localTime = DateTime.parse(localSurvey.lastModified);
+              DateTime serverTime = nServerSurvey.updatedAt!;
+              int time = compareTime(localTime, serverTime);
+              if (time == 1) {
+                // local data is greater than server data
+                debugPrint("Local data is greater than server data");
+                localToPushUpdate.add(Survey.fromJson(localSurvey.toJson()));
+              } else if (time == -1) {
+                // local data is less than server data
+                debugPrint("Local data is less than server data");
+                serverToPullUpdate
+                    .add(SurveyModel.fromJson(nServerSurvey.toJson()));
+              }
+            } catch (e) {
+              localToPushCreate.add(Survey.fromJson(localSurvey.toJson()));
+              continue;
+            }
+          }
+
+          if (localToPushCreate.isNotEmpty) {
+            pushSurvey(localToPushCreate.toSet().toList(), isCreate: true);
+          }
+
+          if (localToPushUpdate.isNotEmpty) {
+            pushSurvey(localToPushUpdate.toSet().toList(), isCreate: false);
+          }
+
+          if (serverToPullCreate.isNotEmpty) {
+            pullSurvey(
+                surveyData: serverToPullCreate.toSet().toList(),
+                isCreate: true);
+          }
+
+          if (serverToPullUpdate.isNotEmpty) {
+            pullSurvey(
+                surveyData: serverToPullUpdate.toSet().toList(),
+                isCreate: false);
+          }
+        } else {
+          // local user not exist
+          // pull data from server
+          debugPrint("local data not exist. pull data from server");
+          pullSurvey(isCreate: true);
+        }
       } else {
         debugPrint("survey data not found on server");
       }
@@ -302,50 +585,72 @@ class SyncDataController {
 
   Future syncJawabanSurvey() async {
     try {
-      // get survey from local
-      var surveys = await DbHelper.getSurvey(store_);
-      if (surveys.isNotEmpty) {
-        for (var s in surveys) {
-          // Get jawabanSurvey form server
-          List<JawabanSurvey>? jawabanSurvey = await DioClient()
-              .getJawabanSurvey(
-                  token: token, kodeUnikSurvey: s.kodeUnik.toString());
-          if (jawabanSurvey != null) {
-            pullJawabanSurvey(jawabanSurvey);
-          } else {
-            debugPrint('jawaban survey not found on server');
+      List<Survey>? surveys = await DioClient().getSurvey(token: token);
+      List<SurveyModel> localSurveys = await DbHelper.getSurvey(store_);
+      if (surveys != null) {
+        if (localSurveys.isNotEmpty) {
+          int index = 0;
+          for (var s in surveys) {
+            // compare local user with server user
+            DateTime localTime =
+                DateTime.parse(localSurveys[index].lastModified);
+            DateTime serverTime = s.updatedAt!;
+            int time = compareTime(localTime, serverTime);
+            if (time == 1) {
+              // local data is greater than server data
+              // push jawaban survey from local to server
+              debugPrint("Local data is greater than server data");
+              pushJawabanSurvey(kodeUnikSurvey: localSurveys[index].kodeUnik);
+            } else if (time == -1) {
+              // local data is less than server data
+              // pull jawaban survey from server to local
+              debugPrint("Local data is less than server data");
+              pullJawabanSurvey(kodeUnik: surveys[index].kodeUnik!);
+            }
+            index++;
           }
+        } else {
+          debugPrint('survey on local is empty');
         }
       } else {
-        debugPrint('local survey is empty');
+        debugPrint('survey on server is empty');
       }
     } on DioError catch (e) {
       handleError(error: e);
     }
   }
 
-  void pullProfile(UserProfile serverProfile) async {
-    var profileData = serverProfile.data!;
-    //remove profile before pull
-    await DbHelper.deleteAllProfile(store_);
-    ProfileModel profile = ProfileModel(
-      id: profileData.id,
-      namaLengkap: profileData.namaLengkap,
-      jenisKelamin: profileData.jenisKelamin,
-      tempatLahir: profileData.tempatLahir,
-      tanggalLahir: profileData.tanggalLahir,
-      alamat: profileData.alamat,
-      provinsiId: profileData.provinsi,
-      kabupatenId: profileData.kabupatenKota,
-      kecamatanId: profileData.kecamatan,
-      kelurahanId: profileData.desaKelurahan,
-      nomorHp: profileData.nomorHp,
-      email: profileData.email,
-      userId: int.parse(profileData.userId),
-      lastModified: DateTime.now().toString(),
-    );
-    await DbHelper.putProfile(store_, profile);
-    debugPrint("profile data has been pulled from server to local");
+  Future pullProfile() async {
+    try {
+      // Get profile form server
+      UserProfile userProfile = await DioClient().getProfile(token: token);
+      var profileData = userProfile.data;
+      if (profileData != null) {
+        // pull data from server
+        ProfileModel profile = ProfileModel(
+          id: profileData.id,
+          namaLengkap: profileData.namaLengkap,
+          jenisKelamin: profileData.jenisKelamin,
+          tempatLahir: profileData.tempatLahir,
+          tanggalLahir: profileData.tanggalLahir,
+          alamat: profileData.alamat,
+          provinsiId: profileData.provinsi,
+          kabupatenId: profileData.kabupatenKota,
+          kecamatanId: profileData.kecamatan,
+          kelurahanId: profileData.desaKelurahan,
+          nomorHp: profileData.nomorHp,
+          email: profileData.email,
+          userId: int.parse(profileData.userId),
+          lastModified: DateTime.now().toString(),
+        );
+        await DbHelper.putProfile(store_, profile);
+        debugPrint("profile data has been pulled from server to local");
+      } else {
+        debugPrint("profile data not found on server");
+      }
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
   }
 
   void pushProfile(ProfileModel localProfile) async {
@@ -372,22 +677,71 @@ class SyncDataController {
     }
   }
 
+  void pushSurvey(List<Survey> surveyData, {required bool isCreate}) async {
+    for (var survey in surveyData) {
+      await DioClient().createSurvey(token: token, data: survey);
+    }
+    successScackbar('Sync Data Survey selesai.');
+  }
+
+  void pushJawabanSurvey({required int kodeUnikSurvey}) async {
+    List<JawabanSurveyModel> jawabanSurveyLocal =
+        await DbHelper.getJawabanSurveyByKodeUnikSurveyId(store_,
+            kodeUnikSurveyId: kodeUnikSurvey);
+    List<JawabanSurvey> nJawabanSurveyData = [];
+    for (var item in jawabanSurveyLocal) {
+      nJawabanSurveyData.add(JawabanSurvey(
+        jawabanLainnya: item.jawabanLainnya,
+        jawabanSoalId:
+            item.jawabanSoalId != null ? item.jawabanSoalId.toString() : '',
+        soalId: item.soalId.toString(),
+        kodeUnikSurvey: item.kodeUnikSurvey.targetId.toString(),
+        kategoriSoalId: item.kategoriSoalId.toString(),
+      ));
+    }
+    if (nJawabanSurveyData.isNotEmpty) {
+      await DioClient()
+          .deleteJawabanSurvey(token: token, kodeUnikSurvey: kodeUnikSurvey);
+      await DioClient()
+          .createJawabanSurvey(token: token, data: nJawabanSurveyData);
+      successScackbar('Sync Data Jawaban Survey selesai.');
+    }
+  }
+
+  void pushResponden(List<Responden> respondenData,
+      {required bool isCreate}) async {
+    if (isCreate) {
+      for (var responden in respondenData) {
+        await DioClient().createResponden(token: token, data: responden);
+      }
+      successScackbar('Sync Data Responden selesai.');
+    }
+  }
+
   /// Pull data user from server
   /// Params : userAkun , id to update(only if update data)
-  void pullUser(Akun serverAkun) async {
-    var userData = serverAkun.data!;
-    // delete user berfore pull
-    DbHelper.deleteAllUser(store_);
-    UserModel user = UserModel(
-      id: userData.id,
-      username: userData.username,
-      password: userData.password,
-      status: userData.status,
-      role: userData.role,
-      lastModified: DateTime.now().toString(),
-    );
-    await DbHelper.putUser(store_, user);
-    debugPrint("user data has been pulled from server to local");
+  Future pullUser() async {
+    try {
+      Akun? userAkun = await DioClient().getAkun(token: token);
+      var userData = userAkun?.data;
+      if (userData != null) {
+        UserModel user = UserModel(
+          id: userData.id,
+          username: userData.username,
+          password: userData.password,
+          status: userData.status,
+          role: userData.role,
+          lastModified: DateTime.now().toString(),
+        );
+
+        await DbHelper.putUser(store_, user);
+        debugPrint("user data has been pulled from server to local");
+      } else {
+        debugPrint("user data not found on server");
+      }
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
   }
 
   void pushUser(UserModel localUser) async {
@@ -405,191 +759,596 @@ class SyncDataController {
     }
   }
 
-  void pullProvinsi(List<Provinsi> provinsi) async {
-    // delete provinsi berfore pull
-    await DbHelper.deleteAllProvinsi(store_);
-    for (var prov in provinsi) {
-      ProvinsiModel provinsiModel = ProvinsiModel(
-        id: prov.id,
-        nama: prov.nama,
-        lastModified: DateTime.now().toString(),
-      );
-      await DbHelper.putProvinsi(store_, provinsiModel);
+  Future pullProvinsi({List<Provinsi>? provinsiData}) async {
+    List<ProvinsiModel> nProvinsi = [];
+    if (provinsiData == null) {
+      try {
+        // Get provinsi form server
+        List<Provinsi>? provinsi = await DioClient().getProvinsi(token: token);
+        if (provinsi != null) {
+          for (var prov in provinsi) {
+            ProvinsiModel provinsiModel = ProvinsiModel(
+              id: prov.id,
+              nama: prov.nama,
+              lastModified: DateTime.now().toString(),
+            );
+            nProvinsi.add(provinsiModel);
+          }
+          await DbHelper.deleteAllProvinsi(store_);
+          await DbHelper.putProvinsi(store_, nProvinsi);
+          debugPrint("provinsi data has been pulled from server to local");
+        } else {
+          debugPrint("provinsi data not found on server");
+        }
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      for (var prov in provinsiData) {
+        ProvinsiModel provinsiModel = ProvinsiModel(
+          id: prov.id,
+          nama: prov.nama,
+          lastModified: DateTime.now().toString(),
+        );
+        nProvinsi.add(provinsiModel);
+      }
+      await DbHelper.deleteAllProvinsi(store_);
+      await DbHelper.putProvinsi(store_, nProvinsi);
+      debugPrint("provinsi data has been pulled from server to local");
     }
-    debugPrint("provinsi data has been pulled from server to local");
   }
 
-  void pullKabupaten(List<Kabupaten> kabupaten) async {
-    // delete kabupaten berfore pull
-    await DbHelper.deleteAllKabupaten(store_);
-    for (var kab in kabupaten) {
-      KabupatenModel kabupatenModel = KabupatenModel(
-        id: kab.id,
-        nama: kab.nama,
-        provinsiId: int.parse(kab.provinsiId),
-        lastModified: DateTime.now().toString(),
-      );
-      await DbHelper.putKabupaten(store_, kabupatenModel);
+  Future pullKabupaten({List<Kabupaten>? kabupatenData}) async {
+    List<KabupatenModel> nKabupaten = [];
+    if (kabupatenData == null) {
+      try {
+        // Get kabupaten form server
+        List<Kabupaten>? kabupaten =
+            await DioClient().getAllKabupaten(token: token);
+        if (kabupaten != null) {
+          for (var kab in kabupaten) {
+            KabupatenModel kabupatenModel = KabupatenModel(
+              id: kab.id,
+              nama: kab.nama,
+              provinsiId: int.parse(kab.provinsiId),
+              lastModified: DateTime.now().toString(),
+            );
+            nKabupaten.add(kabupatenModel);
+          }
+          await DbHelper.deleteAllKabupaten(store_);
+          await DbHelper.putKabupaten(store_, nKabupaten);
+          debugPrint("kabupaten data has been pulled from server to local");
+        } else {
+          debugPrint("kabupaten data not found on server");
+        }
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      for (var kab in kabupatenData) {
+        KabupatenModel kabupatenModel = KabupatenModel(
+          id: kab.id,
+          nama: kab.nama,
+          provinsiId: int.parse(kab.provinsiId),
+          lastModified: DateTime.now().toString(),
+        );
+        nKabupaten.add(kabupatenModel);
+      }
+      await DbHelper.deleteAllKabupaten(store_);
+      await DbHelper.putKabupaten(store_, nKabupaten);
+      debugPrint("kabupaten data has been pulled from server to local");
     }
-    debugPrint("kabupaten data has been pulled from server to local");
   }
 
-  void pullKecamatan(List<Kecamatan> kecamatan) async {
-    // delete kecamatan berfore pull
-    await DbHelper.deleteAllKecamatan(store_);
-    for (var kec in kecamatan) {
-      KecamatanModel kecamatanModel = KecamatanModel(
-        id: kec.id,
-        nama: kec.nama,
-        kabupatenId: int.parse(kec.kabupatenKotaId),
-        lastModified: DateTime.now().toString(),
-      );
-      await DbHelper.putKecamatan(store_, kecamatanModel);
+  Future pullKecamatan({List<Kecamatan>? kecamatanData}) async {
+    List<KecamatanModel> nKecamatan = [];
+    if (kecamatanData == null) {
+      try {
+        // Get kecamatan form server
+        List<Kecamatan>? kecamatan =
+            await DioClient().getAllKecamatan(token: token);
+        if (kecamatan != null) {
+          for (var kec in kecamatan) {
+            KecamatanModel kecamatanModel = KecamatanModel(
+              id: kec.id,
+              nama: kec.nama,
+              kabupatenId: int.parse(kec.kabupatenKotaId),
+              lastModified: DateTime.now().toString(),
+            );
+            nKecamatan.add(kecamatanModel);
+          }
+          await DbHelper.deleteAllKecamatan(store_);
+          await DbHelper.putKecamatan(store_, nKecamatan);
+          debugPrint("kecamatan data has been pulled from server to local");
+        } else {
+          debugPrint("kecamatan data not found on server");
+        }
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      for (var kec in kecamatanData) {
+        KecamatanModel kecamatanModel = KecamatanModel(
+          id: kec.id,
+          nama: kec.nama,
+          kabupatenId: int.parse(kec.kabupatenKotaId),
+          lastModified: DateTime.now().toString(),
+        );
+        nKecamatan.add(kecamatanModel);
+      }
+      await DbHelper.deleteAllKecamatan(store_);
+      await DbHelper.putKecamatan(store_, nKecamatan);
+      debugPrint("kecamatan data has been pulled from server to local");
     }
-    debugPrint("kecamatan data has been pulled from server to local");
   }
 
-  void pullKelurahan(List<Kelurahan> kelurahan) async {
-    // delete kelurahan berfore pull
-    await DbHelper.deleteAllKelurahan(store_);
-    for (var kel in kelurahan) {
-      KelurahanModel kelurahanModel = KelurahanModel(
-        id: kel.id,
-        nama: kel.nama,
-        kecamatanId: int.parse(kel.kecamatanId),
-        lastModified: DateTime.now().toString(),
-      );
-      await DbHelper.putKelurahan(store_, kelurahanModel);
+  Future pullKelurahan({List<Kelurahan>? kelurahanData}) async {
+    List<KelurahanModel> nKelurahan = [];
+    if (kelurahanData == null) {
+      try {
+        // Get kelurahan form server
+        List<Kelurahan>? kelurahan =
+            await DioClient().getAllKelurahan(token: token);
+        if (kelurahan != null) {
+          for (var kel in kelurahan) {
+            KelurahanModel kelurahanModel = KelurahanModel(
+              id: kel.id,
+              nama: kel.nama,
+              kecamatanId: int.parse(kel.kecamatanId),
+              lastModified: DateTime.now().toString(),
+            );
+            nKelurahan.add(kelurahanModel);
+          }
+          await DbHelper.deleteAllKelurahan(store_);
+          await DbHelper.putKelurahan(store_, nKelurahan);
+          debugPrint("kelurahan data has been pulled from server to local");
+        } else {
+          debugPrint("kelurahan data not found on server");
+        }
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      for (var kel in kelurahanData) {
+        KelurahanModel kelurahanModel = KelurahanModel(
+          id: kel.id,
+          nama: kel.nama,
+          kecamatanId: int.parse(kel.kecamatanId),
+          lastModified: DateTime.now().toString(),
+        );
+        nKelurahan.add(kelurahanModel);
+      }
+      await DbHelper.deleteAllKelurahan(store_);
+      await DbHelper.putKelurahan(store_, nKelurahan);
+      debugPrint("kelurahan data has been pulled from server to local");
     }
-    debugPrint("kelurahan data has been pulled from server to local");
   }
 
-  void pullJawabanSoal(List<JawabanSoal> jawabanSoal) async {
-    // delete jawaban berfore pull
-    await DbHelper.deleteAllJawabanSoal(store_);
-    for (var jawaban in jawabanSoal) {
-      JawabanSoalModel jawabanSoalModel = JawabanSoalModel(
-        id: jawaban.id,
-        isLainnya: int.parse(jawaban.isLainnya),
-        soalId: int.parse(jawaban.soalId),
-        jawaban: jawaban.jawaban,
-        lastModified: DateTime.now().toString(),
-      );
-      await DbHelper.putJawabanSoal(store_, jawabanSoalModel);
+  Future pullJawabanSoal({List<JawabanSoal>? jawabanSoalData}) async {
+    List<JawabanSoalModel> nJawabanSoal = [];
+    if (jawabanSoalData == null) {
+      try {
+        // Get jawabanSoal form server
+        List<JawabanSoal>? jawabanSoal =
+            await DioClient().getJawabanSoal(token: token);
+        if (jawabanSoal != null) {
+          for (var jawaban in jawabanSoal) {
+            JawabanSoalModel jawabanSoalModel = JawabanSoalModel(
+              id: jawaban.id,
+              isLainnya: int.parse(jawaban.isLainnya),
+              soalId: int.parse(jawaban.soalId),
+              jawaban: jawaban.jawaban,
+              lastModified: DateTime.now().toString(),
+            );
+            nJawabanSoal.add(jawabanSoalModel);
+          }
+          await DbHelper.deleteAllJawabanSoal(store_);
+          await DbHelper.putJawabanSoal(store_, nJawabanSoal);
+          debugPrint("jawaban soal data has been pulled from server to local");
+        } else {
+          debugPrint("jawabanSoal data not found on server");
+        }
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      for (var jawaban in jawabanSoalData) {
+        JawabanSoalModel jawabanSoalModel = JawabanSoalModel(
+          id: jawaban.id,
+          isLainnya: int.parse(jawaban.isLainnya),
+          soalId: int.parse(jawaban.soalId),
+          jawaban: jawaban.jawaban,
+          lastModified: DateTime.now().toString(),
+        );
+        nJawabanSoal.add(jawabanSoalModel);
+      }
+      await DbHelper.deleteAllJawabanSoal(store_);
+      await DbHelper.putJawabanSoal(store_, nJawabanSoal);
+      debugPrint("jawaban soal data has been pulled from server to local");
     }
-    debugPrint("jawaban soal data has been pulled from server to local");
   }
 
-  void pullSoal(List<Soal> soal) async {
-    // delete soal berfore pull
-    await DbHelper.deleteAllSoal(store_);
-    for (var soal in soal) {
-      SoalModel soalModel = SoalModel(
-        id: soal.id,
-        soal: soal.soal,
-        urutan: int.parse(soal.urutan),
-        tipeJawaban: soal.tipeJawaban,
-        isNumerik: int.parse(soal.isNumerik),
-        kategoriSoalId: int.parse(soal.kategoriSoalId),
-        lastModified: DateTime.now().toString(),
-      );
-      await DbHelper.putSoal(store_, soalModel);
+  Future pullSoal({List<Soal>? soalData}) async {
+    List<SoalModel> nSoal = [];
+    if (soalData == null) {
+      try {
+        // Get soal form server
+        List<Soal>? soal_ = await DioClient().getAllSoal(token: token);
+        if (soal_ != null) {
+          for (var soal in soal_) {
+            SoalModel soalModel = SoalModel(
+              id: soal.id,
+              soal: soal.soal,
+              urutan: int.parse(soal.urutan),
+              tipeJawaban: soal.tipeJawaban,
+              isNumerik: int.parse(soal.isNumerik),
+              kategoriSoalId: int.parse(soal.kategoriSoalId),
+              lastModified: DateTime.now().toString(),
+            );
+            nSoal.add(soalModel);
+          }
+          await DbHelper.deleteAllSoal(store_);
+          await DbHelper.putSoal(store_, nSoal);
+          debugPrint("soal data has been pulled from server to local");
+        } else {
+          debugPrint("soal data not found on server");
+        }
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      for (var soal in soalData) {
+        SoalModel soalModel = SoalModel(
+          id: soal.id,
+          soal: soal.soal,
+          urutan: int.parse(soal.urutan),
+          tipeJawaban: soal.tipeJawaban,
+          isNumerik: int.parse(soal.isNumerik),
+          kategoriSoalId: int.parse(soal.kategoriSoalId),
+          lastModified: DateTime.now().toString(),
+        );
+        nSoal.add(soalModel);
+      }
+      await DbHelper.deleteAllSoal(store_);
+      await DbHelper.putSoal(store_, nSoal);
+      debugPrint("soal data has been pulled from server to local");
     }
-    debugPrint("soal data has been pulled from server to local");
   }
 
-  void pullKategoriSoal(List<KategoriSoal> kategoriSoal) async {
-    // delete kategori berfore pull
-    await DbHelper.deleteAllKategoriSoal(store_);
-    for (var kategori in kategoriSoal) {
-      KategoriSoalModel kategoriSoalModel = KategoriSoalModel(
-        id: kategori.id,
-        urutan: int.parse(kategori.urutan),
-        nama: kategori.nama,
-        namaSurveyId: int.parse(kategori.namaSurveyId),
-        lastModified: DateTime.now().toString(),
-      );
-      await DbHelper.putKategoriSoal(store_, kategoriSoalModel);
+  Future pullKategoriSoal({List<KategoriSoal>? kategoriSoalData}) async {
+    List<KategoriSoalModel> nKategoriSoal = [];
+    if (kategoriSoalData == null) {
+      try {
+        // Get kategoriSoal form server
+        List<KategoriSoal>? kategoriSoal =
+            await DioClient().getAllKategoriSoal(token: token);
+        if (kategoriSoal != null) {
+          for (var kategori in kategoriSoal) {
+            KategoriSoalModel kategoriSoalModel = KategoriSoalModel(
+              id: kategori.id,
+              urutan: int.parse(kategori.urutan),
+              nama: kategori.nama,
+              namaSurveyId: int.parse(kategori.namaSurveyId),
+              lastModified: DateTime.now().toString(),
+            );
+            nKategoriSoal.add(kategoriSoalModel);
+          }
+          await DbHelper.deleteAllKategoriSoal(store_);
+          await DbHelper.putKategoriSoal(store_, nKategoriSoal);
+          debugPrint("kategori soal data has been pulled from server to local");
+        } else {
+          debugPrint("kategoriSoal data not found on server");
+        }
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      for (var kategori in kategoriSoalData) {
+        KategoriSoalModel kategoriSoalModel = KategoriSoalModel(
+          id: kategori.id,
+          urutan: int.parse(kategori.urutan),
+          nama: kategori.nama,
+          namaSurveyId: int.parse(kategori.namaSurveyId),
+          lastModified: DateTime.now().toString(),
+        );
+        nKategoriSoal.add(kategoriSoalModel);
+      }
+      await DbHelper.deleteAllKategoriSoal(store_);
+      await DbHelper.putKategoriSoal(store_, nKategoriSoal);
+      debugPrint("kategori soal data has been pulled from server to local");
     }
-    debugPrint("kategori soal data has been pulled from server to local");
   }
 
-  void pullNamaSurvey(List<NamaSurvey> namaSurvey) async {
-    // delete nama survey berfore pull
-    await DbHelper.deleteAllNamaSurvey(store_);
-    for (var nama in namaSurvey) {
-      NamaSurveyModel namaSurveyModel = NamaSurveyModel(
-        id: nama.id,
-        nama: nama.nama,
-        tipe: nama.tipe,
-        lastModified: DateTime.now().toString(),
-      );
-      await DbHelper.putNamaSurvey(store_, namaSurveyModel);
+  Future pullNamaSurvey({List<NamaSurvey>? namaSurveyData}) async {
+    List<NamaSurveyModel> nNamaSurvey = [];
+    if (namaSurveyData == null) {
+      try {
+        // Get namaSurvey form server
+        List<NamaSurvey>? namaSurvey =
+            await DioClient().getNamaSurvey(token: token);
+        if (namaSurvey != null) {
+          for (var nama in namaSurvey) {
+            NamaSurveyModel namaSurveyModel = NamaSurveyModel(
+              id: nama.id,
+              nama: nama.nama,
+              tipe: nama.tipe,
+              lastModified: DateTime.now().toString(),
+            );
+            nNamaSurvey.add(namaSurveyModel);
+          }
+          await DbHelper.deleteAllNamaSurvey(store_);
+          await DbHelper.putNamaSurvey(store_, nNamaSurvey);
+          debugPrint("nama survey data has been pulled from server to local");
+        } else {
+          debugPrint("namaSurvey data not found on server");
+        }
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      for (var nama in namaSurveyData) {
+        NamaSurveyModel namaSurveyModel = NamaSurveyModel(
+          id: nama.id,
+          nama: nama.nama,
+          tipe: nama.tipe,
+          lastModified: DateTime.now().toString(),
+        );
+        nNamaSurvey.add(namaSurveyModel);
+      }
+      await DbHelper.putNamaSurvey(store_, nNamaSurvey);
+      debugPrint("nama survey data has been pulled from server to local");
     }
-    debugPrint("nama survey data has been pulled from server to local");
   }
 
-  void pullResponden(List<Responden> responden) async {
-    // delete responden berfore pull
-    await DbHelper.deleteAllResponden(store_);
-    for (var resp in responden) {
-      RespondenModel respondenModel = RespondenModel(
-        id: resp.id,
-        kodeUnik: int.parse(resp.kodeUnik!),
-        kartuKeluarga: int.parse(resp.kartuKeluarga),
-        alamat: resp.alamat,
-        nomorHp: resp.nomorHp.toString(),
-        provinsiId: int.parse(resp.provinsiId),
-        kabupatenId: int.parse(resp.kabupatenKotaId),
-        kecamatanId: int.parse(resp.kecamatanId),
-        kelurahanId: int.parse(resp.desaKelurahanId),
-        lastModified: DateTime.now().toString(),
-      );
-      await DbHelper.putResponden(store_, respondenModel);
+  Future pullResponden(
+      {List<RespondenModel>? respondenData, required bool isCreate}) async {
+    int id = await getIdResponden();
+    List<RespondenModel> nResponden = [];
+    if (respondenData == null) {
+      try {
+        // Get responden form server
+        List<Responden>? responden =
+            await DioClient().getResponden(token: token);
+        if (responden != null) {
+          for (var resp in responden) {
+            RespondenModel respondenModel = RespondenModel(
+              id: id,
+              kodeUnik: int.parse(resp.kodeUnik!),
+              kartuKeluarga: int.parse(resp.kartuKeluarga),
+              alamat: resp.alamat,
+              nomorHp: resp.nomorHp.toString(),
+              provinsiId: int.parse(resp.provinsiId),
+              kabupatenId: int.parse(resp.kabupatenKotaId),
+              kecamatanId: int.parse(resp.kecamatanId),
+              kelurahanId: int.parse(resp.desaKelurahanId),
+              lastModified: DateTime.now().toString(),
+            );
+            nResponden.add(respondenModel);
+            id += 1;
+          }
+          await DbHelper.putResponden(store_, nResponden);
+          debugPrint("responden data has been pulled from server to local");
+        } else {
+          debugPrint("responden data not found on server");
+        }
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      if (isCreate) {
+        for (var resp in respondenData) {
+          RespondenModel respondenModel = RespondenModel(
+            id: id,
+            kodeUnik: resp.kodeUnik,
+            kartuKeluarga: resp.kartuKeluarga,
+            alamat: resp.alamat,
+            nomorHp: resp.nomorHp.toString(),
+            provinsiId: resp.provinsiId,
+            kabupatenId: resp.kabupatenId,
+            kecamatanId: resp.kecamatanId,
+            kelurahanId: resp.kelurahanId,
+            lastModified: DateTime.now().toString(),
+          );
+          nResponden.add(respondenModel);
+          id += 1;
+        }
+        await DbHelper.putResponden(store_, nResponden);
+        debugPrint(
+            "responden data has been pulled(created) from server to local");
+      } else {
+        // get id of local responden
+        for (var item in respondenData) {
+          int idToUpdate = await getCurrentRespondenId(kodeUnik: item.kodeUnik);
+          RespondenModel respondenModel = RespondenModel(
+              id: idToUpdate,
+              kodeUnik: item.kodeUnik,
+              kartuKeluarga: item.kartuKeluarga,
+              alamat: item.alamat,
+              nomorHp: item.nomorHp,
+              provinsiId: item.provinsiId,
+              kabupatenId: item.kabupatenId,
+              kecamatanId: item.kecamatanId,
+              kelurahanId: item.kelurahanId,
+              lastModified: DateTime.now().toString());
+          nResponden.add(respondenModel);
+        }
+        // update data
+        await DbHelper.putResponden(store_, nResponden);
+        debugPrint(
+            "responden data has been pulled(updated) from server to local");
+      }
     }
-    debugPrint("responden data has been pulled from server to local");
   }
 
-  void pullSurvey(List<Survey> survey) async {
-    // delete survey berfore pull
-    await DbHelper.deleteAllSurvey(store_);
-    for (var s in survey) {
-      SurveyModel surveyModel = SurveyModel(
-        id: s.id,
-        kodeUnik: int.parse(s.kodeUnik!),
-        kategoriSelanjutnya: s.kategoriSelanjutnya != null
-            ? int.parse(s.kategoriSelanjutnya!)
-            : null,
-        isSelesai: int.parse(s.isSelesai),
-        namaSurveyId: int.parse(s.namaSurveyId),
-        profileId: int.parse(s.profileId),
-        kodeUnikRespondenId: int.parse(s.kodeUnikResponden),
-        lastModified: DateTime.now().toString(),
-      );
-      await DbHelper.putSurvey(store_, surveyModel);
+  Future pullSurvey(
+      {List<SurveyModel>? surveyData, required bool isCreate}) async {
+    int id = await getIdSurvey();
+    List<SurveyModel> nSurvey = [];
+    if (surveyData == null) {
+      try {
+        // Get responden form server
+        List<Survey>? survey = await DioClient().getSurvey(token: token);
+        if (survey != null) {
+          for (var surv in survey) {
+            SurveyModel surveyModel = SurveyModel(
+              id: id,
+              kodeUnik: int.parse(surv.kodeUnik!),
+              kategoriSelanjutnya: surv.kategoriSelanjutnya != null
+                  ? int.parse(surv.kategoriSelanjutnya!)
+                  : null,
+              // kategoriSelanjutnya: int.tryParse(surv.kategoriSelanjutnya!),
+              isSelesai: int.parse(surv.isSelesai),
+              kodeUnikRespondenId: int.tryParse(surv.kodeUnikResponden),
+              namaSurveyId: int.tryParse(surv.namaSurveyId),
+              profileId: int.tryParse(surv.profileId),
+              lastModified: surv.updatedAt.toString(),
+            );
+            nSurvey.add(surveyModel);
+            id += 1;
+          }
+          await DbHelper.putSurvey(store_, nSurvey);
+          debugPrint("survey data has been pulled from server to local");
+        } else {
+          debugPrint("survey data not found on server");
+        }
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      if (isCreate) {
+        for (var s in surveyData) {
+          SurveyModel surveyModel = SurveyModel(
+            id: id,
+            kodeUnik: s.kodeUnik,
+            kategoriSelanjutnya: s.kategoriSelanjutnya,
+            isSelesai: s.isSelesai,
+            namaSurveyId: s.namaSurveyId,
+            profileId: s.profileId,
+            kodeUnikRespondenId: s.kodeUnikRespondenId,
+            lastModified: s.lastModified,
+          );
+          nSurvey.add(surveyModel);
+          id += 1;
+        }
+        await DbHelper.putSurvey(store_, nSurvey);
+        debugPrint("survey data has been pulled from server to local");
+      } else {
+        for (var item in surveyData) {
+          int idToUpdate = await getCurrentSurveyId(kodeUnik: item.kodeUnik);
+          SurveyModel surveyModel = SurveyModel(
+            id: idToUpdate,
+            kodeUnik: item.kodeUnik,
+            kategoriSelanjutnya: item.kategoriSelanjutnya,
+            isSelesai: item.isSelesai,
+            namaSurveyId: item.namaSurveyId,
+            profileId: item.profileId,
+            kodeUnikRespondenId: item.kodeUnikRespondenId,
+            lastModified: item.lastModified,
+          );
+          nSurvey.add(surveyModel);
+        }
+        await DbHelper.putSurvey(store_, nSurvey);
+        debugPrint("survey data has been pulled from server to local");
+      }
     }
-    debugPrint("survey data has been pulled from server to local");
   }
 
-  void pullJawabanSurvey(List<JawabanSurvey> jawabanSurvey) async {
-    // delete jawaban survey berfore pull
-    await DbHelper.deleteAllJawabanSurvey(store_);
-    for (var jawaban in jawabanSurvey) {
-      JawabanSurveyModel jawabanSurveyModel = JawabanSurveyModel(
-        id: jawaban.id,
-        jawabanLainnya:
-            jawaban.jawabanLainnya != null ? jawaban.jawabanLainnya! : null,
-        soalId: int.parse(jawaban.soalId),
-        kategoriSoalId: int.parse(jawaban.kategoriSoalId),
-        jawabanSoalId: jawaban.jawabanSoalId != null
-            ? int.parse(jawaban.jawabanSoalId!)
-            : null,
-        kodeUnikSurveyId: int.parse(jawaban.kodeUnikSurvey),
-        lastModified: DateTime.now().toString(),
-      );
-      await DbHelper.putJawabanSurvey(store_, jawabanSurveyModel);
+  Future pullJawabanSurvey({String? kodeUnik}) async {
+    int id = await getIdJawabanSurvey();
+    List<JawabanSurveyModel> nJawabanSurvey = [];
+    if (kodeUnik == null) {
+      // delete jawaban survey berfore pull
+      await DbHelper.deleteAllJawabanSurvey(store_);
+      // get all local survey
+      List<SurveyModel> localSurveys = await DbHelper.getSurvey(store_);
+      for (var survey in localSurveys) {
+        // Get jawabanSurvey form server
+        List<JawabanSurvey>? jawabanSurvey = await DioClient().getJawabanSurvey(
+            token: token, kodeUnikSurvey: survey.kodeUnik.toString());
+
+        if (jawabanSurvey != null) {
+          for (var item in jawabanSurvey) {
+            nJawabanSurvey.add(JawabanSurveyModel(
+              id: id,
+              jawabanLainnya: item.jawabanLainnya,
+              soalId: int.parse(item.soalId),
+              jawabanSoalId: item.jawabanSoalId != null
+                  ? int.parse(item.jawabanSoalId!)
+                  : null,
+              kategoriSoalId: int.parse(item.kategoriSoalId),
+              kodeUnikSurveyId: int.parse(item.kodeUnikSurvey),
+              lastModified: DateTime.now().toString(),
+            ));
+            id += 1;
+          }
+          await DbHelper.putJawabanSurvey(store_, nJawabanSurvey);
+          debugPrint(
+              "jawaban survey data has been pulled from server to local");
+        } else {
+          debugPrint('jawaban survey not found on server');
+        }
+      }
+    } else {
+      // delete jawaban survey by kodeUnik before pull
+      await DbHelper.deleteJawabanSurveyByKodeUnikSurvey(store_,
+          kodeUnikSurvey: int.parse(kodeUnik));
+      // Get jawabanSurvey form server
+      List<JawabanSurvey>? jawabanSurvey = await DioClient()
+          .getJawabanSurvey(token: token, kodeUnikSurvey: kodeUnik);
+
+      if (jawabanSurvey != null) {
+        for (var item in jawabanSurvey) {
+          nJawabanSurvey.add(JawabanSurveyModel(
+            id: id,
+            jawabanLainnya: item.jawabanLainnya,
+            jawabanSoalId: item.jawabanSoalId != null
+                ? int.parse(item.jawabanSoalId!)
+                : null,
+            kategoriSoalId: int.parse(item.kategoriSoalId),
+            kodeUnikSurveyId: int.parse(item.kodeUnikSurvey),
+            soalId: int.parse(item.soalId),
+            lastModified: DateTime.now().toString(),
+          ));
+          id += 1;
+        }
+        await DbHelper.putJawabanSurvey(store_, nJawabanSurvey);
+        debugPrint("jawaban survey data has been pulled from server to local");
+      } else {
+        debugPrint('jawaban survey not found on server');
+      }
     }
-    debugPrint("jawaban survey data has been pulled from server to local");
+  }
+
+  Future<int> getIdResponden() async {
+    List<RespondenModel>? localResponden =
+        await DbHelper.getResponden(Objectbox.store_);
+    return localResponden.length + 1;
+  }
+
+  Future<int> getCurrentRespondenId({required int kodeUnik}) async {
+    RespondenModel responden = await DbHelper.getRespondenByKodeUnik(
+        Objectbox.store_,
+        kodeUnik: kodeUnik);
+    int id = responden.id!;
+    return id;
+  }
+
+  Future<int> getIdSurvey() async {
+    List<SurveyModel>? localSurvey = await DbHelper.getSurvey(Objectbox.store_);
+    return localSurvey.length + 1;
+  }
+
+  Future<int> getCurrentSurveyId({required int kodeUnik}) async {
+    SurveyModel survey = await DbHelper.getSurveyByKodeUnik(Objectbox.store_,
+        kodeUnik: kodeUnik);
+    int id = survey.id!;
+    return id;
+  }
+
+  Future<int> getIdJawabanSurvey() async {
+    List<JawabanSurveyModel>? localJawabanSurvey =
+        await DbHelper.getJawabanSurvey(Objectbox.store_);
+    return localJawabanSurvey.length + 1;
   }
 
   /// Comparing between two dates

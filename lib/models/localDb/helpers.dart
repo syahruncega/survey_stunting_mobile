@@ -115,13 +115,6 @@ class DbHelper {
     return store.box<UserModel>().get(id);
   }
 
-  /// get user by profileId
-  // static Future<UserModel?> getUserByProfileId(Store store,
-  //     {required int profileId}) async {
-  //   final users = await getUser(store);
-  //   return users.firstWhere((user) => user.profile.targetId == profileId);
-  // }
-
   /// param :
   /// id (int) - id of the user
   /// return :
@@ -139,9 +132,11 @@ class DbHelper {
   /// - store (ObjextBoxStore)
   /// - SoalData (SoalModel)
   /// - id (int) - id of the soal optional only if you want to update the soal
-  static Future<int> putSoal(Store store, SoalModel soal) async {
-    soal.kategoriSoal.targetId = soal.kategoriSoalId;
-    return store.box<SoalModel>().put(soal);
+  static Future<List<int>> putSoal(Store store, List<SoalModel> soal) async {
+    for (var soal_ in soal) {
+      soal_.kategoriSoal.targetId = soal_.kategoriSoalId;
+    }
+    return store.box<SoalModel>().putMany(soal);
   }
 
   /// Get all soal
@@ -189,10 +184,12 @@ class DbHelper {
   /// - store (ObjextBoxStore)
   /// - KategoriSoalData (KategoriSoalModel)
   /// - id (int) - id of the kategori soal optional only if you want to update the kategori soal
-  static Future<int> putKategoriSoal(
-      Store store, KategoriSoalModel kategoriSoal) async {
-    kategoriSoal.namaSurvey.targetId = kategoriSoal.namaSurveyId;
-    return store.box<KategoriSoalModel>().put(kategoriSoal);
+  static Future<List<int>> putKategoriSoal(
+      Store store, List<KategoriSoalModel> kategoriSoal) async {
+    for (var kategori in kategoriSoal) {
+      kategori.namaSurvey.targetId = kategori.namaSurveyId;
+    }
+    return store.box<KategoriSoalModel>().putMany(kategoriSoal);
   }
 
   /// get all kategori soal
@@ -233,9 +230,9 @@ class DbHelper {
   /// - store (ObjextBoxStore)
   /// - NamaSurveyData (NamaSurveyModel)
   /// - id (int) - id of the nama survey optional only if you want to update the nama survey
-  static Future<int> putNamaSurvey(
-      Store store, NamaSurveyModel namaSurvey) async {
-    return store.box<NamaSurveyModel>().put(namaSurvey);
+  static Future<List<int>> putNamaSurvey(
+      Store store, List<NamaSurveyModel> namaSurvey) async {
+    return store.box<NamaSurveyModel>().putMany(namaSurvey);
   }
 
   /// get all nama survey
@@ -267,11 +264,12 @@ class DbHelper {
   /// - store (ObjextBoxStore)
   /// - JawabanSoalData (JawabanSoalModel)
   /// - id (int) - id of the jawaban soal optional only if you want to update the jawaban soal
-  static Future<int> putJawabanSoal(
-      Store store, JawabanSoalModel jawabanSoal) async {
-    jawabanSoal.soal.targetId = jawabanSoal.soalId;
-    // jawabanSoal.jawabanSurvey.targetId = jawabanSoal.jawabanSurveyId;
-    return store.box<JawabanSoalModel>().put(jawabanSoal);
+  static Future<List<int>> putJawabanSoal(
+      Store store, List<JawabanSoalModel> jawabanSoal) async {
+    for (var jawaban in jawabanSoal) {
+      jawaban.soal.targetId = jawaban.soalId;
+    }
+    return store.box<JawabanSoalModel>().putMany(jawabanSoal);
   }
 
   /// get all jawaban soal
@@ -296,18 +294,6 @@ class DbHelper {
         .toList();
   }
 
-  /// Get jawabanSoal by jawabanSurveyId
-  // static Future<List<JawabanSoalModel>> getJawabanSoalByJawabanSurveyId(
-  //   Store store, {
-  //   required int jawabanSurveyId,
-  // }) async {
-  //   final jawabanSoals = await getJawabanSoal(store);
-  //   return jawabanSoals
-  //       .where((jawabanSoal) =>
-  //           jawabanSoal.jawabanSurvey.targetId == jawabanSurveyId)
-  //       .toList();
-  // }
-
   /// delete all jawabanSoal
   static Future<int> deleteAllJawabanSoal(Store store) async {
     return store.box<JawabanSoalModel>().removeAll();
@@ -319,12 +305,14 @@ class DbHelper {
   /// - store (ObjextBoxStore)
   /// - JawabanSurveyData (JawabanSurveyModel)
   /// - id (int) - id of the jawaban survey optional only if you want to update the jawaban survey
-  static Future<int> putJawabanSurvey(
-      Store store, JawabanSurveyModel jawabanSurvey) async {
-    jawabanSurvey.soal.targetId = jawabanSurvey.soalId;
-    jawabanSurvey.kodeUnikSurvey.targetId = jawabanSurvey.kodeUnikSurveyId;
-    jawabanSurvey.kategoriSoal.targetId = jawabanSurvey.kategoriSoalId;
-    return store.box<JawabanSurveyModel>().put(jawabanSurvey);
+  static Future<List<int>> putJawabanSurvey(
+      Store store, List<JawabanSurveyModel> jawabanSurvey) async {
+    for (var jawaban in jawabanSurvey) {
+      jawaban.soal.targetId = jawaban.soalId;
+      jawaban.kodeUnikSurvey.targetId = jawaban.kodeUnikSurveyId;
+      jawaban.kategoriSoal.targetId = jawaban.kategoriSoalId;
+    }
+    return store.box<JawabanSurveyModel>().putMany(jawabanSurvey);
   }
 
   /// get all jawaban survey
@@ -353,12 +341,21 @@ class DbHelper {
   static Future<List<JawabanSurveyModel>> getJawabanSurveyByKodeUnikSurveyId(
     Store store, {
     required int kodeUnikSurveyId,
+    int? kategoriSoalId,
   }) async {
     final jawabanSurveys = await getJawabanSurvey(store);
-    return jawabanSurveys
-        .where((jawabanSurvey) =>
-            jawabanSurvey.kodeUnikSurvey.targetId == kodeUnikSurveyId)
-        .toList();
+    if (kategoriSoalId == null) {
+      return jawabanSurveys
+          .where((jawabanSurvey) =>
+              jawabanSurvey.kodeUnikSurvey.targetId == kodeUnikSurveyId)
+          .toList();
+    } else {
+      return jawabanSurveys
+          .where((jawabanSurvey) =>
+              jawabanSurvey.kodeUnikSurvey.targetId == kodeUnikSurveyId &&
+              jawabanSurvey.kategoriSoal.targetId == kategoriSoalId)
+          .toList();
+    }
   }
 
   /// Get jawabanSurvey by kategoriSoalId
@@ -390,6 +387,20 @@ class DbHelper {
     return store.box<JawabanSurveyModel>().remove(id);
   }
 
+  /// delete jawaban survey
+  static Future<int> deleteJawabanSurveyByKodeUnikSurvey(Store store,
+      {required int kodeUnikSurvey}) async {
+    List<int> ids = [];
+    final jawabanSurvey = await getJawabanSurveyByKodeUnikSurveyId(store,
+        kodeUnikSurveyId: kodeUnikSurvey);
+    if (jawabanSurvey.isNotEmpty) {
+      for (var item in jawabanSurvey) {
+        ids.add(item.id!);
+      }
+    }
+    return store.box<JawabanSurveyModel>().removeMany(ids);
+  }
+
   /// delete all jawaban survey
   static Future<int> deleteAllJawabanSurvey(Store store) async {
     return store.box<JawabanSurveyModel>().removeAll();
@@ -401,11 +412,15 @@ class DbHelper {
   /// - store (ObjextBoxStore)
   /// - SurveyData (SurveyModel)
   /// - id (int) - id of the survey optional only if you want to update the survey
-  static Future<int> putSurvey(Store store, SurveyModel survey) async {
-    survey.namaSurvey.targetId = survey.namaSurveyId;
-    survey.profile.targetId = survey.profileId;
-    survey.kodeUnikResponden.targetId = survey.kodeUnikRespondenId;
-    return store.box<SurveyModel>().put(survey);
+  static Future<List<int>> putSurvey(
+      Store store, List<SurveyModel> survey) async {
+    for (var surv in survey) {
+      surv.id = surv.id;
+      surv.namaSurvey.targetId = surv.namaSurveyId;
+      surv.profile.targetId = surv.profileId;
+      surv.kodeUnikResponden.targetId = surv.kodeUnikRespondenId;
+    }
+    return store.box<SurveyModel>().putMany(survey);
   }
 
   /// get all survey
@@ -439,14 +454,52 @@ class DbHelper {
     String? keyword,
   }) async {
     final surveys = await getSurvey(store);
-    if (isSelesai == null) {
-      if (keyword == null) {
-        return surveys
-            .where((survey) => survey.profile.targetId == profileId)
-            .toList();
+
+    if (namaSurveyId != null && namaSurveyId != "") {
+      if (isSelesai != null) {
+        if (keyword != null && keyword != "") {
+          List<SurveyModel> filteredSurveys = surveys
+              .where((survey) =>
+                  survey.profile.targetId == profileId &&
+                  survey.isSelesai == isSelesai &&
+                  survey.namaSurvey.targetId == int.parse(namaSurveyId))
+              .toList();
+
+          filteredSurveys.retainWhere((survey) =>
+              survey.namaSurvey.target!.nama
+                  .toString()
+                  .toLowerCase()
+                  .contains(keyword.toString().toLowerCase()) ||
+              survey.profile.target!.namaLengkap
+                  .toString()
+                  .toLowerCase()
+                  .contains(keyword.toString().toLowerCase()) ||
+              survey.kodeUnikResponden.target!.kartuKeluarga
+                  .toString()
+                  .toLowerCase()
+                  .contains(keyword.toString().toLowerCase()));
+          return filteredSurveys;
+        } else {
+          return surveys
+              .where((survey) =>
+                  survey.profile.targetId == profileId &&
+                  survey.namaSurvey.targetId == int.parse(namaSurveyId) &&
+                  survey.isSelesai == isSelesai)
+              .toList();
+        }
       } else {
+        return surveys
+            .where((survey) =>
+                survey.profile.targetId == profileId &&
+                survey.namaSurvey.targetId == int.parse(namaSurveyId))
+            .toList();
+      }
+    } else if (isSelesai != null) {
+      if (keyword != null && keyword != "") {
         List<SurveyModel> filteredSurveys = surveys
-            .where((survey) => survey.profile.targetId == profileId)
+            .where((survey) =>
+                survey.profile.targetId == profileId &&
+                survey.isSelesai == isSelesai)
             .toList();
 
         filteredSurveys.retainWhere((survey) =>
@@ -463,32 +516,36 @@ class DbHelper {
                 .toLowerCase()
                 .contains(keyword.toString().toLowerCase()));
         return filteredSurveys;
-      }
-    } else {
-      if (keyword == null) {
+      } else {
         return surveys
             .where((survey) =>
                 survey.profile.targetId == profileId &&
                 survey.isSelesai == isSelesai)
             .toList();
-      } else {
-        List<SurveyModel> filteredSurveys = surveys
-            .where((survey) =>
-                survey.profile.targetId == profileId &&
-                survey.isSelesai == isSelesai)
-            .toList();
-
-        filteredSurveys.retainWhere((survey) =>
-            survey.namaSurvey.target!.nama
-                .toString()
-                .toLowerCase()
-                .contains(keyword.toString().toLowerCase()) ||
-            survey.profile.target!.namaLengkap
-                .toString()
-                .toLowerCase()
-                .contains(keyword.toString().toLowerCase()));
-        return filteredSurveys;
       }
+    } else if (keyword != null && keyword != "") {
+      List<SurveyModel> filteredSurveys = surveys
+          .where((survey) => survey.profile.targetId == profileId)
+          .toList();
+
+      filteredSurveys.retainWhere((survey) =>
+          survey.namaSurvey.target!.nama
+              .toString()
+              .toLowerCase()
+              .contains(keyword.toString().toLowerCase()) ||
+          survey.profile.target!.namaLengkap
+              .toString()
+              .toLowerCase()
+              .contains(keyword.toString().toLowerCase()) ||
+          survey.kodeUnikResponden.target!.kartuKeluarga
+              .toString()
+              .toLowerCase()
+              .contains(keyword.toString().toLowerCase()));
+      return filteredSurveys;
+    } else {
+      return surveys
+          .where((survey) => survey.profile.targetId == profileId)
+          .toList();
     }
   }
 
@@ -530,12 +587,12 @@ class DbHelper {
   /// Params:
   /// - store (ObjextBoxStore)
   /// - kodeUnik (int)
-  static Future<List<SurveysModel>> getDetailSurvey(Store store,
+  static Future<List<SurveyModel>> getDetailSurvey(Store store,
       {required int profileId,
       int? isSelesai,
       String? namaSurveyId,
       String? keyword}) async {
-    List<SurveysModel> allSurveys = [];
+    List<SurveyModel> allSurveys = [];
     List<SurveyModel> surveys = await getSurveyByProfileId(store,
         profileId: profileId,
         isSelesai: isSelesai,
@@ -549,12 +606,12 @@ class DbHelper {
       ProfileModel? profile =
           await getProfileById(store, id: survey.profile.targetId);
 
-      allSurveys.add(SurveysModel(
+      allSurveys.add(SurveyModel(
         id: survey.id!,
         kodeUnik: survey.kodeUnik,
         kategoriSelanjutnya: survey.kategoriSelanjutnya,
         isSelesai: survey.isSelesai,
-        kodeUnikResponden: survey.kodeUnikResponden.targetId,
+        kodeUnikRespondenId: survey.kodeUnikResponden.targetId,
         namaSurveyId: survey.namaSurvey.targetId,
         profileId: survey.profile.targetId,
         lastModified: survey.lastModified,
@@ -585,11 +642,11 @@ class DbHelper {
   }
 
   /// delete survey
-  static Future<bool> deleteSurvey(Store store, {required int id}) async {
-    final survey = await getSurveyById(store, id: id);
-    int kodeUnikSurvey = survey!.kodeUnik;
+  static Future<bool> deleteSurvey(Store store, {required int kodeUnik}) async {
+    final survey = await getSurveyByKodeUnik(store, kodeUnik: kodeUnik);
+    int id = survey.id!;
     final jawabanSurvey = await getJawabanSurveyByKodeUnikSurveyId(store,
-        kodeUnikSurveyId: kodeUnikSurvey);
+        kodeUnikSurveyId: kodeUnik);
     if (jawabanSurvey.isNotEmpty) {
       for (var jawaban in jawabanSurvey) {
         await deleteJawabanSurvey(store, id: jawaban.id!);
@@ -603,36 +660,21 @@ class DbHelper {
     return store.box<SurveyModel>().removeAll();
   }
 
-  static Future<dynamic> getTest(Store store, int profileId, int userId) async {
-    // Get survey with kodeUnik = 92230298
-    // Get Responden object id with kodeUnikResponden = 11223344
-    // Get namaSurvey with id = 1
-    // Get profile with id = 1
-    QueryBuilder<ProfileModel> builder =
-        store.box<ProfileModel>().query(ProfileModel_.id.equals(profileId));
-    // builder.link(SurveyModel_.kodeUnikResponden,
-    //     RespondenModel_.kodeUnik.equals(11223344));
-    builder.link(ProfileModel_.user, UserModel_.id.equals(userId));
-    // builder.link(SurveyModel_.profile, ProfileModel_.id.equals(1));
-    Query<ProfileModel> query = builder.build();
-    List<dynamic> result = query.find();
-
-    log(result.toString());
-    query.close();
-    return result;
-  }
-
   //? Responden
   /// Params:
   /// - store (ObjextBoxStore)
   /// - RespondenData (RespondenModel)
   /// - id (int) - id of the survey optional only if you want to update the survey
-  static Future<int> putResponden(Store store, RespondenModel responden) async {
-    responden.provinsi.targetId = responden.provinsiId;
-    responden.kabupaten.targetId = responden.kabupatenId;
-    responden.kecamatan.targetId = responden.kecamatanId;
-    responden.kelurahan.targetId = responden.kelurahanId;
-    return store.box<RespondenModel>().put(responden);
+  static Future<List<int>> putResponden(
+      Store store, List<RespondenModel> responden) async {
+    for (var res in responden) {
+      res.id = res.id;
+      res.provinsi.targetId = res.provinsiId;
+      res.kabupaten.targetId = res.kabupatenId;
+      res.kecamatan.targetId = res.kecamatanId;
+      res.kelurahan.targetId = res.kelurahanId;
+    }
+    return store.box<RespondenModel>().putMany(responden);
   }
 
   /// Get responden
@@ -674,8 +716,9 @@ class DbHelper {
   }
 
   /// put provinsi
-  static Future<int> putProvinsi(Store store, ProvinsiModel provinsi) async {
-    return store.box<ProvinsiModel>().put(provinsi);
+  static Future<List<int>> putProvinsi(
+      Store store, List<ProvinsiModel> provinsi) async {
+    return store.box<ProvinsiModel>().putMany(provinsi);
   }
 
   /// Get provinsi by id
@@ -698,9 +741,12 @@ class DbHelper {
   }
 
   /// put kabupaten
-  static Future<int> putKabupaten(Store store, KabupatenModel kabupaten) async {
-    kabupaten.provinsi.targetId = kabupaten.provinsiId;
-    return store.box<KabupatenModel>().put(kabupaten);
+  static Future<List<int>> putKabupaten(
+      Store store, List<KabupatenModel> kabupaten) async {
+    for (var kab in kabupaten) {
+      kab.provinsi.targetId = kab.provinsiId;
+    }
+    return store.box<KabupatenModel>().putMany(kabupaten);
   }
 
   /// delete all kabupaten
@@ -754,9 +800,12 @@ class DbHelper {
   }
 
   /// put kecamatan
-  static Future<int> putKecamatan(Store store, KecamatanModel kecamatan) async {
-    kecamatan.kabupaten.targetId = kecamatan.kabupatenId;
-    return store.box<KecamatanModel>().put(kecamatan);
+  static Future<List<int>> putKecamatan(
+      Store store, List<KecamatanModel> kecamatan) async {
+    for (var kec in kecamatan) {
+      kec.kabupaten.targetId = kec.kabupatenId;
+    }
+    return store.box<KecamatanModel>().putMany(kecamatan);
   }
 
   /// delete all kecamatan
@@ -791,9 +840,12 @@ class DbHelper {
   }
 
   /// put kelurahan
-  static Future<int> putKelurahan(Store store, KelurahanModel kelurahan) async {
-    kelurahan.kecamatan.targetId = kelurahan.kecamatanId;
-    return store.box<KelurahanModel>().put(kelurahan);
+  static Future<List<int>> putKelurahan(
+      Store store, List<KelurahanModel> kelurahan) async {
+    for (var kel in kelurahan) {
+      kel.kecamatan.targetId = kel.kecamatanId;
+    }
+    return store.box<KelurahanModel>().putMany(kelurahan);
   }
 
   /// delete all kelurahan
