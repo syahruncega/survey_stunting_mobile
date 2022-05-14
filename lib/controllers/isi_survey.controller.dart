@@ -349,17 +349,15 @@ class IsiSurveyController extends GetxController {
           formKey.currentState!.save();
 
           if (initialJawabanSurvey.isNotEmpty) {
-            for (var item in initialJawabanSurvey) {
-              await DioClient().deleteJawabanSurvey(
-                token: token,
-                id: item.id.toString(),
-              );
-            }
+            await DioClient().deleteJawabanSurvey(
+              token: token,
+              kodeUnikSurvey: int.parse(survey.kodeUnik!),
+              kategoriSoalId: currentKategoriSoal.id,
+            );
           }
 
-          for (var item in currentJawabanSurvey) {
-            await DioClient().createJawabanSurvey(token: token, data: [item]);
-          }
+          await DioClient()
+              .createJawabanSurvey(token: token, data: currentJawabanSurvey);
 
           await nextCategory();
           successScackbar("Data berhasil disimpan");
