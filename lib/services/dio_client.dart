@@ -525,6 +525,7 @@ class DioClient {
     required String token,
     String? id,
     int? kodeUnikSurvey,
+    int? kategoriSoalId,
   }) async {
     try {
       await _dio.delete(
@@ -532,6 +533,7 @@ class DioClient {
         data: {
           "id": id,
           "kode_unik_survey": kodeUnikSurvey,
+          "kategori_soal_id": kategoriSoalId,
         },
         options: Options(headers: {
           "authorization": "Bearer $token",

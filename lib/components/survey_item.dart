@@ -11,12 +11,14 @@ class SurveyItem extends StatelessWidget {
     this.onDelete,
     this.onEdit,
     this.enabled = true,
+    this.onTap,
     Key? key,
   }) : super(key: key);
   final Survey survey;
   final bool enabled;
   final dynamic Function()? onDelete;
   final dynamic Function()? onEdit;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +61,7 @@ class SurveyItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
           ),
           child: InkWell(
-            onTap: () {},
+            onTap: onTap,
             borderRadius: BorderRadius.circular(16),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
