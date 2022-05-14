@@ -73,7 +73,11 @@ class IsiSurveyController extends GetxController {
           kodeUnikSurvey: survey.kodeUnik!,
           kategoriSoalId: currentKategoriSoal.id.toString(),
         );
-        initialJawabanSurvey = response!;
+        if (response != null) {
+          initialJawabanSurvey = response;
+        } else {
+          initialJawabanSurvey = [];
+        }
       } on DioError catch (e) {
         if (e.response!.statusCode == 404) {
           initialJawabanSurvey = [];
