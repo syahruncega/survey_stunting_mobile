@@ -415,6 +415,7 @@ class DbHelper {
   static Future<List<int>> putSurvey(
       Store store, List<SurveyModel> survey) async {
     for (var surv in survey) {
+      surv.id = surv.id;
       surv.namaSurvey.targetId = surv.namaSurveyId;
       surv.profile.targetId = surv.profileId;
       surv.kodeUnikResponden.targetId = surv.kodeUnikRespondenId;
@@ -667,6 +668,7 @@ class DbHelper {
   static Future<List<int>> putResponden(
       Store store, List<RespondenModel> responden) async {
     for (var res in responden) {
+      res.id = res.id;
       res.provinsi.targetId = res.provinsiId;
       res.kabupaten.targetId = res.kabupatenId;
       res.kecamatan.targetId = res.kecamatanId;

@@ -120,9 +120,6 @@ class SyncDataController {
             // local data is less than server data
             debugPrint("Local data is less than server data");
             await pullProfile();
-          } else {
-            // local data is equal to server data
-            debugPrint("Local data is equal to server data");
           }
         } else {
           // local profile not exist
@@ -166,9 +163,6 @@ class SyncDataController {
             // local data is less than server data
             debugPrint("Local data is less than server data");
             await pullUser();
-          } else {
-            // local data is equal to server data
-            debugPrint("Local data is equal to server data");
           }
         } else {
           // local user not exist
@@ -188,8 +182,20 @@ class SyncDataController {
     try {
       // Get provinsi form server
       List<Provinsi>? provinsi = await DioClient().getProvinsi(token: token);
+      // Get provinsi local
+      List<ProvinsiModel> localProvinsi = await DbHelper.getProvinsi(store_);
       if (provinsi != null) {
-        await pullProvinsi(provinsiData: provinsi);
+        if (localProvinsi.isNotEmpty) {
+          int index = 0;
+          for (var item in provinsi) {
+            if (item.id != localProvinsi[index].id) {
+              await pullProvinsi(provinsiData: [item]);
+            }
+            index += 1;
+          }
+        } else {
+          await pullProvinsi(provinsiData: provinsi);
+        }
       } else {
         debugPrint("provinsi data not found on server");
       }
@@ -203,8 +209,20 @@ class SyncDataController {
       // Get kabupaten form server
       List<Kabupaten>? kabupaten =
           await DioClient().getAllKabupaten(token: token);
+      // Get local kabupaten
+      List<KabupatenModel> localKabupaten = await DbHelper.getKabupaten(store_);
       if (kabupaten != null) {
-        await pullKabupaten(kabupatenData: kabupaten);
+        if (localKabupaten.isNotEmpty) {
+          int index = 0;
+          for (var item in kabupaten) {
+            if (item.id != localKabupaten[index].id) {
+              await pullKabupaten(kabupatenData: [item]);
+            }
+            index += 1;
+          }
+        } else {
+          await pullKabupaten(kabupatenData: kabupaten);
+        }
       } else {
         debugPrint("kabupaten data not found on server");
       }
@@ -218,8 +236,20 @@ class SyncDataController {
       // Get kecamatan form server
       List<Kecamatan>? kecamatan =
           await DioClient().getAllKecamatan(token: token);
+      // Get local kecamatan
+      List<KecamatanModel> localKecamatan = await DbHelper.getKecamatan(store_);
       if (kecamatan != null) {
-        await pullKecamatan(kecamatanData: kecamatan);
+        if (localKecamatan.isNotEmpty) {
+          int index = 0;
+          for (var item in kecamatan) {
+            if (item.id != localKecamatan[index].id) {
+              await pullKecamatan(kecamatanData: [item]);
+            }
+            index += 1;
+          }
+        } else {
+          await pullKecamatan(kecamatanData: kecamatan);
+        }
       } else {
         debugPrint("kecamatan data not found on server");
       }
@@ -233,8 +263,20 @@ class SyncDataController {
       // Get kelurahan form server
       List<Kelurahan>? kelurahan =
           await DioClient().getAllKelurahan(token: token);
+      // Get local kelurahan
+      List<KelurahanModel> localKelurahan = await DbHelper.getKelurahan(store_);
       if (kelurahan != null) {
-        await pullKelurahan(kelurahanData: kelurahan);
+        if (localKelurahan.isNotEmpty) {
+          int index = 0;
+          for (var item in kelurahan) {
+            if (item.id != localKelurahan[index].id) {
+              await pullKelurahan(kelurahanData: [item]);
+            }
+            index += 1;
+          }
+        } else {
+          await pullKelurahan(kelurahanData: kelurahan);
+        }
       } else {
         debugPrint("kelurahan data not found on server");
       }
@@ -293,8 +335,21 @@ class SyncDataController {
       // Get namaSurvey form server
       List<NamaSurvey>? namaSurvey =
           await DioClient().getNamaSurvey(token: token);
+      // get local data namaSurvey
+      List<NamaSurveyModel>? localNamaSurvey =
+          await DbHelper.getNamaSurvey(store_);
       if (namaSurvey != null) {
-        await pullNamaSurvey(namaSurveyData: namaSurvey);
+        if (localNamaSurvey.isNotEmpty) {
+          int index = 0;
+          for (var item in namaSurvey) {
+            if (item.id != localNamaSurvey[index].id) {
+              await pullNamaSurvey(namaSurveyData: [item]);
+            }
+            index += 1;
+          }
+        } else {
+          await pullNamaSurvey(namaSurveyData: namaSurvey);
+        }
       } else {
         debugPrint("namaSurvey data not found on server");
       }
@@ -309,6 +364,7 @@ class SyncDataController {
       List<RespondenModel> serverToPullUpdate = [];
       List<Responden> localToPushCreate = [];
       List<Responden> localToPushUpdate = [];
+      // List<RespondenModel> localToKeep = [];
 
       // Get user form server
       List<Responden>? respondens =
@@ -344,9 +400,6 @@ class SyncDataController {
                 debugPrint("Local data is less than server data[loop server]");
                 serverToPullUpdate
                     .add(RespondenModel.fromJson(responden.toJson()));
-              } else {
-                // local data is equal to server data
-                debugPrint("Local data is equal to server data[loop server]");
               }
             } catch (e) {
               serverToPullCreate
@@ -381,9 +434,6 @@ class SyncDataController {
                 debugPrint("Local data is less than server data[loop local]");
                 serverToPullUpdate
                     .add(RespondenModel.fromJson(nServerResponden.toJson()));
-              } else {
-                // local data is equal to server data
-                debugPrint("Local data is equal to server data[loop local]");
               }
             } catch (e) {
               localToPushCreate
@@ -401,21 +451,21 @@ class SyncDataController {
           }
 
           if (serverToPullCreate.isNotEmpty) {
-            pullResponden(
+            await pullResponden(
                 respondenData: serverToPullCreate.toSet().toList(),
                 isCreate: true);
           }
 
           if (serverToPullUpdate.isNotEmpty) {
-            pullResponden(
+            await pullResponden(
                 respondenData: serverToPullUpdate.toSet().toList(),
                 isCreate: false);
           }
         } else {
           // local user not exist
           // pull data from server
-          debugPrint("local data not exist. pull data from server");
-          pullResponden(isCreate: true);
+          debugPrint("local data responden not exist. pull data from server");
+          await pullResponden(isCreate: true);
         }
       } else {
         debugPrint("responden data not found on server");
@@ -464,9 +514,6 @@ class SyncDataController {
                 // local data is less than server data
                 debugPrint("Local data is less than server data");
                 serverToPullUpdate.add(SurveyModel.fromJson(survey.toJson()));
-              } else {
-                // local data is equal to server data
-                debugPrint("Local data is equal to server data");
               }
             } catch (e) {
               serverToPullCreate.add(SurveyModel.fromJson(survey.toJson()));
@@ -496,9 +543,6 @@ class SyncDataController {
                 debugPrint("Local data is less than server data");
                 serverToPullUpdate
                     .add(SurveyModel.fromJson(nServerSurvey.toJson()));
-              } else {
-                // local data is equal to server data
-                debugPrint("Local data is equal to server data");
               }
             } catch (e) {
               localToPushCreate.add(Survey.fromJson(localSurvey.toJson()));
@@ -511,7 +555,7 @@ class SyncDataController {
           }
 
           if (localToPushUpdate.isNotEmpty) {
-            pushSurvey(localToPushCreate.toSet().toList(), isCreate: false);
+            pushSurvey(localToPushUpdate.toSet().toList(), isCreate: false);
           }
 
           if (serverToPullCreate.isNotEmpty) {
@@ -562,9 +606,6 @@ class SyncDataController {
               // pull jawaban survey from server to local
               debugPrint("Local data is less than server data");
               pullJawabanSurvey(kodeUnik: surveys[index].kodeUnik!);
-            } else {
-              // local data is equal to server data
-              debugPrint("Local data is equal to server data");
             }
             index++;
           }
@@ -1054,7 +1095,6 @@ class SyncDataController {
         );
         nNamaSurvey.add(namaSurveyModel);
       }
-      await DbHelper.deleteAllNamaSurvey(store_);
       await DbHelper.putNamaSurvey(store_, nNamaSurvey);
       debugPrint("nama survey data has been pulled from server to local");
     }

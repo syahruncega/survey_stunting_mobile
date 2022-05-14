@@ -64,7 +64,7 @@ class SinkronisasiScreen extends StatelessWidget {
                             const SizedBox(
                               height: 10,
                             ),
-                            Text('Mei 09, 2022 : 18.27.00',
+                            Text(controller.lastSync.value,
                                 style: GoogleFonts.kodchasan(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 13,
