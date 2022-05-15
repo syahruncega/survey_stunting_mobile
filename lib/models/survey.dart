@@ -79,7 +79,7 @@ class Survey {
         "kategori_selanjutnya": kategoriSelanjutnya,
         "is_selesai": isSelesai,
         "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
+        "updated_at": updatedAt?.toString(),
         "responden": responden?.toJson(),
         "nama_survey": namaSurvey?.toJson(),
         "profile": profile?.toJson(),

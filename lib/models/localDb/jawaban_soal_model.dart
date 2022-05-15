@@ -29,7 +29,7 @@ class JawabanSoalModel {
         "id": id,
         "jawaban": jawaban.toString(),
         "is_lainnya": isLainnya.toString(),
-        "soal_id": soalId.toString(),
+        "soal_id": soal.targetId.toString(),
         "updated_at": lastModified.toString(),
       };
 }
