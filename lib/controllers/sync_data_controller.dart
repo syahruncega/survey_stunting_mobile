@@ -42,7 +42,6 @@ class SyncDataController {
   Store store_;
   String token = GetStorage().read("token");
   int userId = GetStorage().read("userId");
-  List<int> kodeUnikSurvey = [];
 
   SyncDataController({required this.store_});
 
@@ -60,7 +59,6 @@ class SyncDataController {
       await syncJawabanSoal();
       await syncResponden();
       await syncSurvey();
-      await syncJawabanSurvey();
     } else {
       await syncDataUser();
       await syncDataProfile();
@@ -70,7 +68,6 @@ class SyncDataController {
       await syncJawabanSoal();
       await syncResponden();
       await syncSurvey();
-      await syncJawabanSurvey();
     }
   }
 
@@ -608,43 +605,6 @@ class SyncDataController {
     }
   }
 
-  Future syncJawabanSurvey() async {
-    try {
-      List<Survey>? surveys = await DioClient().getSurvey(token: token);
-      List<SurveyModel> localSurveys = await DbHelper.getSurvey(store_);
-      if (surveys != null) {
-        if (localSurveys.isNotEmpty) {
-          int index = 0;
-          for (var s in surveys) {
-            // compare local user with server user
-            DateTime localTime =
-                DateTime.parse(localSurveys[index].lastModified);
-            DateTime serverTime = s.updatedAt!;
-            int time = compareTime(localTime, serverTime);
-            if (time == 1) {
-              // local data is greater than server data
-              // push jawaban survey from local to server
-              debugPrint("Local data is greater than server data");
-              pushJawabanSurvey(kodeUnikSurvey: localSurveys[index].kodeUnik);
-            } else if (time == -1) {
-              // local data is less than server data
-              // pull jawaban survey from server to local
-              debugPrint("Local data is less than server data");
-              pullJawabanSurvey(kodeUnik: surveys[index].kodeUnik!);
-            }
-            index++;
-          }
-        } else {
-          debugPrint('survey on local is empty');
-        }
-      } else {
-        debugPrint('survey on server is empty');
-      }
-    } on DioError catch (e) {
-      handleError(error: e);
-    }
-  }
-
   Future pullProfile() async {
     try {
       // Get profile form server
@@ -703,33 +663,41 @@ class SyncDataController {
   }
 
   void pushSurvey(List<Survey> surveyData, {required bool isCreate}) async {
+    List<int> kodeUnik = [];
     for (var survey in surveyData) {
+      kodeUnik.add(int.parse(survey.kodeUnik!));
       await DioClient().createSurvey(token: token, data: survey);
     }
-    successScackbar('Sync Data Survey selesai.');
+    pushJawabanSurvey(kodeUnikSurvey: kodeUnik.toSet().toList());
   }
 
-  void pushJawabanSurvey({required int kodeUnikSurvey}) async {
-    List<JawabanSurveyModel> jawabanSurveyLocal =
-        await DbHelper.getJawabanSurveyByKodeUnikSurveyId(store_,
-            kodeUnikSurveyId: kodeUnikSurvey);
+  void pushJawabanSurvey({required List<int> kodeUnikSurvey}) async {
     List<JawabanSurvey> nJawabanSurveyData = [];
-    for (var item in jawabanSurveyLocal) {
-      nJawabanSurveyData.add(JawabanSurvey(
-        jawabanLainnya: item.jawabanLainnya,
-        jawabanSoalId:
-            item.jawabanSoalId != null ? item.jawabanSoalId.toString() : '',
-        soalId: item.soalId.toString(),
-        kodeUnikSurvey: item.kodeUnikSurvey.targetId.toString(),
-        kategoriSoalId: item.kategoriSoalId.toString(),
-      ));
-    }
-    if (nJawabanSurveyData.isNotEmpty) {
-      await DioClient()
-          .deleteJawabanSurvey(token: token, kodeUnikSurvey: kodeUnikSurvey);
-      await DioClient()
-          .createJawabanSurvey(token: token, data: nJawabanSurveyData);
-      successScackbar('Sync Data Jawaban Survey selesai.');
+
+    for (var kodeUnik in kodeUnikSurvey) {
+      List<JawabanSurveyModel> jawabanSurveyLocal =
+          await DbHelper.getJawabanSurveyByKodeUnikSurveyId(store_,
+              kodeUnikSurveyId: kodeUnik);
+
+      if (jawabanSurveyLocal.isNotEmpty) {
+        for (var item in jawabanSurveyLocal) {
+          nJawabanSurveyData.add(JawabanSurvey(
+            jawabanLainnya: item.jawabanLainnya,
+            jawabanSoalId:
+                item.jawabanSoalId != null ? item.jawabanSoalId.toString() : '',
+            soalId: item.soal.targetId.toString(),
+            kodeUnikSurvey: item.kodeUnikSurvey.targetId.toString(),
+            kategoriSoalId: item.kategoriSoal.targetId.toString(),
+          ));
+        }
+        if (nJawabanSurveyData.isNotEmpty) {
+          await DioClient()
+              .deleteJawabanSurvey(token: token, kodeUnikSurvey: kodeUnik);
+          await DioClient()
+              .createJawabanSurvey(token: token, data: nJawabanSurveyData);
+          successScackbar('Sync Data Jawaban Survey selesai.');
+        }
+      }
     }
   }
 
@@ -1255,7 +1223,7 @@ class SyncDataController {
           id += 1;
         }
         await DbHelper.putSurvey(store_, nSurvey);
-        debugPrint("survey data has been pulled from server to local");
+        debugPrint("survey data has been pulled from server to local[create]");
       } else {
         for (var item in surveyData) {
           int idToUpdate = await getCurrentSurveyId(kodeUnik: item.kodeUnik);
@@ -1272,18 +1240,22 @@ class SyncDataController {
           nSurvey.add(surveyModel);
         }
         await DbHelper.putSurvey(store_, nSurvey);
-        debugPrint("survey data has been pulled from server to local");
+        debugPrint("survey data has been pulled from server to local[update]");
       }
+      // Pull JawabanSurvey (Delete current and change with new data)
+      List<int> kodeUnikSurvey = [];
+      for (var kode in surveyData) {
+        kodeUnikSurvey.add(kode.kodeUnik);
+      }
+      await pullJawabanSurvey(kodeUnik: kodeUnikSurvey);
     }
   }
 
-  Future pullJawabanSurvey({String? kodeUnik}) async {
+  Future pullJawabanSurvey({List<int>? kodeUnik}) async {
     int id = await getIdJawabanSurvey();
     List<JawabanSurveyModel> nJawabanSurvey = [];
     if (kodeUnik == null) {
-      // delete jawaban survey berfore pull
-      await DbHelper.deleteAllJawabanSurvey(store_);
-      // get all local survey
+      // get local survey
       List<SurveyModel> localSurveys = await DbHelper.getSurvey(store_);
       for (var survey in localSurveys) {
         // Get jawabanSurvey form server
@@ -1307,38 +1279,44 @@ class SyncDataController {
           }
           await DbHelper.putJawabanSurvey(store_, nJawabanSurvey);
           debugPrint(
-              "jawaban survey data has been pulled from server to local");
+              "jawaban survey data has been pulled from server to local[fresh create]");
         } else {
           debugPrint('jawaban survey not found on server');
         }
       }
     } else {
       // delete jawaban survey by kodeUnik before pull
-      await DbHelper.deleteJawabanSurveyByKodeUnikSurvey(store_,
-          kodeUnikSurvey: int.parse(kodeUnik));
-      // Get jawabanSurvey form server
-      List<JawabanSurvey>? jawabanSurvey = await DioClient()
-          .getJawabanSurvey(token: token, kodeUnikSurvey: kodeUnik);
+      for (var nKodeUnik in kodeUnik) {
+        await DbHelper.deleteJawabanSurveyByKodeUnikSurvey(store_,
+            kodeUnikSurvey: nKodeUnik);
 
-      if (jawabanSurvey != null) {
-        for (var item in jawabanSurvey) {
-          nJawabanSurvey.add(JawabanSurveyModel(
-            id: id,
-            jawabanLainnya: item.jawabanLainnya,
-            jawabanSoalId: item.jawabanSoalId != null
-                ? int.parse(item.jawabanSoalId!)
-                : null,
-            kategoriSoalId: int.parse(item.kategoriSoalId),
-            kodeUnikSurveyId: int.parse(item.kodeUnikSurvey),
-            soalId: int.parse(item.soalId),
-            lastModified: DateTime.now().toString(),
-          ));
-          id += 1;
+        // Get jawabanSurvey form server
+        List<JawabanSurvey>? jawabanSurvey = await DioClient().getJawabanSurvey(
+            token: token, kodeUnikSurvey: nKodeUnik.toString());
+        int diman = id;
+        if (jawabanSurvey != null) {
+          for (var item in jawabanSurvey) {
+            nJawabanSurvey.add(JawabanSurveyModel(
+              // id: id,
+              id: diman,
+              jawabanLainnya: item.jawabanLainnya,
+              jawabanSoalId: item.jawabanSoalId != null
+                  ? int.parse(item.jawabanSoalId!)
+                  : null,
+              kategoriSoalId: int.parse(item.kategoriSoalId),
+              kodeUnikSurveyId: int.parse(item.kodeUnikSurvey),
+              soalId: int.parse(item.soalId),
+              lastModified: DateTime.now().toString(),
+            ));
+            diman += 1;
+            // id += 1;
+          }
+          await DbHelper.putJawabanSurvey(store_, nJawabanSurvey);
+          debugPrint(
+              "jawaban survey data has been pulled from server to local[refresh]");
+        } else {
+          debugPrint('jawaban survey not found on server');
         }
-        await DbHelper.putJawabanSurvey(store_, nJawabanSurvey);
-        debugPrint("jawaban survey data has been pulled from server to local");
-      } else {
-        debugPrint('jawaban survey not found on server');
       }
     }
   }
@@ -1346,7 +1324,11 @@ class SyncDataController {
   Future<int> getIdResponden() async {
     List<RespondenModel>? localResponden =
         await DbHelper.getResponden(Objectbox.store_);
-    return localResponden.length + 1;
+    if (localResponden.isEmpty) {
+      return 1;
+    }
+    int id = localResponden[localResponden.length - 1].id!;
+    return id + 1;
   }
 
   Future<int> getCurrentRespondenId({required int kodeUnik}) async {
@@ -1359,7 +1341,11 @@ class SyncDataController {
 
   Future<int> getIdSurvey() async {
     List<SurveyModel>? localSurvey = await DbHelper.getSurvey(Objectbox.store_);
-    return localSurvey.length + 1;
+    if (localSurvey.isEmpty) {
+      return 1;
+    }
+    int id = localSurvey[localSurvey.length - 1].id!;
+    return id + 1;
   }
 
   Future<int> getCurrentSurveyId({required int kodeUnik}) async {
@@ -1372,7 +1358,11 @@ class SyncDataController {
   Future<int> getIdJawabanSurvey() async {
     List<JawabanSurveyModel>? localJawabanSurvey =
         await DbHelper.getJawabanSurvey(Objectbox.store_);
-    return localJawabanSurvey.length + 1;
+    if (localJawabanSurvey.isEmpty) {
+      return 1;
+    }
+    int id = localJawabanSurvey[localJawabanSurvey.length - 1].id!;
+    return id + 1;
   }
 
   /// Comparing between two dates

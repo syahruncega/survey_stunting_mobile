@@ -431,9 +431,9 @@ class IsiSurveyController extends GetxController {
                 element.urutan ==
                 (survey.isSelesai == "0" ? currentOrder.toString() : "1"))
             .id,
-        kodeUnikRespondenId: int.parse(survey.kodeUnikResponden),
-        namaSurveyId: int.parse(survey.namaSurveyId),
-        profileId: int.parse(survey.profileId),
+        kodeUnikRespondenId: int.parse(survey.responden!.kodeUnik),
+        namaSurveyId: survey.namaSurvey!.id,
+        profileId: survey.profile!.id,
         kodeUnik: int.parse(survey.kodeUnik!),
         isSelesai: int.parse(survey.isSelesai),
         lastModified: DateTime.now().toString(),
