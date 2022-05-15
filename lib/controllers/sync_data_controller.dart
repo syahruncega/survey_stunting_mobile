@@ -42,7 +42,6 @@ class SyncDataController {
   Store store_;
   String token = GetStorage().read("token");
   int userId = GetStorage().read("userId");
-  // List<int> kodeUnikSurvey = [];
 
   SyncDataController({required this.store_});
 
