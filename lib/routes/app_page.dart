@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
+import 'package:survey_stunting/bindings/detail_survey_binding.dart';
 import 'package:survey_stunting/bindings/isi_survey_binding.dart';
 import 'package:survey_stunting/bindings/layout_binding.dart';
 import 'package:survey_stunting/bindings/login_binding.dart';
 import 'package:survey_stunting/bindings/tambah_responden_binding.dart';
 import 'package:survey_stunting/bindings/ubah_akun_binding.dart';
 import 'package:survey_stunting/bindings/ubah_profil_binding.dart';
+import 'package:survey_stunting/pages/Detail-Survey/detail_survey_screen.dart';
 import 'package:survey_stunting/pages/Isi-Survey/isi_survey_screen.dart';
 import 'package:survey_stunting/pages/Login/login_screen.dart';
 import 'package:survey_stunting/pages/Sinkronisasi/sinkronisasi_screen.dart';
@@ -37,6 +39,11 @@ class AppPage {
       name: RouteName.isiSurvey,
       page: () => const IsiSurveyScreen(),
       binding: IsiSurveyBinding(),
+    ),
+    GetPage(
+      name: RouteName.detailSurvey,
+      page: () => const DetailSurveyScreen(),
+      binding: DetailSurveyBinding(),
     ),
     GetPage(
       name: RouteName.ubahProfil,

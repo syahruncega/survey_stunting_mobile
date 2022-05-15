@@ -166,7 +166,7 @@ class SurveyController extends GetxController {
           List<Survey>? response =
               await DioClient().createSurvey(token: token, data: data);
           isLoading.value = false;
-          Get.toNamed(RouteName.isiSurvey, arguments: response![0]);
+          Get.toNamed(RouteName.isiSurvey, arguments: [response![0], false]);
           successScackbar("Survey berhasil disimpan");
         } on DioError catch (e) {
           if (e.response?.statusCode == 302) {
@@ -200,7 +200,7 @@ class SurveyController extends GetxController {
         await DbHelper.putSurvey(Objectbox.store_, [data]);
         isLoading.value = false;
         Get.toNamed(RouteName.isiSurvey,
-            arguments: Survey.fromJson(data.toJson()));
+            arguments: [Survey.fromJson(data.toJson()), false]);
         successScackbar("Survey berhasil disimpan");
       }
     }

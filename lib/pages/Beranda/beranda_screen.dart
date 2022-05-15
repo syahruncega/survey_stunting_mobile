@@ -124,8 +124,10 @@ class BerandaScreen extends StatelessWidget {
                                 enabled: false,
                                 survey: berandaController.surveys[index],
                                 onTap: () => Get.toNamed(RouteName.isiSurvey,
-                                    arguments:
-                                        berandaController.surveys[index]),
+                                    arguments: [
+                                      berandaController.surveys[index],
+                                      false
+                                    ]),
                               );
                             },
                           )

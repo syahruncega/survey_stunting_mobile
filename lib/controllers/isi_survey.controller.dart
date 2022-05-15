@@ -31,6 +31,7 @@ class IsiSurveyController extends GetxController {
   var isLoadingPrevious = false.obs;
   late KategoriSoal currentKategoriSoal;
   late Survey survey;
+  late bool isEdit;
   late List<KategoriSoal> kategoriSoal = [];
   late List<JawabanSurvey> initialJawabanSurvey = [];
   late List<JawabanSurvey> currentJawabanSurvey;
@@ -43,7 +44,8 @@ class IsiSurveyController extends GetxController {
   @override
   void onInit() async {
     await checkConnection();
-    survey = Get.arguments;
+    survey = Get.arguments[0];
+    isEdit = Get.arguments[1];
     await getKategoriSoal();
 
     if (survey.kategoriSelanjutnya != null) {
@@ -453,7 +455,10 @@ class IsiSurveyController extends GetxController {
         .firstWhere((element) => element.urutan == currentOrder.toString());
     title.value = currentKategoriSoal.nama;
     survey.kategoriSelanjutnya = currentKategoriSoal.id.toString();
-    await updateSurvey();
+
+    if (!isEdit || survey.isSelesai == "0") {
+      await updateSurvey();
+    }
     await getJawabanSurvey();
     await getSoal();
     await getJawabanSoal();
