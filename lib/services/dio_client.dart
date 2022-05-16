@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:survey_stunting/models/akun.dart';
 import 'package:survey_stunting/models/auth.dart';
+import 'package:survey_stunting/models/detail_survey.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
 import 'package:survey_stunting/models/jawaban_survey.dart';
 import 'package:survey_stunting/models/kabupaten.dart';
@@ -447,6 +448,30 @@ class DioClient {
     } on DioError catch (e) {
       log('Error get jawaban soal: $e');
       rethrow;
+    }
+  }
+
+  Future<List<DetailSurvey>?> getDetailSurvey({
+    required String token,
+    required String kodeUnikSurvey,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/surveyor/survey",
+        queryParameters: {"kode_unik": kodeUnikSurvey},
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return detailSurveyFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get detail survey: $e');
+      if (e.response?.statusCode == 404) {
+        log(e.response!.statusMessage.toString());
+        return null;
+      } else {
+        rethrow;
+      }
     }
   }
 

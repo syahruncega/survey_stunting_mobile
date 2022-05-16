@@ -255,10 +255,19 @@ class SurveyScreen extends StatelessWidget {
                               onTap: () {
                                 if (surveyController.surveys[index].isSelesai ==
                                     "0") {
-                                  Get.toNamed(RouteName.isiSurvey,
-                                      arguments:
-                                          surveyController.surveys[index]);
-                                } else {}
+                                  Get.toNamed(
+                                    RouteName.isiSurvey,
+                                    arguments: [
+                                      surveyController.surveys[index],
+                                      false
+                                    ],
+                                  );
+                                } else {
+                                  Get.toNamed(
+                                    RouteName.detailSurvey,
+                                    arguments: surveyController.surveys[index],
+                                  );
+                                }
                               },
                               onDelete: () async {
                                 Get.defaultDialog(
@@ -285,8 +294,10 @@ class SurveyScreen extends StatelessWidget {
                                 );
                               },
                               onEdit: () {
-                                Get.toNamed(RouteName.isiSurvey,
-                                    arguments: surveyController.surveys[index]);
+                                Get.toNamed(RouteName.isiSurvey, arguments: [
+                                  surveyController.surveys[index],
+                                  true
+                                ]);
                               },
                             );
                           },
