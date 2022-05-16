@@ -251,6 +251,15 @@ class SurveyScreen extends StatelessWidget {
                           itemBuilder: (context, index) {
                             return SurveyItem(
                               key: UniqueKey(),
+                              survey: surveyController.surveys[index],
+                              onTap: () {
+                                if (surveyController.surveys[index].isSelesai ==
+                                    "0") {
+                                  Get.toNamed(RouteName.isiSurvey,
+                                      arguments:
+                                          surveyController.surveys[index]);
+                                } else {}
+                              },
                               onDelete: () async {
                                 Get.defaultDialog(
                                   title: "Hapus",
@@ -279,7 +288,6 @@ class SurveyScreen extends StatelessWidget {
                                 Get.toNamed(RouteName.isiSurvey,
                                     arguments: surveyController.surveys[index]);
                               },
-                              survey: surveyController.surveys[index],
                             );
                           },
                         )

@@ -87,19 +87,21 @@ class IsiSurveyController extends GetxController {
       }
     } else {
       debugPrint('get jawaban survey offline');
-      List<JawabanSurveyModel> jawabanSurveyModel =
-          await DbHelper.getJawabanSurveyByKodeUnikSurveyId(
-        Objectbox.store_,
-        kodeUnikSurveyId: int.parse(survey.kodeUnik!),
-        kategoriSoalId: currentKategoriSoal.id,
-      );
-      if (jawabanSurveyModel.isEmpty) {
+      try {
+        List<JawabanSurveyModel> jawabanSurveyModel =
+            await DbHelper.getJawabanSurveyByKodeUnikSurveyId(Objectbox.store_,
+                kodeUnikSurveyId: int.parse(survey.kodeUnik!),
+                kategoriSoalId: currentKategoriSoal.id);
+        if (jawabanSurveyModel.isNotEmpty) {
+          initialJawabanSurvey = jawabanSurveyModel
+              .map((e) => JawabanSurvey.fromJson(e.toJson()))
+              .toList();
+        } else {
+          initialJawabanSurvey = [];
+        }
+      } catch (e) {
         initialJawabanSurvey = [];
-        return;
       }
-      initialJawabanSurvey = jawabanSurveyModel
-          .map((e) => JawabanSurvey.fromJson(e.toJson()))
-          .toList();
     }
   }
 
@@ -118,7 +120,7 @@ class IsiSurveyController extends GetxController {
       List<KategoriSoalModel> kategoriSoalModel =
           await DbHelper.getKategoriSoalByNamaSurveyId(
         Objectbox.store_,
-        namaSurveyId: int.parse(survey.namaSurveyId),
+        namaSurveyId: survey.namaSurvey!.id,
       );
       kategoriSoal = kategoriSoalModel
           .map((e) => KategoriSoal.fromJson(e.toJson()))
@@ -349,17 +351,15 @@ class IsiSurveyController extends GetxController {
           formKey.currentState!.save();
 
           if (initialJawabanSurvey.isNotEmpty) {
-            for (var item in initialJawabanSurvey) {
-              await DioClient().deleteJawabanSurvey(
-                token: token,
-                id: item.id.toString(),
-              );
-            }
+            await DioClient().deleteJawabanSurvey(
+              token: token,
+              kodeUnikSurvey: int.parse(survey.kodeUnik!),
+              kategoriSoalId: currentKategoriSoal.id,
+            );
           }
 
-          for (var item in currentJawabanSurvey) {
-            await DioClient().createJawabanSurvey(token: token, data: [item]);
-          }
+          await DioClient()
+              .createJawabanSurvey(token: token, data: currentJawabanSurvey);
 
           await nextCategory();
           successScackbar("Data berhasil disimpan");
@@ -431,9 +431,9 @@ class IsiSurveyController extends GetxController {
                 element.urutan ==
                 (survey.isSelesai == "0" ? currentOrder.toString() : "1"))
             .id,
-        kodeUnikRespondenId: int.parse(survey.kodeUnikResponden),
-        namaSurveyId: int.parse(survey.namaSurveyId),
-        profileId: int.parse(survey.profileId),
+        kodeUnikRespondenId: int.parse(survey.responden!.kodeUnik),
+        namaSurveyId: survey.namaSurvey!.id,
+        profileId: survey.profile!.id,
         kodeUnik: int.parse(survey.kodeUnik!),
         isSelesai: int.parse(survey.isSelesai),
         lastModified: DateTime.now().toString(),
