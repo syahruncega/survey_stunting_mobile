@@ -80,28 +80,7 @@ class UbahAkunController extends GetxController {
         }
       } else {
         debugPrint('update akun local');
-        akunUpdateStatus.value = 'waiting';
-        var password_ = Crypt.sha256('password');
-        var userData = UserModel(
-          id: userId,
-          username: username,
-          password: password_.toString(),
-          status: '1',
-          role: 'Surveyor',
-          lastModified: DateTime.now().toString(),
-        );
-        UserModel? nUser =
-            await DbHelper.getUserById(Objectbox.store_, id: userId);
-        if (nUser != null && nUser.username == username) {
-          akunUpdateStatus.value = 'failed';
-          errorScackbar('Update akun gagal, Username sudah ada.');
-        } else {
-          int user = await DbHelper.putUser(Objectbox.store_, userData);
-          if (user > 0) {
-            akunUpdateStatus.value = 'successful';
-            successScackbar("Akun berhasil diupdate");
-          }
-        }
+        errorScackbar('Update akun hanya dapat dilakukan saat online');
       }
     } else {
       debugPrint('update akun validation failed');
