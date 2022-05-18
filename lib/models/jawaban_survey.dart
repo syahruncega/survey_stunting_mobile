@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:survey_stunting/models/jawaban_soal.dart';
+
 List<JawabanSurvey> listJawabanSurveyFromJson(String str) =>
     List<JawabanSurvey>.from(
         json.decode(str).map((x) => JawabanSurvey.fromJson(x)));
@@ -26,6 +28,7 @@ class JawabanSurvey {
     this.jawabanLainnya,
     this.createdAt,
     this.updatedAt,
+    this.jawabanSoal,
   });
 
   int? id;
@@ -36,6 +39,7 @@ class JawabanSurvey {
   String? jawabanLainnya;
   DateTime? createdAt;
   DateTime? updatedAt;
+  dynamic jawabanSoal;
 
   factory JawabanSurvey.fromJson(Map<String, dynamic> json) => JawabanSurvey(
         id: json["id"],
@@ -50,6 +54,7 @@ class JawabanSurvey {
         updatedAt: json["updated_at"] != null
             ? DateTime.parse(json["updated_at"])
             : null,
+        jawabanSoal: json["jawaban_soal"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -61,5 +66,6 @@ class JawabanSurvey {
         "jawaban_lainnya": jawabanLainnya,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
+        "jawaban_soal": jawabanSoal,
       };
 }
