@@ -26,6 +26,9 @@ import '../models/localDb/survey_model.dart';
 class IsiSurveyController extends GetxController {
   String token = GetStorage().read("token");
   Rx<String> title = "".obs;
+  late int kodeUnikResponden;
+  late int namaSurveyId;
+  late int profileId;
   var isLoading = true.obs;
   var isLoadingNext = false.obs;
   var isLoadingPrevious = false.obs;
@@ -46,6 +49,25 @@ class IsiSurveyController extends GetxController {
     await checkConnection();
     survey = Get.arguments[0];
     isEdit = Get.arguments[1];
+
+    if (survey.responden == null) {
+      kodeUnikResponden = int.parse(survey.kodeUnikResponden);
+    } else {
+      kodeUnikResponden = int.parse(survey.responden!.kodeUnik);
+    }
+
+    if (survey.namaSurvey == null) {
+      namaSurveyId = int.parse(survey.namaSurveyId);
+    } else {
+      namaSurveyId = survey.namaSurvey!.id;
+    }
+
+    if (survey.profile == null) {
+      profileId = int.parse(survey.profileId);
+    } else {
+      profileId = survey.profile!.id;
+    }
+
     await getKategoriSoal();
 
     if (survey.kategoriSelanjutnya != null) {
@@ -112,7 +134,7 @@ class IsiSurveyController extends GetxController {
       debugPrint('get kategori soal online');
       try {
         List<KategoriSoal>? response = await DioClient().getKategoriSoal(
-            token: token, namaSurveyId: survey.namaSurvey!.id.toString());
+            token: token, namaSurveyId: namaSurveyId.toString());
         kategoriSoal = response!;
       } on DioError catch (e) {
         handleError(error: e);
@@ -122,7 +144,7 @@ class IsiSurveyController extends GetxController {
       List<KategoriSoalModel> kategoriSoalModel =
           await DbHelper.getKategoriSoalByNamaSurveyId(
         Objectbox.store_,
-        namaSurveyId: survey.namaSurvey!.id,
+        namaSurveyId: namaSurveyId,
       );
       kategoriSoal = kategoriSoalModel
           .map((e) => KategoriSoal.fromJson(e.toJson()))
@@ -411,9 +433,9 @@ class IsiSurveyController extends GetxController {
         token: token,
         data: {
           "kode_unik": survey.kodeUnik,
-          "kode_unik_responden": survey.kodeUnikResponden,
-          "nama_survey_id": survey.namaSurveyId,
-          "profile_id": survey.profileId,
+          "kode_unik_responden": kodeUnikResponden.toString(),
+          "nama_survey_id": namaSurveyId.toString(),
+          "profile_id": profileId.toString(),
           "kategori_selanjutnya": kategoriSoal
               .firstWhere((element) =>
                   element.urutan ==
@@ -423,7 +445,6 @@ class IsiSurveyController extends GetxController {
           "is_selesai": survey.isSelesai,
         },
       );
-      debugPrint(survey.kodeUnikResponden);
     } else {
       debugPrint('update survey local');
       var surveyModel = SurveyModel(
@@ -433,9 +454,9 @@ class IsiSurveyController extends GetxController {
                 element.urutan ==
                 (survey.isSelesai == "0" ? currentOrder.toString() : "1"))
             .id,
-        kodeUnikRespondenId: int.parse(survey.responden!.kodeUnik),
-        namaSurveyId: survey.namaSurvey!.id,
-        profileId: survey.profile!.id,
+        kodeUnikRespondenId: kodeUnikResponden,
+        namaSurveyId: namaSurveyId,
+        profileId: profileId,
         kodeUnik: int.parse(survey.kodeUnik!),
         isSelesai: int.parse(survey.isSelesai),
         lastModified: DateTime.now().toString(),

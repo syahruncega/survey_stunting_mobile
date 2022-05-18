@@ -650,9 +650,7 @@ class SyncDataController {
       updatedAt: localProfile.lastModified,
     );
 
-    if (response) {
-      successScackbar('Sync Data profile selesai.');
-    } else {
+    if (!response) {
       errorScackbar('Sync data profile Gagal.');
     }
   }

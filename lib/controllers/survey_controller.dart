@@ -208,6 +208,7 @@ class SurveyController extends GetxController {
 
   Future deleteSurvey({required dynamic kodeUnik}) async {
     isLoading.value = true;
+    await checkConnection();
     if (isConnect) {
       debugPrint('delete online survey');
       try {
