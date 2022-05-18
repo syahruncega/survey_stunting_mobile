@@ -89,19 +89,21 @@ class IsiSurveyController extends GetxController {
       }
     } else {
       debugPrint('get jawaban survey offline');
-      List<JawabanSurveyModel> jawabanSurveyModel =
-          await DbHelper.getJawabanSurveyByKodeUnikSurveyId(
-        Objectbox.store_,
-        kodeUnikSurveyId: int.parse(survey.kodeUnik!),
-        kategoriSoalId: currentKategoriSoal.id,
-      );
-      if (jawabanSurveyModel.isEmpty) {
+      try {
+        List<JawabanSurveyModel> jawabanSurveyModel =
+            await DbHelper.getJawabanSurveyByKodeUnikSurveyId(Objectbox.store_,
+                kodeUnikSurveyId: int.parse(survey.kodeUnik!),
+                kategoriSoalId: currentKategoriSoal.id);
+        if (jawabanSurveyModel.isNotEmpty) {
+          initialJawabanSurvey = jawabanSurveyModel
+              .map((e) => JawabanSurvey.fromJson(e.toJson()))
+              .toList();
+        } else {
+          initialJawabanSurvey = [];
+        }
+      } catch (e) {
         initialJawabanSurvey = [];
-        return;
       }
-      initialJawabanSurvey = jawabanSurveyModel
-          .map((e) => JawabanSurvey.fromJson(e.toJson()))
-          .toList();
     }
   }
 
@@ -109,8 +111,8 @@ class IsiSurveyController extends GetxController {
     if (isConnect) {
       debugPrint('get kategori soal online');
       try {
-        List<KategoriSoal>? response = await DioClient()
-            .getKategoriSoal(token: token, namaSurveyId: survey.namaSurveyId);
+        List<KategoriSoal>? response = await DioClient().getKategoriSoal(
+            token: token, namaSurveyId: survey.namaSurvey!.id.toString());
         kategoriSoal = response!;
       } on DioError catch (e) {
         handleError(error: e);
