@@ -366,13 +366,14 @@ class IsiSurveyController extends GetxController {
   }
 
   Future submitForm() async {
-    isLoadingNext.value = true;
     if (isConnect) {
       debugPrint('create jawaban survey online');
       try {
         if (formKey.currentState!.validate()) {
           currentJawabanSurvey.clear();
           formKey.currentState!.save();
+
+          isLoadingNext.value = true;
 
           if (initialJawabanSurvey.isNotEmpty) {
             await DioClient().deleteJawabanSurvey(
@@ -397,6 +398,8 @@ class IsiSurveyController extends GetxController {
       if (formKey.currentState!.validate()) {
         currentJawabanSurvey.clear();
         formKey.currentState!.save();
+
+        isLoadingNext.value = true;
 
         if (initialJawabanSurvey.isNotEmpty) {
           for (var item in initialJawabanSurvey) {
@@ -468,7 +471,7 @@ class IsiSurveyController extends GetxController {
   Future refreshPage() async {
     isLoading.value = true;
     soalAndJawaban.clear();
-    if (currentOrder == kategoriSoal.length) {
+    if (currentOrder > kategoriSoal.length) {
       survey.isSelesai = "1";
       await updateSurvey();
       Get.back();
@@ -486,7 +489,14 @@ class IsiSurveyController extends GetxController {
     await getSoal();
     await getJawabanSoal();
     currentJawabanSurvey = [];
-    isLoading.value = false;
+
+    if (isConnect) {
+      isLoading.value = false;
+    } else {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        isLoading.value = false;
+      });
+    }
   }
 
   Future checkConnection() async {

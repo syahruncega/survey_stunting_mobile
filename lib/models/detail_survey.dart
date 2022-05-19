@@ -33,7 +33,7 @@ class DetailSurvey {
   DateTime? createdAt;
   DateTime? updatedAt;
   List<Soal> soal;
-  List<JawabanSurvey> jawabanSurvey;
+  List<JawabanSurveyy> jawabanSurvey;
 
   factory DetailSurvey.fromJson(Map<String, dynamic> json) => DetailSurvey(
         id: json["id"],
@@ -50,8 +50,8 @@ class DetailSurvey {
             ? DateTime.parse(json["updated_at"])
             : null,
         soal: List<Soal>.from(json["soal"].map((x) => Soal.fromJson(x))),
-        jawabanSurvey: List<JawabanSurvey>.from(
-            json["jawaban_survey"].map((x) => JawabanSurvey.fromJson(x))),
+        jawabanSurvey: List<JawabanSurveyy>.from(
+            json["jawaban_survey"].map((x) => JawabanSurveyy.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -65,5 +65,57 @@ class DetailSurvey {
         "soal": List<dynamic>.from(soal.map((x) => x.toJson())),
         "jawaban_survey":
             List<dynamic>.from(jawabanSurvey.map((x) => x.toJson())),
+      };
+}
+
+class JawabanSurveyy {
+  JawabanSurveyy({
+    this.id,
+    required this.soalId,
+    required this.kodeUnikSurvey,
+    required this.kategoriSoalId,
+    this.jawabanSoalId,
+    this.jawabanLainnya,
+    this.createdAt,
+    this.updatedAt,
+    this.jawabanSoal,
+  });
+
+  int? id;
+  String soalId;
+  String kodeUnikSurvey;
+  String kategoriSoalId;
+  String? jawabanSoalId;
+  String? jawabanLainnya;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  dynamic jawabanSoal;
+
+  factory JawabanSurveyy.fromJson(Map<String, dynamic> json) => JawabanSurveyy(
+        id: json["id"],
+        soalId: json["soal_id"],
+        kodeUnikSurvey: json["kode_unik_survey"],
+        kategoriSoalId: json["kategori_soal_id"],
+        jawabanSoalId: json["jawaban_soal_id"],
+        jawabanLainnya: json["jawaban_lainnya"],
+        createdAt: json["created_at"] != null
+            ? DateTime.parse(json["created_at"])
+            : null,
+        updatedAt: json["updated_at"] != null
+            ? DateTime.parse(json["updated_at"])
+            : null,
+        jawabanSoal: json["jawaban_soal"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "soal_id": soalId,
+        "kode_unik_survey": kodeUnikSurvey,
+        "kategori_soal_id": kategoriSoalId,
+        "jawaban_soal_id": jawabanSoalId,
+        "jawaban_lainnya": jawabanLainnya,
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
+        "jawaban_soal": jawabanSoal,
       };
 }
