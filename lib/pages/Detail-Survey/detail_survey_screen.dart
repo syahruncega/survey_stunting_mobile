@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:survey_stunting/controllers/detail_survey_controller.dart';
+import 'package:survey_stunting/pages/Detail-Survey/ketegosi_soal_item.dart';
 
 class DetailSurveyScreen extends StatelessWidget {
   const DetailSurveyScreen({Key? key}) : super(key: key);
@@ -36,6 +37,25 @@ class DetailSurveyScreen extends StatelessWidget {
                     ),
                     const SizedBox(
                       height: 20,
+                    ),
+                    Obx(
+                      () => Visibility(
+                        visible: !controller.isLoading.value,
+                        replacement: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        child: Wrap(
+                          runSpacing: 40,
+                          children: [
+                            ...controller.detailSurvey
+                                .map(
+                                  (kategoriSoal) =>
+                                      KategoriSoalItem(kategoriSoal),
+                                )
+                                .toList()
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
