@@ -399,6 +399,8 @@ class IsiSurveyController extends GetxController {
         currentJawabanSurvey.clear();
         formKey.currentState!.save();
 
+        isLoadingNext.value = true;
+
         if (initialJawabanSurvey.isNotEmpty) {
           for (var item in initialJawabanSurvey) {
             await DbHelper.deleteJawabanSurvey(Objectbox.store_, id: item.id!);
@@ -487,7 +489,14 @@ class IsiSurveyController extends GetxController {
     await getSoal();
     await getJawabanSoal();
     currentJawabanSurvey = [];
-    isLoading.value = false;
+
+    if (isConnect) {
+      isLoading.value = false;
+    } else {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        isLoading.value = false;
+      });
+    }
   }
 
   Future checkConnection() async {
