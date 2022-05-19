@@ -522,7 +522,7 @@ class DioClient {
       log("$response");
       return listJawabanSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
-      log('Error create jawaban survey: $e');
+      log('Error create jawaban survey: ${e.response!.data}');
       rethrow;
     }
   }
