@@ -20,6 +20,7 @@ class SinkronisasiController extends GetxController {
     synchronizeStatus.value = 'waiting';
     await checkConnection();
     if (isConnect) {
+      isLoading.value = true;
       await SyncDataController(store_: Objectbox.store_)
           .syncData(syncAll: true);
       successScackbar('Sinkronisasi Berhasil');
@@ -30,6 +31,7 @@ class SinkronisasiController extends GetxController {
           ? 'Belum pernah melakukan Sinkronisasi data'
           : DateFormat("dd-MMMM-yyyy hh:mm a")
               .format(DateTime.parse(prefs.getString('last_sync')!));
+      isLoading.value = false;
     } else {
       errorScackbar('Tidak ada koneksi internet');
       synchronizeStatus.value = 'failed';

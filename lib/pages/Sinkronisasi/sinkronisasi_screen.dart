@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:survey_stunting/components/synchronize_data.dart';
 
-import '../../consts/colors.dart';
 import '../../controllers/sinkronisasi_controller.dart';
 
 class SinkronisasiScreen extends StatelessWidget {
@@ -18,7 +18,7 @@ class SinkronisasiScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            onPressed: () => Get.back(),
+            onPressed: () => !controller.isLoading.value ? Get.back() : null,
             icon: SvgPicture.asset(
               "assets/icons/outline/arrow-left.svg",
               color: Theme.of(context).textTheme.headline1!.color,
@@ -27,9 +27,7 @@ class SinkronisasiScreen extends StatelessWidget {
         ),
         body: Obx(
           () => controller.isLoading.value
-              ? const Center(
-                  child: CircularProgressIndicator(color: primaryColor),
-                )
+              ? const SynchronizeData()
               : SafeArea(
                   child: Padding(
                     padding:

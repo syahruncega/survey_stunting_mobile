@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:survey_stunting/models/akun.dart';
@@ -144,7 +143,6 @@ class SyncDataController {
           // local user exist
           // check, if server profileData not updated yet
           if (userData.updatedAt == null) {
-            pushUser(localUser);
             return;
           }
           // compare local user with server user
@@ -152,11 +150,7 @@ class SyncDataController {
           DateTime localTime = DateTime.parse(localUser.lastModified);
           DateTime serverTime = DateTime.parse(userData.updatedAt);
           int time = compareTime(localTime, serverTime);
-          if (time == 1) {
-            // local data is greater than server data
-            debugPrint("Local data is greater than server data");
-            pushUser(localUser);
-          } else if (time == -1) {
+          if (time == -1) {
             // local data is less than server data
             debugPrint("Local data is less than server data");
             await pullUser();
@@ -655,9 +649,7 @@ class SyncDataController {
       updatedAt: localProfile.lastModified,
     );
 
-    if (response) {
-      successScackbar('Sync Data profile selesai.');
-    } else {
+    if (!response) {
       errorScackbar('Sync data profile Gagal.');
     }
   }
@@ -734,21 +726,6 @@ class SyncDataController {
       }
     } on DioError catch (e) {
       handleError(error: e);
-    }
-  }
-
-  void pushUser(UserModel localUser) async {
-    bool response = await DioClient().updateAkun(
-      token: token,
-      username: localUser.username!,
-      password: localUser.password,
-      updatedAt: localUser.lastModified,
-    );
-
-    if (response) {
-      successScackbar('Sync Data user selesai.');
-    } else {
-      errorScackbar('Sync data user Gagal.');
     }
   }
 
