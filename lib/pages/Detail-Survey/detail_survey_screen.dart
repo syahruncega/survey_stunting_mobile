@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:survey_stunting/controllers/detail_survey_controller.dart';
-import 'package:survey_stunting/pages/Detail-Survey/ketegosi_soal_item.dart';
+import 'package:survey_stunting/pages/Detail-Survey/ketegori_soal_item.dart';
 
 class DetailSurveyScreen extends StatelessWidget {
   const DetailSurveyScreen({Key? key}) : super(key: key);
