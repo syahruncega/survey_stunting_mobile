@@ -9,6 +9,7 @@ import 'package:get_storage/get_storage.dart';
 import '../services/dio_client.dart';
 
 var offlineMode = false.obs;
+var syncCompleted = false.obs;
 
 /// Return true if connected
 Future<bool> isConnected() async {
