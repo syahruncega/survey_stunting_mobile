@@ -7,24 +7,31 @@ import 'profile_model.dart';
 
 @Entity()
 class SurveyModel {
+  @Id(assignable: true)
   int? id = 0;
   int kodeUnik;
-  int kategoriSelanjutnya;
+  int? kategoriSelanjutnya;
   int isSelesai;
   int? kodeUnikRespondenId;
   int? namaSurveyId;
   int? profileId;
   String lastModified;
+  RespondenModel? respondenModel;
+  NamaSurveyModel? namaSurveyModel;
+  ProfileModel? profileModel;
 
   SurveyModel({
     this.id,
     required this.kodeUnik,
-    required this.kategoriSelanjutnya,
+    this.kategoriSelanjutnya,
     required this.isSelesai,
     this.kodeUnikRespondenId,
     this.namaSurveyId,
     this.profileId,
     required this.lastModified,
+    this.respondenModel,
+    this.namaSurveyModel,
+    this.profileModel,
   });
 
   final kodeUnikResponden = ToOne<RespondenModel>();
@@ -33,4 +40,33 @@ class SurveyModel {
 
   @Backlink()
   final jawabanSurvey = ToMany<JawabanSurveyModel>();
+
+  factory SurveyModel.fromJson(Map<String, dynamic> json) => SurveyModel(
+        id: json["id"],
+        kodeUnik: int.parse(json["kode_unik"]),
+        kategoriSelanjutnya: int.tryParse(json["kategori_selanjutnya"]),
+        isSelesai: int.parse(json["is_selesai"]),
+        kodeUnikRespondenId: int.parse(json["kode_unik_responden"]),
+        namaSurveyId: int.parse(json["nama_survey_id"]),
+        profileId: int.parse(json["profile_id"]),
+        lastModified: json["updated_at"],
+        // respondenModel: RespondenModel.fromJson(json["responden"]),
+        // namaSurveyModel: NamaSurveyModel.fromJson(json["nama_survey"]),
+        // profileModel: ProfileModel.fromJson(json["profile"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "kode_unik_responden": kodeUnikResponden.targetId.toString(),
+        "kode_unik": kodeUnik.toString(),
+        "nama_survey_id": namaSurvey.targetId.toString(),
+        "profile_id": profile.targetId.toString(),
+        "kategori_selanjutnya": kategoriSelanjutnya.toString(),
+        "is_selesai": isSelesai.toString(),
+        "updated_at": lastModified.toString(),
+        "created_at": lastModified.toString(),
+        "responden": respondenModel?.toJson(),
+        "nama_survey": namaSurveyModel?.toJson(),
+        "profile": profileModel?.toJson(),
+      };
 }

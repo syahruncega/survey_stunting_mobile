@@ -18,7 +18,7 @@ class BerandaItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(6),
       child: Container(
-        width: 170,
+        width: 190,
         decoration: BoxDecoration(
           color: Theme.of(context).inputDecorationTheme.fillColor,
           borderRadius: BorderRadius.circular(14),

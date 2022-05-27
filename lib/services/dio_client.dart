@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:survey_stunting/models/akun.dart';
 import 'package:survey_stunting/models/auth.dart';
+import 'package:survey_stunting/models/detail_survey.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
 import 'package:survey_stunting/models/jawaban_survey.dart';
 import 'package:survey_stunting/models/kabupaten.dart';
@@ -59,6 +60,24 @@ class DioClient {
       log('${response.data}');
     } on DioError catch (e) {
       log('Error Logout: $e');
+      rethrow;
+    }
+  }
+
+  Future testConnection({required String token}) async {
+    try {
+      Response response = await _dio.get(
+        "/connection",
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      if (response.statusCode == 200) {
+        return true;
+      }
+      return false;
+    } on DioError catch (e) {
+      log('Error check Connection: $e');
       rethrow;
     }
   }
@@ -432,19 +451,41 @@ class DioClient {
     }
   }
 
-
-  Future<List<JawabanSurvey>?> getJawabanSurvey({
+  Future<List<DetailSurvey>?> getDetailSurvey({
     required String token,
     required String kodeUnikSurvey,
-    String? soalId,
-    String? kategoriSoalId,
   }) async {
+    try {
+      Response response = await _dio.get(
+        "/surveyor/survey",
+        queryParameters: {"kode_unik": kodeUnikSurvey},
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return detailSurveyFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get detail survey: $e');
+      if (e.response?.statusCode == 404) {
+        log(e.response!.statusMessage.toString());
+        return null;
+      } else {
+        rethrow;
+      }
+    }
+  }
 
+  Future<List<JawabanSurvey>?> getJawabanSurvey(
+      {required String token,
+      String? kodeUnikSurvey,
+      String? soalId,
+      String? kategoriSoalId}) async {
     try {
       Response response = await _dio.get(
         "/jawaban_survey",
         queryParameters: {
-          "kode_unik_survey": int.parse(kodeUnikSurvey),
+          "kode_unik_survey":
+              kodeUnikSurvey != null ? int.parse(kodeUnikSurvey) : null,
           "kategori_soal_id":
               kategoriSoalId != null ? int.parse(kategoriSoalId) : null,
           "soal_id": soalId != null ? int.parse(soalId) : null,
@@ -456,26 +497,32 @@ class DioClient {
       return listJawabanSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error get jawaban survey: $e');
-      rethrow;
+      if (e.response?.statusCode == 404) {
+        log(e.response!.statusMessage.toString());
+        return null;
+      } else {
+        rethrow;
+      }
     }
   }
 
-  Future<JawabanSurvey>? createJawabanSurvey({
+  Future<List<JawabanSurvey>>? createJawabanSurvey({
     required String token,
-    required JawabanSurvey data,
+    required List<JawabanSurvey> data,
   }) async {
     try {
       Response response = await _dio.post(
         "/jawaban_survey",
-        data: jawabanSurveyToJson(data),
+        data: listJawabanSurveyToJson(data),
+        // data: jawabanSurveyToJson(data),
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
       );
       log("$response");
-      return jawabanSurveyFromJson(getData(response.data));
+      return listJawabanSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
-      log('Error create jawaban survey: $e');
+      log('Error create jawaban survey: ${e.response!.data}');
       rethrow;
     }
   }
@@ -501,12 +548,18 @@ class DioClient {
 
   Future deleteJawabanSurvey({
     required String token,
-    required String id,
+    String? id,
+    int? kodeUnikSurvey,
+    int? kategoriSoalId,
   }) async {
     try {
       await _dio.delete(
         "/jawaban_survey",
-        data: {"id": id},
+        data: {
+          "id": id,
+          "kode_unik_survey": kodeUnikSurvey,
+          "kategori_soal_id": kategoriSoalId,
+        },
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
