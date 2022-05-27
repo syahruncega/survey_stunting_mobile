@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:survey_stunting/models/akun.dart';
 import 'package:survey_stunting/models/auth.dart';
+import 'package:survey_stunting/models/detail_survey.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
 import 'package:survey_stunting/models/jawaban_survey.dart';
 import 'package:survey_stunting/models/kabupaten.dart';
@@ -63,6 +64,24 @@ class DioClient {
     }
   }
 
+  Future testConnection({required String token}) async {
+    try {
+      Response response = await _dio.get(
+        "/connection",
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      if (response.statusCode == 200) {
+        return true;
+      }
+      return false;
+    } on DioError catch (e) {
+      log('Error check Connection: $e');
+      rethrow;
+    }
+  }
+
   Future<List<Survey>?> getSurvey({
     required String token,
     SurveyParameters? queryParameters,
@@ -101,14 +120,33 @@ class DioClient {
     }
   }
 
+  Future<List<Survey>>? updateSurvey({
+    required String token,
+    required Object data,
+  }) async {
+    try {
+      Response response = await _dio.put(
+        "/surveyor/survey",
+        data: jsonEncode(data),
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listSurveyFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error update survey: $e');
+      rethrow;
+    }
+  }
+
   Future deleteSurvey({
     required String token,
-    required int id,
+    required dynamic kodeUnik,
   }) async {
     try {
       await _dio.delete(
         "/surveyor/survey",
-        data: {"id": id},
+        data: {"kode_unik": kodeUnik},
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
@@ -228,6 +266,23 @@ class DioClient {
     }
   }
 
+  Future<List<Kabupaten>?> getAllKabupaten({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/kabupaten_kota",
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listKabupatenFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get kabupaten kota: $e');
+      rethrow;
+    }
+  }
+
   Future<List<Kecamatan>?> getKecamatan({
     required String token,
     required String kabupatenId,
@@ -236,6 +291,23 @@ class DioClient {
       Response response = await _dio.get(
         "/kecamatan",
         queryParameters: {"kabupaten_id": kabupatenId},
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listKecamatanFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get kecamatan: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Kecamatan>?> getAllKecamatan({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/kecamatan",
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
@@ -266,6 +338,21 @@ class DioClient {
     }
   }
 
+  Future<List<Kelurahan>?> getAllKelurahan({required String token}) async {
+    try {
+      Response response = await _dio.get(
+        "/desa_kelurahan",
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listKelurahanFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get kelurahan: $e');
+      rethrow;
+    }
+  }
+
   Future<List<KategoriSoal>?> getKategoriSoal({
     required String token,
     required String namaSurveyId,
@@ -274,6 +361,23 @@ class DioClient {
       Response response = await _dio.get(
         "/kategori_soal",
         queryParameters: {"nama_survey_id": int.parse(namaSurveyId)},
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listKategoriSoalFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get kategori soal: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<KategoriSoal>?> getAllKategoriSoal({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/kategori_soal",
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
@@ -296,6 +400,23 @@ class DioClient {
           "kategori_soal_id":
               kategoriSoalId != null ? int.parse(kategoriSoalId) : null
         },
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return listSoalFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get soal: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Soal>?> getAllSoal({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/soal",
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
@@ -330,16 +451,41 @@ class DioClient {
     }
   }
 
+  Future<List<DetailSurvey>?> getDetailSurvey({
+    required String token,
+    required String kodeUnikSurvey,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/surveyor/survey",
+        queryParameters: {"kode_unik": kodeUnikSurvey},
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return detailSurveyFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get detail survey: $e');
+      if (e.response?.statusCode == 404) {
+        log(e.response!.statusMessage.toString());
+        return null;
+      } else {
+        rethrow;
+      }
+    }
+  }
+
   Future<List<JawabanSurvey>?> getJawabanSurvey(
       {required String token,
-      required String kodeUnikSurvey,
+      String? kodeUnikSurvey,
       String? soalId,
       String? kategoriSoalId}) async {
     try {
       Response response = await _dio.get(
         "/jawaban_survey",
         queryParameters: {
-          "kode_unik_survey": int.parse(kodeUnikSurvey),
+          "kode_unik_survey":
+              kodeUnikSurvey != null ? int.parse(kodeUnikSurvey) : null,
           "kategori_soal_id":
               kategoriSoalId != null ? int.parse(kategoriSoalId) : null,
           "soal_id": soalId != null ? int.parse(soalId) : null,
@@ -351,25 +497,32 @@ class DioClient {
       return listJawabanSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error get jawaban survey: $e');
-      rethrow;
+      if (e.response?.statusCode == 404) {
+        log(e.response!.statusMessage.toString());
+        return null;
+      } else {
+        rethrow;
+      }
     }
   }
 
-  Future<JawabanSurvey>? createJawabanSurvey({
+  Future<List<JawabanSurvey>>? createJawabanSurvey({
     required String token,
-    required JawabanSurvey data,
+    required List<JawabanSurvey> data,
   }) async {
     try {
       Response response = await _dio.post(
         "/jawaban_survey",
-        data: jawabanSurveyToJson(data),
+        data: listJawabanSurveyToJson(data),
+        // data: jawabanSurveyToJson(data),
         options: Options(headers: {
           "authorization": "Bearer $token",
         }),
       );
-      return jawabanSurveyFromJson(getData(response.data));
+      log("$response");
+      return listJawabanSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
-      log('Error create jawaban survey: $e');
+      log('Error create jawaban survey: ${e.response!.data}');
       rethrow;
     }
   }
@@ -389,6 +542,30 @@ class DioClient {
       return jawabanSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error create jawaban survey: $e');
+      rethrow;
+    }
+  }
+
+  Future deleteJawabanSurvey({
+    required String token,
+    String? id,
+    int? kodeUnikSurvey,
+    int? kategoriSoalId,
+  }) async {
+    try {
+      await _dio.delete(
+        "/jawaban_survey",
+        data: {
+          "id": id,
+          "kode_unik_survey": kodeUnikSurvey,
+          "kategori_soal_id": kategoriSoalId,
+        },
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+    } on DioError catch (e) {
+      log('Error delete jawaban survey: $e');
       rethrow;
     }
   }
@@ -419,10 +596,12 @@ class DioClient {
     }
   }
 
-  Future updateAkun(
-      {required String token,
-      required String username,
-      String? password}) async {
+  Future updateAkun({
+    required String token,
+    required String username,
+    String? password,
+    required String updatedAt,
+  }) async {
     try {
       Response response = await _dio.put("/dashboard/akun",
           options: Options(responseType: ResponseType.plain, headers: {
@@ -440,19 +619,21 @@ class DioClient {
     }
   }
 
-  Future updateProfile(
-      {required String token,
-      required String nama,
-      required String jenisKelamin,
-      required String tempatLahir,
-      required String tglLahir,
-      required String alamat,
-      required String provinsi,
-      required String kabupaten,
-      required String kecamatan,
-      required String kelurahan,
-      required String nomorHp,
-      required String email}) async {
+  Future updateProfile({
+    required String token,
+    required String nama,
+    required String jenisKelamin,
+    required String tempatLahir,
+    required String tglLahir,
+    required String alamat,
+    required String provinsi,
+    required String kabupaten,
+    required String kecamatan,
+    required String kelurahan,
+    required String nomorHp,
+    required String email,
+    required String updatedAt,
+  }) async {
     try {
       Response response = await _dio.put("/dashboard/profile",
           options: Options(responseType: ResponseType.plain, headers: {
@@ -469,7 +650,8 @@ class DioClient {
             'kecamatan': kecamatan,
             'desa_kelurahan': kelurahan,
             'nomor_hp': nomorHp,
-            'email': email
+            'email': email,
+            'updated_at': updatedAt,
           }));
       if (response.statusCode == 200) {
         return true;

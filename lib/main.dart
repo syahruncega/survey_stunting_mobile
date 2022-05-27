@@ -7,11 +7,15 @@ import 'package:survey_stunting/consts/colors.dart';
 import 'package:survey_stunting/routes/app_page.dart';
 import 'package:survey_stunting/routes/route_name.dart';
 
-void main() async {
+import 'models/localDb/helpers.dart';
+
+late final Objectbox objectbox;
+Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await GetStorage.init();
   Get.put<GetStorage>(GetStorage());
-  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
+  objectbox = await Objectbox.create();
   runApp(const MyApp());
 }
 
@@ -138,8 +142,15 @@ class Wrapper extends StatefulWidget {
 class WrapperState extends State<Wrapper> {
   @override
   void initState() {
-    super.initState();
     sessionCheck();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // objectbox.store.close();
+    // objectbox.admin.close();
+    super.dispose();
   }
 
   void sessionCheck() async {

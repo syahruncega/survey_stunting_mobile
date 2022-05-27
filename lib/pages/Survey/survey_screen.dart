@@ -96,9 +96,8 @@ class SurveyScreen extends StatelessWidget {
                         onCancel: () {},
                         textCancel: "Batal",
                         textConfirm: "Proses",
-                        content: Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.start,
-                          runSpacing: size.height * 0.03,
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             FilledAutocomplete(
                               title: "Jenis Survey",
@@ -118,6 +117,7 @@ class SurveyScreen extends StatelessWidget {
                                     suggestion["value"];
                               },
                             ),
+                            const SizedBox(height: 20),
                             FilledAutocomplete(
                               title: "Status Survey",
                               hintText: "Pilih status survey",
@@ -171,9 +171,8 @@ class SurveyScreen extends StatelessWidget {
                       textCancel: "Batal",
                       cancelTextColor: Theme.of(context).colorScheme.primary,
                       textConfirm: "Tambah Survey",
-                      content: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.start,
-                        runSpacing: size.height * 0.03,
+                      content: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Obx(
                             () => FilledAutocomplete(
@@ -183,8 +182,10 @@ class SurveyScreen extends StatelessWidget {
                               keyboardType: TextInputType.number,
                               controller: surveyController.respondenTEC,
                               items: surveyController.responden
-                                  .map((e) =>
-                                      {"label": e.kartuKeluarga, "value": e.id})
+                                  .map((e) => {
+                                        "label": e.kartuKeluarga,
+                                        "value": e.kodeUnik
+                                      })
                                   .toList(),
                               onSuggestionSelected:
                                   (Map<String, dynamic> suggestion) {
@@ -195,6 +196,7 @@ class SurveyScreen extends StatelessWidget {
                               },
                             ),
                           ),
+                          const SizedBox(height: 20),
                           Obx(
                             () => FilledAutocomplete(
                               title: "Nama Survey",
@@ -216,6 +218,7 @@ class SurveyScreen extends StatelessWidget {
                               },
                             ),
                           ),
+                          const SizedBox(height: 20),
                           Center(
                             child: CustomElevatedButton(
                               label: "Tambah Responden",
@@ -248,6 +251,24 @@ class SurveyScreen extends StatelessWidget {
                           itemBuilder: (context, index) {
                             return SurveyItem(
                               key: UniqueKey(),
+                              survey: surveyController.surveys[index],
+                              onTap: () {
+                                if (surveyController.surveys[index].isSelesai ==
+                                    "0") {
+                                  Get.toNamed(
+                                    RouteName.isiSurvey,
+                                    arguments: [
+                                      surveyController.surveys[index],
+                                      false
+                                    ],
+                                  );
+                                } else {
+                                  Get.toNamed(
+                                    RouteName.detailSurvey,
+                                    arguments: surveyController.surveys[index],
+                                  );
+                                }
+                              },
                               onDelete: () async {
                                 Get.defaultDialog(
                                   title: "Hapus",
@@ -259,7 +280,8 @@ class SurveyScreen extends StatelessWidget {
                                     onPressed: () async {
                                       Get.back();
                                       await surveyController.deleteSurvey(
-                                        id: surveyController.surveys[index].id!,
+                                        kodeUnik: surveyController
+                                            .surveys[index].kodeUnik!,
                                       );
                                     },
                                   ),
@@ -272,10 +294,11 @@ class SurveyScreen extends StatelessWidget {
                                 );
                               },
                               onEdit: () {
-                                Get.toNamed(RouteName.isiSurvey,
-                                    arguments: surveyController.surveys[index]);
+                                Get.toNamed(RouteName.isiSurvey, arguments: [
+                                  surveyController.surveys[index],
+                                  true
+                                ]);
                               },
-                              survey: surveyController.surveys[index],
                             );
                           },
                         )

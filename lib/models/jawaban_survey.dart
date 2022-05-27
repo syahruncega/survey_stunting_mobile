@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:survey_stunting/models/jawaban_soal.dart';
+
 List<JawabanSurvey> listJawabanSurveyFromJson(String str) =>
     List<JawabanSurvey>.from(
         json.decode(str).map((x) => JawabanSurvey.fromJson(x)));
@@ -22,8 +24,8 @@ class JawabanSurvey {
     required this.soalId,
     required this.kodeUnikSurvey,
     required this.kategoriSoalId,
-    required this.jawabanSoalId,
-    required this.jawabanLainnya,
+    this.jawabanSoalId,
+    this.jawabanLainnya,
     this.createdAt,
     this.updatedAt,
   });

@@ -60,9 +60,14 @@ class Survey {
         updatedAt: json["updated_at"] != null
             ? DateTime.parse(json["updated_at"])
             : null,
-        responden: Responden.fromJson(json["responden"]),
-        namaSurvey: NamaSurvey.fromJson(json["nama_survey"]),
-        profile: Profile.fromJson(json["profile"]),
+        responden: json["responden"] != null
+            ? Responden.fromJson(json["responden"])
+            : null,
+        namaSurvey: json["nama_survey"] != null
+            ? NamaSurvey.fromJson(json["nama_survey"])
+            : null,
+        profile:
+            json["profile"] != null ? Profile.fromJson(json["profile"]) : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -74,7 +79,7 @@ class Survey {
         "kategori_selanjutnya": kategoriSelanjutnya,
         "is_selesai": isSelesai,
         "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
+        "updated_at": updatedAt?.toString(),
         "responden": responden?.toJson(),
         "nama_survey": namaSurvey?.toJson(),
         "profile": profile?.toJson(),

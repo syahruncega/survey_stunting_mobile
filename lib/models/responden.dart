@@ -27,7 +27,7 @@ class Responden {
   });
 
   int? id;
-  String? kodeUnik;
+  dynamic kodeUnik;
   String kartuKeluarga;
   String alamat;
   String provinsiId;
