@@ -27,6 +27,7 @@ class BerandaController extends GetxController {
 
   Future getSurvey({String? search}) async {
     isLoadedSurvey.value = false;
+    await checkConnection();
     if (isConnect) {
       try {
         List<Survey>? response = await DioClient().getSurvey(

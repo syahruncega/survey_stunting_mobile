@@ -450,8 +450,9 @@ class IsiSurveyController extends GetxController {
       );
     } else {
       debugPrint('update survey local');
+      int idToUpdate = await getSurveyId(kodeUnik: int.parse(survey.kodeUnik!));
       var surveyModel = SurveyModel(
-        id: survey.id,
+        id: idToUpdate,
         kategoriSelanjutnya: kategoriSoal
             .firstWhere((element) =>
                 element.urutan ==
@@ -466,6 +467,12 @@ class IsiSurveyController extends GetxController {
       );
       await DbHelper.putSurvey(Objectbox.store_, [surveyModel]);
     }
+  }
+
+  Future<int> getSurveyId({required int kodeUnik}) async {
+    var survey = await DbHelper.getSurveyByKodeUnik(Objectbox.store_,
+        kodeUnik: kodeUnik);
+    return survey.id!;
   }
 
   Future refreshPage() async {
