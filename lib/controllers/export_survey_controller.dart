@@ -50,6 +50,7 @@ class ExportSurveyController extends GetxController {
 
   Future getSurvey({required dynamic namaSurveyId}) async {
     isLoaded.value = false;
+    await checkConnection();
     if (isConnect) {
       debugPrint('EXPORT : get survey online');
       try {
@@ -161,6 +162,28 @@ class ExportSurveyController extends GetxController {
     // print value survey
     int rowIndex = 0;
     for (var s in surveys) {
+      int kodeUnikResponden;
+      int namaSurveyId;
+      int profileId;
+
+      if (s.responden == null) {
+        kodeUnikResponden = int.parse(s.kodeUnikResponden);
+      } else {
+        kodeUnikResponden = int.parse(s.responden!.kodeUnik);
+      }
+
+      if (s.namaSurvey == null) {
+        namaSurveyId = int.parse(s.namaSurveyId);
+      } else {
+        namaSurveyId = s.namaSurvey!.id;
+      }
+
+      if (s.profile == null) {
+        profileId = int.parse(s.profileId);
+      } else {
+        profileId = s.profile!.id;
+      }
+
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 0, rowIndex: 1 + rowIndex))
@@ -169,17 +192,17 @@ class ExportSurveyController extends GetxController {
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 1, rowIndex: 1 + rowIndex))
-          .value = s.responden!.kodeUnik;
+          .value = kodeUnikResponden;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 2, rowIndex: 1 + rowIndex))
-          .value = s.namaSurveyId;
+          .value = namaSurveyId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 3, rowIndex: 1 + rowIndex))
-          .value = s.profileId;
+          .value = profileId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
