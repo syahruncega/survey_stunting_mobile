@@ -683,8 +683,18 @@ class SyncDataController {
           ));
         }
         if (nJawabanSurveyData.isNotEmpty) {
-          await DioClient()
-              .deleteJawabanSurvey(token: token, kodeUnikSurvey: kodeUnik);
+          List<int> tempKategoriSoal = [];
+          for (var jawaban in nJawabanSurveyData) {
+            tempKategoriSoal.add(int.parse(jawaban.kategoriSoalId));
+          }
+          List<int> kategoriSoalToDelete = tempKategoriSoal.toSet().toList();
+          for (var kategori in kategoriSoalToDelete) {
+            await DioClient().deleteJawabanSurvey(
+                token: token,
+                kodeUnikSurvey: kodeUnik,
+                kategoriSoalId: kategori);
+          }
+
           await DioClient()
               .createJawabanSurvey(token: token, data: nJawabanSurveyData);
           successScackbar('Sync Data Jawaban Survey selesai.');

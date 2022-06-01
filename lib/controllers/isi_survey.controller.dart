@@ -89,6 +89,7 @@ class IsiSurveyController extends GetxController {
   }
 
   Future getJawabanSurvey() async {
+    await checkConnection();
     if (isConnect) {
       debugPrint('get jawaban survey online');
       try {
@@ -130,6 +131,7 @@ class IsiSurveyController extends GetxController {
   }
 
   Future getKategoriSoal() async {
+    await checkConnection();
     if (isConnect) {
       debugPrint('get kategori soal online');
       try {
@@ -153,6 +155,7 @@ class IsiSurveyController extends GetxController {
   }
 
   Future getSoal() async {
+    await checkConnection();
     if (isConnect) {
       debugPrint('get soal online');
       try {
@@ -175,6 +178,7 @@ class IsiSurveyController extends GetxController {
   }
 
   Future getJawabanSoal() async {
+    await checkConnection();
     if (isConnect) {
       debugPrint('get jawaban soal online');
       try {
@@ -366,6 +370,7 @@ class IsiSurveyController extends GetxController {
   }
 
   Future submitForm() async {
+    await checkConnection();
     if (isConnect) {
       debugPrint('create jawaban survey online');
       try {
@@ -430,6 +435,7 @@ class IsiSurveyController extends GetxController {
   }
 
   Future updateSurvey() async {
+    await checkConnection();
     if (isConnect) {
       debugPrint('update survey online');
       await DioClient().updateSurvey(
@@ -497,6 +503,7 @@ class IsiSurveyController extends GetxController {
     await getJawabanSoal();
     currentJawabanSurvey = [];
 
+    await checkConnection();
     if (isConnect) {
       isLoading.value = false;
     } else {
