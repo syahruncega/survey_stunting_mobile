@@ -634,11 +634,12 @@ class DbHelper {
   }
 
   static Future<List<DetailSurvey>> getDetailSurveyByKodeUnik(Store store,
-      {required int kodeUnik}) async {
+      {required int kodeUnik, required int namaSurveyId}) async {
     List<DetailSurvey> detailSurvey = [];
 
     //Get Kategori soal
-    List<KategoriSoalModel> kategoriSoal = await getKategoriSoal(store);
+    List<KategoriSoalModel> kategoriSoal =
+        await getKategoriSoalByNamaSurveyId(store, namaSurveyId: namaSurveyId);
     //Get Soal by kategori soal id
     for (var kategori in kategoriSoal) {
       List<SoalModel> _soal =

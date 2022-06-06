@@ -53,6 +53,7 @@ class DetailSurveyController extends GetxController {
             await DbHelper.getDetailSurveyByKodeUnik(
           Objectbox.store_,
           kodeUnik: int.parse(survey.kodeUnik!),
+          namaSurveyId: int.parse(survey.namaSurveyId),
         );
         detailSurvey = detailSurveyLocal;
       } on DioError catch (e) {
