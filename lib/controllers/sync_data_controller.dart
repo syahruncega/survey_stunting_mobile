@@ -445,10 +445,6 @@ class SyncDataController {
                   continue;
                 }
               }
-              // if (nServerResponden.updatedAt == null) {
-              //   // skip this responden
-              //   continue;
-              // }
               // compare local user with server user
               debugPrint(
                   "server responden exist. compare server with local data[loop local]");
