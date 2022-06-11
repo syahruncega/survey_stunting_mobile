@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
@@ -36,6 +38,18 @@ class SinkronisasiController extends GetxController {
       errorScackbar('Tidak ada koneksi internet');
       synchronizeStatus.value = 'failed';
     }
+  }
+
+  Future<bool> onWillPop() async {
+    if (isLoading.value) {
+      Fluttertoast.showToast(
+        msg: "Mohon tunggu proses sinkronisasi hingga selesai.",
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+      );
+      return false;
+    }
+    return true;
   }
 
   Future checkConnection() async {

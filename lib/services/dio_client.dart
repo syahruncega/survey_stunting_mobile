@@ -105,8 +105,25 @@ class DioClient {
   Future<List<Survey>?> createSurvey({
     required String token,
     required Survey data,
+    bool? sync = false,
+    int? kartuKeluarga,
   }) async {
     try {
+      if (sync == true) {
+        Response response = await _dio.post(
+          "/surveyor/survey",
+          data: surveyToJson(data),
+          queryParameters: {
+            "sync": true,
+            "kartu_keluarga": kartuKeluarga,
+          },
+          options: Options(headers: {
+            "authorization": "Bearer $token",
+          }),
+        );
+        return listSurveyFromJson(getData(response.data));
+      }
+
       Response response = await _dio.post(
         "/surveyor/survey",
         data: surveyToJson(data),
@@ -117,11 +134,13 @@ class DioClient {
       return listSurveyFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error create survey: $e');
-      if (e.response?.statusCode == 422) {
+      if (e.response?.statusCode == 422 || e.response?.statusCode == 302) {
         errorScackbar("Syncroinize Survey gagal! \n"
             "Survey sudah pernah dibuat sebelumnya");
+        return null;
+      } else {
+        rethrow;
       }
-      rethrow;
     }
   }
 
@@ -182,8 +201,17 @@ class DioClient {
 
   Future<List<Responden>?> getResponden({
     required String token,
+    bool withTrashed = false,
   }) async {
     try {
+      if (withTrashed) {
+        Response response = await _dio.get("/responden",
+            options: Options(headers: {
+              "authorization": "Bearer $token",
+            }),
+            queryParameters: {"withTrashed": withTrashed});
+        return listRespondenFromJson(getData(response.data));
+      }
       Response response = await _dio.get(
         "/responden",
         options: Options(headers: {
@@ -197,7 +225,7 @@ class DioClient {
     }
   }
 
-  Future<Responden>? createResponden({
+  Future<Responden?>? createResponden({
     required String token,
     required Responden data,
   }) async {
@@ -213,7 +241,11 @@ class DioClient {
       return respondenFromJson(getData(response.data));
     } on DioError catch (e) {
       log('Error create responden: $e');
-      rethrow;
+      if (e.response?.statusCode == 302) {
+        return null;
+      } else {
+        rethrow;
+      }
     }
   }
 

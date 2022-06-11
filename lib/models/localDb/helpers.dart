@@ -59,19 +59,19 @@ class Objectbox {
 class DbHelper {
   /// delete all data in database
   static Future deleteAll(Store store) async {
-    await deleteAllUser(store);
-    await deleteAllProfile(store);
-    await deleteAllProvinsi(store);
-    await deleteAllKabupaten(store);
-    await deleteAllKecamatan(store);
-    await deleteAllKelurahan(store);
-    await deleteAllNamaSurvey(store);
-    await deleteAllKategoriSoal(store);
-    await deleteAllSoal(store);
-    await deleteAllJawabanSoal(store);
-    await deleteAllResponden(store);
-    await deleteAllSurvey(store);
-    await deleteAllJawabanSurvey(store);
+    // await deleteAllUser(store);
+    // await deleteAllProfile(store);
+    // await deleteAllProvinsi(store);
+    // await deleteAllKabupaten(store);
+    // await deleteAllKecamatan(store);
+    // await deleteAllKelurahan(store);
+    // await deleteAllNamaSurvey(store);
+    // await deleteAllKategoriSoal(store);
+    // await deleteAllSoal(store);
+    // await deleteAllJawabanSoal(store);
+    // await deleteAllResponden(store);
+    // await deleteAllSurvey(store);
+    // await deleteAllJawabanSurvey(store);
   }
 
   //? Profile
