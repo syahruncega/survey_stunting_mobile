@@ -40,10 +40,10 @@ class TambahRespondenController extends GetxController {
   var kabupatenError = "".obs;
   var kecamatanError = "".obs;
   var kelurahanError = "".obs;
-  late int provinsiId;
-  late int kabupatenId;
-  late int kecamatanId;
-  late int kelurahanId;
+  int provinsiId = 0;
+  int kabupatenId = 0;
+  int kecamatanId = 0;
+  int kelurahanId = 0;
   late bool isConnect;
   String token = GetStorage().read("token");
 
@@ -75,20 +75,35 @@ class TambahRespondenController extends GetxController {
     kecamatanError.value = "";
     kelurahanError.value = "";
 
+    if (kartuKeluargaTEC.text.trim().length < 16) {
+      kartuKeluargaError.value = 'Nomor Kartu Keluarga harus 16 digit';
+    }
     if (kartuKeluargaTEC.text.trim().isEmpty) {
       kartuKeluargaError.value = 'Nomor Kartu Keluarga wajib diisi';
     }
     if (alamatTEC.text.trim().isEmpty) {
       alamatError.value = "Alamat wajib diisi";
     }
+    if (provinsiId == 0) {
+      provinsiError.value = "Provinsi wajib diisi";
+    }
     if (provinsiTEC.text.trim().isEmpty) {
       provinsiError.value = "Provinsi wajib diisi";
+    }
+    if (kabupatenId == 0) {
+      kabupatenError.value = "Kabupaten wajib diisi";
     }
     if (kabupatenTEC.text.trim().isEmpty) {
       kabupatenError.value = "Kabupaten wajib diisi";
     }
+    if (kecamatanId == 0) {
+      kecamatanError.value = "Kecamatan wajib diisi";
+    }
     if (kecamatanTEC.text.trim().isEmpty) {
       kecamatanError.value = "Kecamatan wajib diisi";
+    }
+    if (kelurahanId == 0) {
+      kelurahanError.value = "Kelurahan wajib diisi";
     }
     if (kelurahanTEC.text.trim().isEmpty) {
       kelurahanError.value = "Kelurahan wajib diisi";
