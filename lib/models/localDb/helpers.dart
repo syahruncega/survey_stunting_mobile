@@ -57,6 +57,23 @@ class Objectbox {
 }
 
 class DbHelper {
+  /// delete all data in database
+  static Future deleteAll(Store store) async {
+    // await deleteAllUser(store);
+    // await deleteAllProfile(store);
+    // await deleteAllProvinsi(store);
+    // await deleteAllKabupaten(store);
+    // await deleteAllKecamatan(store);
+    // await deleteAllKelurahan(store);
+    // await deleteAllNamaSurvey(store);
+    // await deleteAllKategoriSoal(store);
+    // await deleteAllSoal(store);
+    // await deleteAllJawabanSoal(store);
+    // await deleteAllResponden(store);
+    // await deleteAllSurvey(store);
+    // await deleteAllJawabanSurvey(store);
+  }
+
   //? Profile
   /// Params:
   /// - store (ObjextBoxStore)
@@ -634,11 +651,12 @@ class DbHelper {
   }
 
   static Future<List<DetailSurvey>> getDetailSurveyByKodeUnik(Store store,
-      {required int kodeUnik}) async {
+      {required int kodeUnik, required int namaSurveyId}) async {
     List<DetailSurvey> detailSurvey = [];
 
     //Get Kategori soal
-    List<KategoriSoalModel> kategoriSoal = await getKategoriSoal(store);
+    List<KategoriSoalModel> kategoriSoal =
+        await getKategoriSoalByNamaSurveyId(store, namaSurveyId: namaSurveyId);
     //Get Soal by kategori soal id
     for (var kategori in kategoriSoal) {
       List<SoalModel> _soal =

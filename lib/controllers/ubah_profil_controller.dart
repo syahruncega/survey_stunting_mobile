@@ -401,7 +401,7 @@ class UbahProfilController extends GetxController {
       tglLahirTextController.text = profileData.value.data!.tanggalLahir;
       alamatTextController.text = profileData.value.data!.alamat;
       nomorHpTextController.text = profileData.value.data!.nomorHp;
-      emailTextController.text = profileData.value.data!.email;
+      emailTextController.text = profileData.value.data?.email ?? "";
       provinsiTEC.text =
           provinsi.firstWhere((element) => element.id == provinsiId).nama;
       kabupatenTEC.text =
