@@ -48,4 +48,3 @@ app.*.map.json
 
 # ObjectBox
 objectbox.g.dart
-objectbox-model.json
