@@ -46,6 +46,7 @@ class SurveyController extends GetxController {
   late bool isConnect;
 
   Future getSurvey({SurveyParameters? queryParameters}) async {
+    await checkConnection();
     isLoading.value = true;
     if (isConnect) {
       debugPrint('get online survey');
@@ -87,6 +88,7 @@ class SurveyController extends GetxController {
   }
 
   Future getResponden() async {
+    await checkConnection();
     if (isConnect) {
       debugPrint('get online responden');
       try {
@@ -111,6 +113,7 @@ class SurveyController extends GetxController {
   }
 
   Future getNamaSurvey() async {
+    await checkConnection();
     if (isConnect) {
       debugPrint('get online nama survey');
       try {
@@ -150,6 +153,7 @@ class SurveyController extends GetxController {
   }
 
   Future submitForm() async {
+    await checkConnection();
     var profileData =
         await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
     int profileId = profileData!.id!;
@@ -216,6 +220,8 @@ class SurveyController extends GetxController {
           token: token,
           kodeUnik: kodeUnik,
         );
+        await DbHelper.deleteSurvey(Objectbox.store_,
+            kodeUnik: int.parse(kodeUnik));
         surveys.removeWhere((element) => element.kodeUnik == kodeUnik);
       } on DioError catch (e) {
         handleError(error: e);

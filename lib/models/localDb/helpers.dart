@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:get/state_manager.dart';
+import 'package:survey_stunting/models/detail_survey.dart';
 import 'package:survey_stunting/models/localDb/objectBox_generated_files/objectbox.g.dart';
 import 'package:survey_stunting/models/localDb/profile_model.dart';
 import 'package:survey_stunting/models/localDb/responden_model.dart';
 import 'package:survey_stunting/models/total_survey.dart';
+import '../soal.dart';
 import 'jawaban_soal_model.dart';
 import 'jawaban_survey_model.dart';
 import 'kabupaten_model.dart';
@@ -360,14 +362,22 @@ class DbHelper {
 
   /// Get jawabanSurvey by kategoriSoalId
   static Future<List<JawabanSurveyModel>> getJawabanSurveyByKategoriSoalId(
-    Store store, {
-    required int kategoriSoalId,
-  }) async {
+      Store store,
+      {required int kategoriSoalId,
+      int? kodeUnikSurvey}) async {
     final jawabanSurveys = await getJawabanSurvey(store);
-    return jawabanSurveys
-        .where((jawabanSurvey) =>
-            jawabanSurvey.kategoriSoal.targetId == kategoriSoalId)
-        .toList();
+    if (kodeUnikSurvey != null) {
+      return jawabanSurveys
+          .where((jawabanSurvey) =>
+              jawabanSurvey.kategoriSoal.targetId == kategoriSoalId &&
+              jawabanSurvey.kodeUnikSurvey.targetId == kodeUnikSurvey)
+          .toList();
+    } else {
+      return jawabanSurveys
+          .where((jawabanSurvey) =>
+              jawabanSurvey.kategoriSoal.targetId == kategoriSoalId)
+          .toList();
+    }
   }
 
   /// Get jawabanSurvey by jawabanSoalId
@@ -621,6 +631,61 @@ class DbHelper {
       ));
     }
     return allSurveys;
+  }
+
+  static Future<List<DetailSurvey>> getDetailSurveyByKodeUnik(Store store,
+      {required int kodeUnik}) async {
+    List<DetailSurvey> detailSurvey = [];
+
+    //Get Kategori soal
+    List<KategoriSoalModel> kategoriSoal = await getKategoriSoal(store);
+    //Get Soal by kategori soal id
+    for (var kategori in kategoriSoal) {
+      List<SoalModel> _soal =
+          await getSoalByKategoriSoalId(store, kategoriSoalId: kategori.id!);
+
+      //Get Jawaban Survey
+      List<JawabanSurveyModel> _jawabanSurvey =
+          await getJawabanSurveyByKategoriSoalId(
+        store,
+        kategoriSoalId: kategori.id!,
+        kodeUnikSurvey: kodeUnik,
+      );
+
+      List<JawabanSurveyy> jawabanSurvey = [];
+      dynamic jawabanSoal;
+
+      for (var jawaban in _jawabanSurvey) {
+        if (jawaban.jawabanSoalId != null) {
+          //Get Jawaban Soal
+          JawabanSoalModel? _jawabanSoal =
+              await getJawabanSoalById(store, id: jawaban.jawabanSoalId!);
+          jawabanSoal = _jawabanSoal?.toJson();
+        }
+        jawabanSurvey.add(
+          JawabanSurveyy(
+            id: jawaban.id,
+            soalId: jawaban.soal.targetId.toString(),
+            kodeUnikSurvey: jawaban.kodeUnikSurvey.targetId.toString(),
+            kategoriSoalId: jawaban.kategoriSoal.targetId.toString(),
+            jawabanSoalId: jawaban.jawabanSoalId.toString(),
+            jawabanLainnya: jawaban.jawabanLainnya,
+            jawabanSoal: jawabanSoal,
+          ),
+        );
+      }
+
+      detailSurvey.add(
+        DetailSurvey(
+            id: kategori.id!,
+            urutan: kategori.urutan.toString(),
+            nama: kategori.nama,
+            namaSurveyId: kategori.namaSurvey.targetId.toString(),
+            soal: _soal.map((e) => Soal.fromJson(e.toJson())).toList(),
+            jawabanSurvey: jawabanSurvey),
+      );
+    }
+    return detailSurvey;
   }
 
   static Future<TotalSurvey> getTotalSurvey(
