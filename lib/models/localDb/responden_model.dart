@@ -13,7 +13,7 @@ class RespondenModel {
   int kodeUnik;
   int kartuKeluarga;
   String alamat;
-  String nomorHp;
+  String? nomorHp;
   int? provinsiId;
   int? kabupatenId;
   int? kecamatanId;
@@ -25,7 +25,7 @@ class RespondenModel {
     required this.kodeUnik,
     required this.kartuKeluarga,
     required this.alamat,
-    required this.nomorHp,
+    this.nomorHp,
     this.provinsiId,
     this.kabupatenId,
     this.kecamatanId,

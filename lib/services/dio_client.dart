@@ -631,7 +631,7 @@ class DioClient {
     required String kecamatan,
     required String kelurahan,
     required String nomorHp,
-    required String email,
+    String? email,
     required String updatedAt,
   }) async {
     try {

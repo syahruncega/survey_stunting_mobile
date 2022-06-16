@@ -16,7 +16,7 @@ class ProfileModel {
   String kecamatanId;
   String kelurahanId;
   String nomorHp;
-  String email;
+  String? email;
   int? userId;
   String lastModified;
 
@@ -32,7 +32,7 @@ class ProfileModel {
     required this.kecamatanId,
     required this.kelurahanId,
     required this.nomorHp,
-    required this.email,
+    this.email,
     this.userId,
     required this.lastModified,
   });
