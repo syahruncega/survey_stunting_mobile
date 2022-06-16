@@ -10,6 +10,7 @@ class FilledTextField extends StatelessWidget {
   final String? errorText;
   final int? minLine;
   final int? maxLine;
+  final int? maxLength;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
@@ -43,6 +44,7 @@ class FilledTextField extends StatelessWidget {
     this.validator,
     this.onChanged,
     this.initialValue,
+    this.maxLength,
     Key? key,
   }) : super(key: key);
 
@@ -63,6 +65,7 @@ class FilledTextField extends StatelessWidget {
           controller: controller,
           minLines: minLine,
           maxLines: maxLine,
+          maxLength: maxLength,
           keyboardType: keyboardType,
           textInputAction: textInputAction,
           inputFormatters: inputFormatters,
@@ -75,6 +78,9 @@ class FilledTextField extends StatelessWidget {
             hintText: hintText,
             helperText: helperText,
             errorText: errorText == "" ? null : errorText,
+            errorStyle: TextStyle(
+              color: Theme.of(context).errorColor,
+            ),
             helperMaxLines: 2,
             hintStyle: TextStyle(color: Theme.of(context).hintColor),
             contentPadding: const EdgeInsets.symmetric(
