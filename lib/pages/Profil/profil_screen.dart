@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:survey_stunting/routes/route_name.dart';
 
+import '../../models/localDb/helpers.dart';
+
 class ProfilScreen extends StatelessWidget {
   const ProfilScreen({Key? key}) : super(key: key);
 
@@ -104,11 +106,13 @@ class ProfilScreen extends StatelessWidget {
                 onConfirm: () async {
                   GetStorage().remove("token");
                   GetStorage().remove("session");
+                  await DbHelper.deleteAll(Objectbox.store_);
                   Get.offAllNamed(RouteName.login);
                 },
                 confirmTextColor: Colors.white,
                 title: "Logout",
-                middleText: "Anda yakin akan logout?",
+                middleText:
+                    "Anda yakin akan logout? \n Semua data akan terhapus!",
                 buttonColor: Theme.of(context).errorColor,
                 textConfirm: "Logout",
               );

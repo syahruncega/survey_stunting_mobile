@@ -384,7 +384,7 @@ class SyncDataController {
 
       // Get user form server
       List<Responden>? respondens =
-          await DioClient().getResponden(token: token);
+          await DioClient().getResponden(token: token, withTrashed: true);
       List<RespondenModel> localResponden = await DbHelper.getResponden(store_);
 
       if (respondens != null) {
@@ -430,8 +430,20 @@ class SyncDataController {
                   element.kodeUnik == _localResponden.kodeUnik.toString());
               // check, if responden on local not updated yet
               if (nServerResponden.updatedAt == null) {
-                // skip this responden
-                continue;
+                // check if server responden has deleted
+                if (nServerResponden.deletedAt != null) {
+                  if (_localResponden.deletedAt == "null" ||
+                      _localResponden.deletedAt == null) {
+                    log('server responden deleted, update deleted status in local');
+                    serverToPullUpdate.add(
+                        RespondenModel.fromJson(nServerResponden.toJson()));
+                  } else {
+                    continue;
+                  }
+                } else {
+                  // skip this responden
+                  continue;
+                }
               }
               // compare local user with server user
               debugPrint(
@@ -658,7 +670,14 @@ class SyncDataController {
     List<int> kodeUnik = [];
     for (var survey in surveyData) {
       kodeUnik.add(int.parse(survey.kodeUnik!));
-      await DioClient().createSurvey(token: token, data: survey);
+      RespondenModel responden = await DbHelper.getRespondenByKodeUnik(store_,
+          kodeUnik: int.parse(survey.kodeUnikResponden));
+      await DioClient().createSurvey(
+        token: token,
+        data: survey,
+        sync: true,
+        kartuKeluarga: responden.kartuKeluarga,
+      );
     }
     pushJawabanSurvey(kodeUnikSurvey: kodeUnik.toSet().toList());
   }
@@ -683,11 +702,20 @@ class SyncDataController {
           ));
         }
         if (nJawabanSurveyData.isNotEmpty) {
-          await DioClient()
-              .deleteJawabanSurvey(token: token, kodeUnikSurvey: kodeUnik);
+          List<int> tempKategoriSoal = [];
+          for (var jawaban in nJawabanSurveyData) {
+            tempKategoriSoal.add(int.parse(jawaban.kategoriSoalId));
+          }
+          List<int> kategoriSoalToDelete = tempKategoriSoal.toSet().toList();
+          for (var kategori in kategoriSoalToDelete) {
+            await DioClient().deleteJawabanSurvey(
+                token: token,
+                kodeUnikSurvey: kodeUnik,
+                kategoriSoalId: kategori);
+          }
+
           await DioClient()
               .createJawabanSurvey(token: token, data: nJawabanSurveyData);
-          successScackbar('Sync Data Jawaban Survey selesai.');
         }
       }
     }
@@ -697,9 +725,12 @@ class SyncDataController {
       {required bool isCreate}) async {
     if (isCreate) {
       for (var responden in respondenData) {
-        await DioClient().createResponden(token: token, data: responden);
+        var result =
+            await DioClient().createResponden(token: token, data: responden);
+        if (result == null) {
+          continue;
+        }
       }
-      successScackbar('Sync Data Responden selesai.');
     }
   }
 
@@ -1077,7 +1108,7 @@ class SyncDataController {
       try {
         // Get responden form server
         List<Responden>? responden =
-            await DioClient().getResponden(token: token);
+            await DioClient().getResponden(token: token, withTrashed: true);
         if (responden != null) {
           for (var resp in responden) {
             RespondenModel respondenModel = RespondenModel(
@@ -1091,6 +1122,7 @@ class SyncDataController {
               kecamatanId: int.parse(resp.kecamatanId),
               kelurahanId: int.parse(resp.desaKelurahanId),
               lastModified: DateTime.now().toString(),
+              deletedAt: resp.deletedAt.toString(),
             );
             nResponden.add(respondenModel);
             id += 1;
@@ -1117,6 +1149,7 @@ class SyncDataController {
             kecamatanId: resp.kecamatanId,
             kelurahanId: resp.kelurahanId,
             lastModified: DateTime.now().toString(),
+            deletedAt: resp.deletedAt,
           );
           nResponden.add(respondenModel);
           id += 1;
@@ -1129,16 +1162,18 @@ class SyncDataController {
         for (var item in respondenData) {
           int idToUpdate = await getCurrentRespondenId(kodeUnik: item.kodeUnik);
           RespondenModel respondenModel = RespondenModel(
-              id: idToUpdate,
-              kodeUnik: item.kodeUnik,
-              kartuKeluarga: item.kartuKeluarga,
-              alamat: item.alamat,
-              nomorHp: item.nomorHp,
-              provinsiId: item.provinsiId,
-              kabupatenId: item.kabupatenId,
-              kecamatanId: item.kecamatanId,
-              kelurahanId: item.kelurahanId,
-              lastModified: DateTime.now().toString());
+            id: idToUpdate,
+            kodeUnik: item.kodeUnik,
+            kartuKeluarga: item.kartuKeluarga,
+            alamat: item.alamat,
+            nomorHp: item.nomorHp,
+            provinsiId: item.provinsiId,
+            kabupatenId: item.kabupatenId,
+            kecamatanId: item.kecamatanId,
+            kelurahanId: item.kelurahanId,
+            lastModified: DateTime.now().toString(),
+            deletedAt: item.deletedAt,
+          );
           nResponden.add(respondenModel);
         }
         // update data

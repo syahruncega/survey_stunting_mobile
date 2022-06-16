@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:survey_stunting/components/custom_elevated_button.dart';
@@ -179,7 +180,7 @@ class SurveyScreen extends StatelessWidget {
                               title: "Responden",
                               hintText: "Pilih responden",
                               errorText: surveyController.respondenError.value,
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.none,
                               controller: surveyController.respondenTEC,
                               items: surveyController.responden
                                   .map((e) => {
@@ -201,6 +202,7 @@ class SurveyScreen extends StatelessWidget {
                             () => FilledAutocomplete(
                               title: "Nama Survey",
                               hintText: "Pilih nama survey",
+                              keyboardType: TextInputType.none,
                               errorText: surveyController.namaSurveyError.value,
                               controller: surveyController.namaSurveyTEC,
                               items: surveyController.namaSurvey

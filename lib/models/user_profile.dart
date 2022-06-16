@@ -45,7 +45,7 @@ class Data {
     required this.kecamatan,
     required this.desaKelurahan,
     required this.nomorHp,
-    required this.email,
+    this.email,
     required this.deletedAt,
     required this.createdAt,
     required this.updatedAt,
@@ -63,7 +63,7 @@ class Data {
   String kecamatan;
   String desaKelurahan;
   String nomorHp;
-  String email;
+  String? email;
   dynamic deletedAt;
   DateTime createdAt;
   dynamic updatedAt;
