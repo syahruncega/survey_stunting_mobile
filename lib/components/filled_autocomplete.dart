@@ -46,7 +46,18 @@ class FilledAutocomplete extends StatelessWidget {
             decoration: InputDecoration(
               hintText: hintText,
               errorText: errorText == "" ? null : errorText,
+              errorStyle: TextStyle(
+                color: Theme.of(context).errorColor,
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide:
+                    BorderSide(color: Theme.of(context).secondaryHeaderColor),
+              ),
               filled: true,
+              fillColor: enabled
+                  ? Theme.of(context).inputDecorationTheme.fillColor
+                  : const Color.fromARGB(255, 207, 209, 214),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
               ),

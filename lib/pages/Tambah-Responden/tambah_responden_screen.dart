@@ -47,6 +47,7 @@ class TambahRespondenScreen extends StatelessWidget {
                       keyboardType: TextInputType.number,
                       controller: controller.kartuKeluargaTEC,
                       errorText: controller.kartuKeluargaError.value,
+                      maxLength: 16,
                     ),
                   ),
                   Obx(
@@ -78,6 +79,7 @@ class TambahRespondenScreen extends StatelessWidget {
                   Obx(
                     () => FilledAutocomplete(
                       title: "Kabupaten / Kota",
+                      enabled: controller.provinsiId != 0,
                       controller: controller.kabupatenTEC,
                       errorText: controller.kabupatenError.value,
                       items: controller.kabupaten
@@ -94,6 +96,7 @@ class TambahRespondenScreen extends StatelessWidget {
                   Obx(
                     () => FilledAutocomplete(
                       title: "Kecamatan",
+                      enabled: controller.kabupatenId != 0,
                       controller: controller.kecamatanTEC,
                       errorText: controller.kecamatanError.value,
                       items: controller.kecamatan
@@ -110,6 +113,7 @@ class TambahRespondenScreen extends StatelessWidget {
                   Obx(
                     () => FilledAutocomplete(
                       title: "Desa / Kelurahan",
+                      enabled: controller.kecamatanId != 0,
                       controller: controller.kelurahanTEC,
                       errorText: controller.kelurahanError.value,
                       items: controller.kelurahan
