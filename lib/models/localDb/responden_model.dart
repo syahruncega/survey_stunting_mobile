@@ -8,8 +8,8 @@ import 'kelurahan_model.dart';
 
 @Entity()
 class RespondenModel {
-  int? id = 0;
   @Id(assignable: true)
+  int? id = 0;
   int kodeUnik;
   int kartuKeluarga;
   String alamat;
@@ -19,6 +19,7 @@ class RespondenModel {
   int? kecamatanId;
   int? kelurahanId;
   String lastModified;
+  String? deletedAt;
 
   RespondenModel({
     this.id,
@@ -31,6 +32,7 @@ class RespondenModel {
     this.kecamatanId,
     this.kelurahanId,
     required this.lastModified,
+    this.deletedAt,
   });
 
   final provinsi = ToOne<ProvinsiModel>();
@@ -52,6 +54,7 @@ class RespondenModel {
         kelurahanId: int.parse(json["desa_kelurahan_id"]),
         nomorHp: json["nomor_hp"],
         lastModified: json["updated_at"],
+        deletedAt: json["deleted_at"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -65,5 +68,6 @@ class RespondenModel {
         "desa_kelurahan_id": kelurahan.targetId.toString(),
         "nomor_hp": nomorHp.toString(),
         "updated_at": lastModified.toString(),
+        "deleted_at": deletedAt != "null" ? deletedAt : null,
       };
 }

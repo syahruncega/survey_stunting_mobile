@@ -122,6 +122,7 @@ class TambahRespondenController extends GetxController {
 
   Future submitForm() async {
     if (validate()) {
+      await checkConnection();
       if (isConnect) {
         debugPrint('add responden online');
         try {
@@ -173,6 +174,7 @@ class TambahRespondenController extends GetxController {
   }
 
   Future getProvinsi() async {
+    await checkConnection();
     if (isConnect) {
       debugPrint('get provinsi online');
       try {
@@ -203,6 +205,7 @@ class TambahRespondenController extends GetxController {
   Future getKabupaten() async {
     kabupaten.value = [];
     kabupatenTEC.text = "";
+    await checkConnection();
     if (isConnect) {
       debugPrint('get kabupaten online');
       try {
@@ -234,6 +237,7 @@ class TambahRespondenController extends GetxController {
   Future getKecamatan() async {
     kecamatan.value = [];
     kecamatanTEC.text = "";
+    await checkConnection();
     if (isConnect) {
       debugPrint('get kecamatan online');
       try {
@@ -266,6 +270,7 @@ class TambahRespondenController extends GetxController {
   Future getKelurahan() async {
     kelurahan.value = [];
     kelurahanTEC.text = "";
+    await checkConnection();
     if (isConnect) {
       debugPrint('get kelurahan online');
       try {

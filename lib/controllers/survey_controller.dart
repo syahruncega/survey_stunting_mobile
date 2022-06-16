@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:math';
 
@@ -107,8 +108,23 @@ class SurveyController extends GetxController {
       debugPrint('get local responden');
       List<RespondenModel>? localResponden =
           await DbHelper.getResponden(Objectbox.store_);
-      responden =
-          localResponden.map((e) => Responden.fromJson(e.toJson())).toList();
+
+      List<RespondenModel> tempLocalResponden = localResponden;
+
+      for (var i = 0; i < localResponden.length; i++) {
+        for (var j = i + 1; j < tempLocalResponden.length; j++) {
+          if (tempLocalResponden[j].kartuKeluarga ==
+              localResponden[i].kartuKeluarga) {
+            tempLocalResponden.removeAt(j);
+            j--;
+          }
+        }
+      }
+      tempLocalResponden.where((element) =>
+          element.deletedAt == "null" || element.deletedAt == null);
+      responden = tempLocalResponden
+          .map((e) => Responden.fromJson(e.toJson()))
+          .toList();
     }
   }
 

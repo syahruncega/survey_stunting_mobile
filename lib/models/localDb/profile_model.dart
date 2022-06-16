@@ -55,7 +55,7 @@ class ProfileModel {
         "kecamatan": kecamatanId.toString(),
         "desa_kelurahan": kelurahanId.toString(),
         "nomor_hp": nomorHp.toString(),
-        "email": email.toString(),
+        "email": email?.toString(),
         "updated_at": lastModified.toString(),
       };
 }
