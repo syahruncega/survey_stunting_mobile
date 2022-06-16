@@ -100,7 +100,7 @@ class Profile {
     required this.kecamatan,
     required this.desaKelurahan,
     required this.nomorHp,
-    required this.email,
+    this.email,
     this.deletedAt,
     this.createdAt,
     this.updatedAt,
@@ -118,7 +118,7 @@ class Profile {
   String kecamatan;
   String desaKelurahan;
   String nomorHp;
-  String email;
+  String? email;
   DateTime? deletedAt;
   DateTime? createdAt;
   DateTime? updatedAt;

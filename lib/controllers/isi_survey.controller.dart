@@ -131,90 +131,90 @@ class IsiSurveyController extends GetxController {
   }
 
   Future getKategoriSoal() async {
-    await checkConnection();
-    if (isConnect) {
-      debugPrint('get kategori soal online');
-      try {
-        List<KategoriSoal>? response = await DioClient().getKategoriSoal(
-            token: token, namaSurveyId: namaSurveyId.toString());
-        kategoriSoal = response!;
-      } on DioError catch (e) {
-        handleError(error: e);
-      }
-    } else {
-      debugPrint('get kategori soal local');
-      List<KategoriSoalModel> kategoriSoalModel =
-          await DbHelper.getKategoriSoalByNamaSurveyId(
-        Objectbox.store_,
-        namaSurveyId: namaSurveyId,
-      );
-      kategoriSoal = kategoriSoalModel
-          .map((e) => KategoriSoal.fromJson(e.toJson()))
-          .toList();
-    }
+    // await checkConnection();
+    // if (isConnect) {
+    //   debugPrint('get kategori soal online');
+    //   try {
+    //     List<KategoriSoal>? response = await DioClient().getKategoriSoal(
+    //         token: token, namaSurveyId: namaSurveyId.toString());
+    //     kategoriSoal = response!;
+    //   } on DioError catch (e) {
+    //     handleError(error: e);
+    //   }
+    // } else {
+    debugPrint('get kategori soal local');
+    List<KategoriSoalModel> kategoriSoalModel =
+        await DbHelper.getKategoriSoalByNamaSurveyId(
+      Objectbox.store_,
+      namaSurveyId: namaSurveyId,
+    );
+    kategoriSoal = kategoriSoalModel
+        .map((e) => KategoriSoal.fromJson(e.toJson()))
+        .toList();
+    // }
   }
 
   Future getSoal() async {
-    await checkConnection();
-    if (isConnect) {
-      debugPrint('get soal online');
-      try {
-        List<Soal>? response = await DioClient().getSoal(
-          token: token,
-          kategoriSoalId: currentKategoriSoal.id.toString(),
-        );
-        soal.value = response!;
-      } on DioError catch (e) {
-        handleError(error: e);
-      }
-    } else {
-      debugPrint('get soal local');
-      List<SoalModel> soalModel = await DbHelper.getSoalByKategoriSoalId(
-        Objectbox.store_,
-        kategoriSoalId: currentKategoriSoal.id,
-      );
-      soal.value = soalModel.map((e) => Soal.fromJson(e.toJson())).toList();
-    }
+    // await checkConnection();
+    // if (isConnect) {
+    //   debugPrint('get soal online');
+    //   try {
+    //     List<Soal>? response = await DioClient().getSoal(
+    //       token: token,
+    //       kategoriSoalId: currentKategoriSoal.id.toString(),
+    //     );
+    //     soal.value = response!;
+    //   } on DioError catch (e) {
+    //     handleError(error: e);
+    //   }
+    // } else {
+    debugPrint('get soal local');
+    List<SoalModel> soalModel = await DbHelper.getSoalByKategoriSoalId(
+      Objectbox.store_,
+      kategoriSoalId: currentKategoriSoal.id,
+    );
+    soal.value = soalModel.map((e) => Soal.fromJson(e.toJson())).toList();
+    // }
   }
 
   Future getJawabanSoal() async {
-    await checkConnection();
-    if (isConnect) {
-      debugPrint('get jawaban soal online');
-      try {
-        for (var item in soal) {
-          if (item.tipeJawaban == "Jawaban Singkat") {
-            soalAndJawaban.add(SoalAndJawaban(soal: item));
-          } else {
-            List<JawabanSoal>? response = await DioClient()
-                .getJawabanSoal(token: token, soalId: item.id.toString());
-            soalAndJawaban
-                .add(SoalAndJawaban(soal: item, jawabanSoal: response));
-          }
-        }
-      } on DioError catch (e) {
-        handleError(error: e);
-      }
-    } else {
-      debugPrint('get jawaban soal local');
-      for (var item in soal) {
-        if (item.tipeJawaban == "Jawaban Singkat") {
-          soalAndJawaban.add(SoalAndJawaban(soal: item));
-        } else {
-          List<JawabanSoalModel> jawabanSoalModel =
-              await DbHelper.getJawabanSoalBySoalId(
-            Objectbox.store_,
-            soalId: item.id,
-          );
-          soalAndJawaban.add(SoalAndJawaban(
-            soal: item,
-            jawabanSoal: jawabanSoalModel
-                .map((e) => JawabanSoal.fromJson(e.toJson()))
-                .toList(),
-          ));
-        }
+    // await checkConnection();
+    // if (isConnect) {
+    //   debugPrint('get jawaban soal online');
+    //   try {
+    //     for (var item in soal) {
+    //       if (item.tipeJawaban == "Jawaban Singkat") {
+    //         soalAndJawaban.add(SoalAndJawaban(soal: item));
+    //       } else {
+    //         List<JawabanSoal>? response = await DioClient()
+    //             .getJawabanSoal(token: token, soalId: item.id.toString());
+    //         soalAndJawaban
+    //             .add(SoalAndJawaban(soal: item, jawabanSoal: response));
+    //       }
+    //     }
+    //   } on DioError catch (e) {
+    //     handleError(error: e);
+    //   }
+    // } else {
+    debugPrint('get jawaban soal local');
+    for (var item in soal) {
+      if (item.tipeJawaban == "Jawaban Singkat") {
+        soalAndJawaban.add(SoalAndJawaban(soal: item));
+      } else {
+        List<JawabanSoalModel> jawabanSoalModel =
+            await DbHelper.getJawabanSoalBySoalId(
+          Objectbox.store_,
+          soalId: item.id,
+        );
+        soalAndJawaban.add(SoalAndJawaban(
+          soal: item,
+          jawabanSoal: jawabanSoalModel
+              .map((e) => JawabanSoal.fromJson(e.toJson()))
+              .toList(),
+        ));
       }
     }
+    // }
   }
 
   Widget generateSoalUI({
