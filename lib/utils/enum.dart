@@ -1,4 +1,0 @@
-enum SurveyType {
-  post,
-  pre,
-}
