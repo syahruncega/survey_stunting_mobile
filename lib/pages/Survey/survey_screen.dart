@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:survey_stunting/components/custom_elevated_button.dart';
@@ -147,95 +148,98 @@ class SurveyScreen extends StatelessWidget {
                 ],
               ),
               SizedBox(
-                height: size.height * 0.01,
+                height: size.height * 0.02,
               ),
-              Obx(
-                () => CustomElevatedButtonIcon(
-                  isLoading: surveyController.isLoadingFilter.value,
-                  label: "Tambah",
-                  icon: SvgPicture.asset("assets/icons/outline/add-square.svg",
-                      color: Colors.white),
-                  onPressed: () async {
-                    surveyController.isLoadingFilter.value = true;
-                    await surveyController.getResponden();
-                    await surveyController.getNamaSurvey();
-                    surveyController.isLoadingFilter.value = false;
-                    Get.defaultDialog(
-                      backgroundColor:
-                          Theme.of(context).scaffoldBackgroundColor,
-                      buttonColor: Theme.of(context).colorScheme.primary,
-                      confirmTextColor: Colors.white,
-                      title: "Filter",
-                      onConfirm: surveyController.submitForm,
-                      onCancel: () {},
-                      textCancel: "Batal",
-                      cancelTextColor: Theme.of(context).colorScheme.primary,
-                      textConfirm: "Tambah Survey",
-                      content: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Obx(
-                            () => FilledAutocomplete(
-                              title: "Responden",
-                              hintText: "Pilih responden",
-                              errorText: surveyController.respondenError.value,
-                              keyboardType: TextInputType.number,
-                              controller: surveyController.respondenTEC,
-                              items: surveyController.responden
-                                  .map((e) => {
-                                        "label": e.kartuKeluarga,
-                                        "value": e.kodeUnik
-                                      })
-                                  .toList(),
-                              onSuggestionSelected:
-                                  (Map<String, dynamic> suggestion) {
-                                surveyController.respondenTEC.text =
-                                    suggestion["label"];
-                                surveyController.kodeUnikResponden =
-                                    suggestion["value"];
-                              },
-                            ),
+              Row(
+                children: [
+                  Flexible(
+                    child: CustomElevatedButton(
+                      label: "Tambah Responden",
+                      onPressed: () => Get.toNamed(RouteName.tambahResponden),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Obx(
+                    () => CustomElevatedButton(
+                      isLoading: surveyController.isLoadingFilter.value,
+                      label: "Tambah Survey",
+                      width: size.width * 0.4,
+                      onPressed: () async {
+                        surveyController.isLoadingFilter.value = true;
+                        await surveyController.getResponden();
+                        await surveyController.getNamaSurvey();
+                        surveyController.isLoadingFilter.value = false;
+                        Get.defaultDialog(
+                          backgroundColor:
+                              Theme.of(context).scaffoldBackgroundColor,
+                          buttonColor: Theme.of(context).colorScheme.primary,
+                          confirmTextColor: Colors.white,
+                          title: "Filter",
+                          onConfirm: surveyController.submitForm,
+                          onCancel: () {},
+                          textCancel: "Batal",
+                          cancelTextColor:
+                              Theme.of(context).colorScheme.primary,
+                          textConfirm: "Tambah Survey",
+                          content: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Obx(
+                                () => FilledAutocomplete(
+                                  title: "Responden",
+                                  hintText: "Pilih responden",
+                                  errorText:
+                                      surveyController.respondenError.value,
+                                  keyboardType: TextInputType.number,
+                                  controller: surveyController.respondenTEC,
+                                  items: surveyController.responden
+                                      .map((e) => {
+                                            "label": e.kartuKeluarga,
+                                            "value": e.kodeUnik
+                                          })
+                                      .toList(),
+                                  onSuggestionSelected:
+                                      (Map<String, dynamic> suggestion) {
+                                    surveyController.respondenTEC.text =
+                                        suggestion["label"];
+                                    surveyController.kodeUnikResponden =
+                                        suggestion["value"];
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              Obx(
+                                () => FilledAutocomplete(
+                                  title: "Jenis Survey",
+                                  hintText: "Pilih jenis survey",
+                                  errorText:
+                                      surveyController.namaSurveyError.value,
+                                  controller: surveyController.namaSurveyTEC,
+                                  items: surveyController.namaSurvey
+                                      .map((e) => {
+                                            "label": "${e.nama} | ${e.tipe}",
+                                            "value": e.id
+                                          })
+                                      .toList(),
+                                  onSuggestionSelected:
+                                      (Map<String, dynamic> suggestion) {
+                                    surveyController.namaSurveyTEC.text =
+                                        suggestion["label"];
+                                    surveyController.namaSurveyId =
+                                        suggestion["value"];
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 20),
-                          Obx(
-                            () => FilledAutocomplete(
-                              title: "Nama Survey",
-                              hintText: "Pilih nama survey",
-                              errorText: surveyController.namaSurveyError.value,
-                              controller: surveyController.namaSurveyTEC,
-                              items: surveyController.namaSurvey
-                                  .map((e) => {
-                                        "label": "${e.nama} | ${e.tipe}",
-                                        "value": e.id
-                                      })
-                                  .toList(),
-                              onSuggestionSelected:
-                                  (Map<String, dynamic> suggestion) {
-                                surveyController.namaSurveyTEC.text =
-                                    suggestion["label"];
-                                surveyController.namaSurveyId =
-                                    suggestion["value"];
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Center(
-                            child: CustomElevatedButton(
-                              label: "Tambah Responden",
-                              onPressed: () {
-                                Get.back();
-                                Get.toNamed(RouteName.tambahResponden);
-                              },
-                            ),
-                          )
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
               SizedBox(
-                height: size.height * 0.01,
+                height: size.height * 0.02,
               ),
               Obx(
                 () => Visibility(

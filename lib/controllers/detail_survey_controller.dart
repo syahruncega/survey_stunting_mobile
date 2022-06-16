@@ -17,11 +17,17 @@ class DetailSurveyController extends GetxController {
   late List<DetailSurvey> detailSurvey = [];
   late bool isConnect;
   var isLoading = true.obs;
+  late int namaSurveyId;
 
   @override
   void onInit() async {
     await checkConnection();
     survey = Get.arguments;
+    if (survey.namaSurvey != null) {
+      namaSurveyId = survey.namaSurvey!.id;
+    } else {
+      namaSurveyId = int.parse(survey.namaSurveyId);
+    }
     await getDetailSurvey();
     isLoading.value = false;
     super.onInit();
@@ -53,6 +59,7 @@ class DetailSurveyController extends GetxController {
             await DbHelper.getDetailSurveyByKodeUnik(
           Objectbox.store_,
           kodeUnik: int.parse(survey.kodeUnik!),
+          namaSurveyId: namaSurveyId,
         );
         detailSurvey = detailSurveyLocal;
       } on DioError catch (e) {
