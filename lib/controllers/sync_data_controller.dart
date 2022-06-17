@@ -1239,17 +1239,21 @@ class SyncDataController {
       } else {
         for (var item in surveyData) {
           int idToUpdate = await getCurrentSurveyId(kodeUnik: item.kodeUnik);
-          SurveyModel surveyModel = SurveyModel(
-            id: idToUpdate,
-            kodeUnik: item.kodeUnik,
-            kategoriSelanjutnya: item.kategoriSelanjutnya,
-            isSelesai: item.isSelesai,
-            namaSurveyId: item.namaSurveyId,
-            profileId: item.profileId,
-            kodeUnikRespondenId: item.kodeUnikRespondenId,
-            lastModified: item.lastModified,
-          );
-          nSurvey.add(surveyModel);
+          if (idToUpdate != -1) {
+            SurveyModel surveyModel = SurveyModel(
+              id: idToUpdate,
+              kodeUnik: item.kodeUnik,
+              kategoriSelanjutnya: item.kategoriSelanjutnya,
+              isSelesai: item.isSelesai,
+              namaSurveyId: item.namaSurveyId,
+              profileId: item.profileId,
+              kodeUnikRespondenId: item.kodeUnikRespondenId,
+              lastModified: item.lastModified,
+            );
+            nSurvey.add(surveyModel);
+          } else {
+            errorScackbar('Survey tidak ditemukan');
+          }
         }
         await DbHelper.putSurvey(store_, nSurvey);
         debugPrint("survey data has been pulled from server to local[update]");
@@ -1361,10 +1365,14 @@ class SyncDataController {
   }
 
   Future<int> getCurrentSurveyId({required int kodeUnik}) async {
-    SurveyModel survey = await DbHelper.getSurveyByKodeUnik(Objectbox.store_,
+    SurveyModel? survey = await DbHelper.getSurveyByKodeUnik(Objectbox.store_,
         kodeUnik: kodeUnik);
-    int id = survey.id!;
-    return id;
+    if (survey != null) {
+      int id = survey.id!;
+      return id;
+    } else {
+      return -1;
+    }
   }
 
   Future<int> getIdJawabanSurvey() async {

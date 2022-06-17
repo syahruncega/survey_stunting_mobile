@@ -245,6 +245,7 @@ class SurveyController extends GetxController {
         await DbHelper.deleteSurvey(Objectbox.store_,
             kodeUnik: int.parse(kodeUnik));
         surveys.removeWhere((element) => element.kodeUnik == kodeUnik);
+        successScackbar("Survey berhasil dihapus");
       } on DioError catch (e) {
         handleError(error: e);
       }
