@@ -36,8 +36,8 @@ class SurveyController extends GetxController {
   var isLoadingFilter = false.obs;
   String typeSurvey = "";
   String statusSurvey = "";
-  late String kodeUnikResponden;
-  late int namaSurveyId;
+  String kodeUnikResponden = "";
+  int namaSurveyId = 0;
   List<Survey> surveys = [];
   List<Responden> responden = [];
   List<NamaSurvey> namaSurvey = [];
@@ -156,11 +156,17 @@ class SurveyController extends GetxController {
   bool validate() {
     respondenError.value = "";
     namaSurveyError.value = "";
+    if (kodeUnikResponden.toString() == "") {
+      respondenError.value = "Pilih responden yang terdaftar";
+    }
     if (respondenTEC.text.trim() == "") {
       respondenError.value = "Responden wajib diisi";
     }
+    if (namaSurveyId == 0) {
+      namaSurveyError.value = "Pilih jenis survey yang terdaftar";
+    }
     if (namaSurveyTEC.text.trim() == "") {
-      namaSurveyError.value = "Nama survey wajib diisi";
+      namaSurveyError.value = "Jenis survey wajib diisi";
     }
     if (respondenError.value.isNotEmpty || namaSurveyError.value.isNotEmpty) {
       return false;
