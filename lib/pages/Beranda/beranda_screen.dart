@@ -47,8 +47,11 @@ class BerandaScreen extends StatelessWidget {
                           color: Theme.of(context).primaryColor,
                         ),
                         title: "Total Responden Anda",
-                        subTitle: berandaController.totalSurvey.totalResponden
-                            .toString(),
+                        subTitle:
+                            berandaController.totalSurvey.totalResponden != null
+                                ? berandaController.totalSurvey.totalResponden
+                                    .toString()
+                                : "0",
                         isLoaded: berandaController.isLoadedTotalSurvey.value,
                       ),
                       const SizedBox(
@@ -60,8 +63,11 @@ class BerandaScreen extends StatelessWidget {
                           color: Colors.blue.shade300,
                         ),
                         title: "Responden Survey Pre",
-                        subTitle: berandaController.totalSurvey.respondenPre
-                            .toString(),
+                        subTitle:
+                            berandaController.totalSurvey.respondenPre != null
+                                ? berandaController.totalSurvey.respondenPre
+                                    .toString()
+                                : "0",
                         isLoaded: berandaController.isLoadedTotalSurvey.value,
                       ),
                       const SizedBox(
@@ -73,8 +79,11 @@ class BerandaScreen extends StatelessWidget {
                           color: Colors.indigo.shade300,
                         ),
                         title: "Responden Survey Post",
-                        subTitle: berandaController.totalSurvey.respondenPost
-                            .toString(),
+                        subTitle:
+                            berandaController.totalSurvey.respondenPost != null
+                                ? berandaController.totalSurvey.respondenPost
+                                    .toString()
+                                : "0",
                         isLoaded: berandaController.isLoadedTotalSurvey.value,
                       )
                     ],
