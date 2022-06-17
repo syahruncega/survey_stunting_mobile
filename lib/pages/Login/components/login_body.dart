@@ -65,7 +65,7 @@ class LoginBody extends StatelessWidget {
                       hintText: "Kata Sandi",
                       errorText: loginController.passwordError.value,
                       controller: loginController.password,
-                      obsecureText: loginController.showPassword.value,
+                      obsecureText: !loginController.showPassword.value,
                       suffixIcon: IconButton(
                         icon: SvgPicture.asset(
                           loginController.showPassword.value
