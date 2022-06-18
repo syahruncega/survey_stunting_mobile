@@ -44,10 +44,14 @@ class UbahProfilController extends GetxController {
   var kecamatan = [].obs;
   var kelurahan = [].obs;
 
-  late int provinsiId;
-  late int kabupatenId;
-  late int kecamatanId;
-  late int kelurahanId;
+  int provinsiId = 0;
+  int kabupatenId = 0;
+  int kecamatanId = 0;
+  int kelurahanId = 0;
+  // late int provinsiId;
+  // late int kabupatenId;
+  // late int kecamatanId;
+  // late int kelurahanId;
 
   var isLoaded = false.obs;
   var profileUpdateStatus = ''.obs;
@@ -106,21 +110,22 @@ class UbahProfilController extends GetxController {
   }
 
   Future getProvinsi() async {
-    if (isConnect) {
-      debugPrint('get provinsi online');
-      try {
-        List<Provinsi>? response = await DioClient().getProvinsi(
-          token: token,
-        );
-        provinsi.value = response!;
-      } on DioError catch (e) {
-        if (e.response?.statusCode == 404) {
-          provinsi.value = [];
-        } else {
-          handleError(error: e);
-        }
-      }
-    } else {
+    // if (isConnect) {
+    //   debugPrint('get provinsi online');
+    //   try {
+    //     List<Provinsi>? response = await DioClient().getProvinsi(
+    //       token: token,
+    //     );
+    //     provinsi.value = response!;
+    //   } on DioError catch (e) {
+    //     if (e.response?.statusCode == 404) {
+    //       provinsi.value = [];
+    //     } else {
+    //       handleError(error: e);
+    //     }
+    //   }
+    // } else {
+    try {
       debugPrint('get provinsi local');
       List<ProvinsiModel>? localProvinsi =
           await DbHelper.getProvinsi(Objectbox.store_);
@@ -130,28 +135,32 @@ class UbahProfilController extends GetxController {
         provinsi.value = [];
         debugPrint('data provinsi not found on local, please sync from server');
       }
+    } on DioError catch (e) {
+      handleError(error: e);
     }
+    // }
   }
 
   Future getKabupaten() async {
     kabupaten.value = [];
     kabupatenTEC.text = "";
-    if (isConnect) {
-      debugPrint('get kabupaten online');
-      try {
-        List<Kabupaten>? response = await DioClient().getKabupaten(
-          token: token,
-          provinsiId: provinsiId.toString(),
-        );
-        kabupaten.value = response!;
-      } on DioError catch (e) {
-        if (e.response?.statusCode == 404) {
-          kabupaten.value = [];
-        } else {
-          handleError(error: e);
-        }
-      }
-    } else {
+    // if (isConnect) {
+    //   debugPrint('get kabupaten online');
+    //   try {
+    //     List<Kabupaten>? response = await DioClient().getKabupaten(
+    //       token: token,
+    //       provinsiId: provinsiId.toString(),
+    //     );
+    //     kabupaten.value = response!;
+    //   } on DioError catch (e) {
+    //     if (e.response?.statusCode == 404) {
+    //       kabupaten.value = [];
+    //     } else {
+    //       handleError(error: e);
+    //     }
+    //   }
+    // } else {
+    try {
       debugPrint('get kabupaten local');
       List<KabupatenModel>? localKabupaten =
           await DbHelper.getKabupatenByProvinsiId(Objectbox.store_,
@@ -163,28 +172,32 @@ class UbahProfilController extends GetxController {
         debugPrint(
             'data kabupaten not found on local, please sync from server');
       }
+    } on DioError catch (e) {
+      handleError(error: e);
     }
+    // }
   }
 
   Future getKecamatan() async {
     kecamatan.value = [];
     kecamatanTEC.text = "";
-    if (isConnect) {
-      debugPrint('get kecamatan online');
-      try {
-        List<Kecamatan>? response = await DioClient().getKecamatan(
-          token: token,
-          kabupatenId: kabupatenId.toString(),
-        );
-        kecamatan.value = response!;
-      } on DioError catch (e) {
-        if (e.response?.statusCode == 404) {
-          kecamatan.value = [];
-        } else {
-          handleError(error: e);
-        }
-      }
-    } else {
+    // if (isConnect) {
+    //   debugPrint('get kecamatan online');
+    //   try {
+    //     List<Kecamatan>? response = await DioClient().getKecamatan(
+    //       token: token,
+    //       kabupatenId: kabupatenId.toString(),
+    //     );
+    //     kecamatan.value = response!;
+    //   } on DioError catch (e) {
+    //     if (e.response?.statusCode == 404) {
+    //       kecamatan.value = [];
+    //     } else {
+    //       handleError(error: e);
+    //     }
+    //   }
+    // } else {
+    try {
       debugPrint('get kecamatan local');
       List<KecamatanModel>? localKecamatan =
           await DbHelper.getKecamatanByKabupatenId(Objectbox.store_,
@@ -196,28 +209,32 @@ class UbahProfilController extends GetxController {
         debugPrint(
             'data kecamatan not found on local, please sync from server');
       }
+    } on DioError catch (e) {
+      handleError(error: e);
     }
+    // }
   }
 
   Future getKelurahan() async {
     kelurahan.value = [];
     kelurahanTEC.text = "";
-    if (isConnect) {
-      debugPrint('get kelurahan online');
-      try {
-        List<Kelurahan>? response = await DioClient().getKelurahan(
-          token: token,
-          kecamatanId: kecamatanId.toString(),
-        );
-        kelurahan.value = response!;
-      } on DioError catch (e) {
-        if (e.response?.statusCode == 404) {
-          kelurahan.value = [];
-        } else {
-          handleError(error: e);
-        }
-      }
-    } else {
+    // if (isConnect) {
+    //   debugPrint('get kelurahan online');
+    //   try {
+    //     List<Kelurahan>? response = await DioClient().getKelurahan(
+    //       token: token,
+    //       kecamatanId: kecamatanId.toString(),
+    //     );
+    //     kelurahan.value = response!;
+    //   } on DioError catch (e) {
+    //     if (e.response?.statusCode == 404) {
+    //       kelurahan.value = [];
+    //     } else {
+    //       handleError(error: e);
+    //     }
+    //   }
+    // } else {
+    try {
       debugPrint('get kelurahan local');
       List<KelurahanModel>? localKelurahan =
           await DbHelper.getKelurahanByKecamatanId(Objectbox.store_,
@@ -229,7 +246,10 @@ class UbahProfilController extends GetxController {
         debugPrint(
             'data kelurahan not found on local, please sync from server');
       }
+    } on DioError catch (e) {
+      handleError(error: e);
     }
+    // }
   }
 
   Future updateUserProfile({
@@ -239,7 +259,7 @@ class UbahProfilController extends GetxController {
     required String tglLahir,
     required String alamat,
     required String nomorHp,
-    required String email,
+    String? email,
   }) async {
     if (validate()) {
       if (isConnect) {
@@ -314,7 +334,6 @@ class UbahProfilController extends GetxController {
     kecamatanError.value = '';
     kelurahanError.value = '';
     nomorHpError.value = '';
-    emailError.value = '';
 
     if (namaLengkapTextController.value.text.trim().isEmpty) {
       namaLengkapError.value = 'Nama wajib diisi';
@@ -340,11 +359,19 @@ class UbahProfilController extends GetxController {
       provinsiError.value = 'Provinsi wajib diisi';
     }
 
+    if (provinsiId == 0) {
+      provinsiError.value = 'Provinsi wajib diisi';
+    }
+
     if (provinsiTEC.value.text.trim().contains('-')) {
       provinsiError.value = 'Provinsi tidak valid';
     }
 
     if (kabupatenTEC.value.text.trim().isEmpty) {
+      kabupatenError.value = 'Kabupaten wajib diisi';
+    }
+
+    if (kabupatenId == 0) {
       kabupatenError.value = 'Kabupaten wajib diisi';
     }
 
@@ -356,11 +383,19 @@ class UbahProfilController extends GetxController {
       kecamatanError.value = 'Kecamatan wajib diisi';
     }
 
+    if (kecamatanId == 0) {
+      kecamatanError.value = 'Kecamatan wajib diisi';
+    }
+
     if (kecamatanTEC.value.text.trim().contains('-')) {
       kecamatanError.value = 'Kecamatan tidak valid';
     }
 
     if (kelurahanTEC.value.text.trim().isEmpty) {
+      kelurahanError.value = 'Kelurahan wajib diisi';
+    }
+
+    if (kelurahanId == 0) {
       kelurahanError.value = 'Kelurahan wajib diisi';
     }
 
@@ -372,10 +407,6 @@ class UbahProfilController extends GetxController {
       nomorHpError.value = 'Nomor Hp wajib diisi';
     }
 
-    if (emailTextController.value.text.trim().isEmpty) {
-      emailError.value = 'E-mail wajib diisi';
-    }
-
     if (namaLengkapError.value.isNotEmpty ||
         jenisKelaminError.value.isNotEmpty ||
         tempatLahirError.value.isNotEmpty ||
@@ -385,8 +416,7 @@ class UbahProfilController extends GetxController {
         kabupatenError.value.isNotEmpty ||
         kecamatanError.value.isNotEmpty ||
         kelurahanError.value.isNotEmpty ||
-        nomorHpError.value.isNotEmpty ||
-        emailError.value.isNotEmpty) {
+        nomorHpError.value.isNotEmpty) {
       return false;
     }
     return true;

@@ -123,6 +123,7 @@ class UbahProfilScreen extends StatelessWidget {
                                 controller: controller.kabupatenTEC,
                                 hintText: "Pilih Kabupaten / Kota",
                                 title: "Kabupaten / Kota",
+                                enabled: controller.provinsiId != 0,
                                 items: controller.kabupaten
                                     .map(
                                         (e) => {"label": e.nama, "value": e.id})
@@ -143,6 +144,7 @@ class UbahProfilScreen extends StatelessWidget {
                                 controller: controller.kecamatanTEC,
                                 title: "Kecamatan",
                                 hintText: "Pilih kecamatan",
+                                enabled: controller.kabupatenId != 0,
                                 items: controller.kecamatan
                                     .map(
                                         (e) => {"label": e.nama, "value": e.id})
@@ -163,6 +165,7 @@ class UbahProfilScreen extends StatelessWidget {
                                 controller: controller.kelurahanTEC,
                                 title: "Desa / Kelurahan",
                                 hintText: "Pilih Desa / Kelurahan",
+                                enabled: controller.kecamatanId != 0,
                                 items: controller.kelurahan
                                     .map(
                                         (e) => {"label": e.nama, "value": e.id})
@@ -189,7 +192,7 @@ class UbahProfilScreen extends StatelessWidget {
                             ),
                             FilledTextField(
                               controller: controller.emailTextController,
-                              title: "Email",
+                              title: "Email (Optional)",
                               errorText: controller.emailError.value,
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.done,
@@ -209,7 +212,7 @@ class UbahProfilScreen extends StatelessWidget {
                                       .alamatTextController.value.text;
                                   String nomorHp = controller
                                       .nomorHpTextController.value.text;
-                                  String email =
+                                  String? email =
                                       controller.emailTextController.value.text;
 
                                   controller.profileUpdateStatus.value ==
