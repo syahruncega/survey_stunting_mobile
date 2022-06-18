@@ -192,8 +192,12 @@ class SurveyController extends GetxController {
           List<Survey>? response =
               await DioClient().createSurvey(token: token, data: data);
           isLoading.value = false;
-          Get.toNamed(RouteName.isiSurvey, arguments: [response![0], false]);
-          successScackbar("Survey berhasil disimpan");
+          if (response != null) {
+            successScackbar("Survey berhasil disimpan");
+            Get.toNamed(RouteName.isiSurvey, arguments: [response[0], false]);
+          } else {
+            errorScackbar("Survey sudah pernah dibuat sebelumnya");
+          }
         } on DioError catch (e) {
           if (e.response?.statusCode == 302) {
             errorScackbar(

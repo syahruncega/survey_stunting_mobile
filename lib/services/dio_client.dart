@@ -135,8 +135,6 @@ class DioClient {
     } on DioError catch (e) {
       log('Error create survey: $e');
       if (e.response?.statusCode == 422 || e.response?.statusCode == 302) {
-        errorScackbar("Syncroinize Survey gagal! \n"
-            "Survey sudah pernah dibuat sebelumnya");
         return null;
       } else {
         rethrow;
