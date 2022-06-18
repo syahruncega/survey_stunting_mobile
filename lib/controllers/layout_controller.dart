@@ -38,6 +38,11 @@ class LayoutController extends GetxController {
 
   void changeTabIndex(int index) {
     tabIndex = index;
+    if (tabIndex == 3) {
+      global.isFabVisible.value = false;
+    } else {
+      global.isFabVisible.value = true;
+    }
     update();
   }
 
