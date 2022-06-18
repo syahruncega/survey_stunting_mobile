@@ -34,7 +34,7 @@ class ExportSurveyScreen extends StatelessWidget {
               Obx(
                 () => FilledAutocomplete(
                   controller: exportSurveyController.namaSurveyTEC,
-                  hintText: "Pilih nama survey",
+                  hintText: "Pilih jenis survey",
                   items: exportSurveyController.namaSurvey
                       .map((e) => {
                             'label': e.nama + '|' + e.tipe,
