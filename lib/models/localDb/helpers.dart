@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:get/state_manager.dart';
 import 'package:survey_stunting/models/detail_survey.dart';
+import 'package:survey_stunting/models/localDb/institusi_model.dart';
 import 'package:survey_stunting/models/localDb/objectBox_generated_files/objectbox.g.dart';
 import 'package:survey_stunting/models/localDb/profile_model.dart';
 import 'package:survey_stunting/models/localDb/responden_model.dart';
@@ -74,6 +75,33 @@ class DbHelper {
     // await deleteAllJawabanSurvey(store);
   }
 
+  //? Institusi
+  /// Get all institusi
+  static Future<List<InstitusiModel>> getInstitusi(Store store) async {
+    return store.box<InstitusiModel>().getAll();
+  }
+
+  /// Params:
+  /// - store (ObjextBoxStore)
+  /// - InstitusiData (InstitusiModel)
+  /// - id (int) - id of institusi optional only if you want to update institusi
+  static Future<List<int>> putInstitusi(
+      Store store, List<InstitusiModel> institusi) async {
+    return store.box<InstitusiModel>().putMany(institusi);
+  }
+
+  /// param :
+  /// id (int) - id of institusi
+  /// return :
+  /// true if institusi is deleted
+  static Future<bool> deleteInstitusi(Store store, int id) async {
+    return store.box<InstitusiModel>().remove(id);
+  }
+
+  static Future<int> deleteAllInstitusi(Store store) async {
+    return store.box<InstitusiModel>().removeAll();
+  }
+
   //? Profile
   /// Params:
   /// - store (ObjextBoxStore)
@@ -81,6 +109,7 @@ class DbHelper {
   /// - id (int) - id of profile optional only if you want to update profile
   static Future<int> putProfile(Store store, ProfileModel profile) async {
     profile.user.targetId = profile.userId;
+    profile.institusi.targetId = int.parse(profile.institusiId!);
     return store.box<ProfileModel>().put(profile);
   }
 

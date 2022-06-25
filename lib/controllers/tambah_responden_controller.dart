@@ -24,6 +24,7 @@ import '../models/localDb/responden_model.dart';
 
 class TambahRespondenController extends GetxController {
   final kartuKeluargaTEC = TextEditingController();
+  final namaKepalaKeluargaTEC = TextEditingController();
   final alamatTEC = TextEditingController();
   final provinsiTEC = TextEditingController();
   final kabupatenTEC = TextEditingController();
@@ -35,6 +36,7 @@ class TambahRespondenController extends GetxController {
   var kecamatan = [].obs;
   var kelurahan = [].obs;
   var kartuKeluargaError = "".obs;
+  var namaKepalaKeluargaError = "".obs;
   var alamatError = "".obs;
   var provinsiError = "".obs;
   var kabupatenError = "".obs;
@@ -69,6 +71,7 @@ class TambahRespondenController extends GetxController {
 
   bool validate() {
     kartuKeluargaError.value = "";
+    namaKepalaKeluargaError.value = "";
     alamatError.value = "";
     provinsiError.value = "";
     kabupatenError.value = "";
@@ -80,6 +83,9 @@ class TambahRespondenController extends GetxController {
     }
     if (kartuKeluargaTEC.text.trim().isEmpty) {
       kartuKeluargaError.value = 'Nomor Kartu Keluarga wajib diisi';
+    }
+    if (namaKepalaKeluargaTEC.text.trim().isEmpty) {
+      namaKepalaKeluargaError.value = 'Nama Kepala Keluarga wajib diisi';
     }
     if (alamatTEC.text.trim().isEmpty) {
       alamatError.value = "Alamat wajib diisi";
@@ -110,6 +116,7 @@ class TambahRespondenController extends GetxController {
     }
 
     if (kartuKeluargaError.value.isNotEmpty ||
+        namaKepalaKeluargaError.value.isNotEmpty ||
         alamatError.value.isNotEmpty ||
         provinsiError.value.isNotEmpty ||
         kabupatenError.value.isNotEmpty ||
@@ -128,6 +135,7 @@ class TambahRespondenController extends GetxController {
         try {
           Responden responden = Responden(
             kartuKeluarga: kartuKeluargaTEC.text,
+            namaKepalaKeluarga: namaKepalaKeluargaTEC.text,
             alamat: alamatTEC.text,
             provinsiId: provinsiId.toString(),
             kabupatenKotaId: kabupatenId.toString(),
@@ -158,6 +166,7 @@ class TambahRespondenController extends GetxController {
           id: id,
           kodeUnik: uniqueCode,
           kartuKeluarga: int.parse(kartuKeluargaTEC.text),
+          namaKepalaKeluarga: namaKepalaKeluargaTEC.text,
           alamat: alamatTEC.text,
           nomorHp: nomorHPTEC.text,
           provinsiId: provinsiId,

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
@@ -9,6 +11,7 @@ import 'package:survey_stunting/models/kabupaten.dart';
 import 'package:survey_stunting/models/kecamatan.dart';
 import 'package:survey_stunting/models/kelurahan.dart';
 import 'package:survey_stunting/models/localDb/helpers.dart';
+import 'package:survey_stunting/models/localDb/institusi_model.dart';
 import 'package:survey_stunting/models/localDb/kecamatan_model.dart';
 import 'package:survey_stunting/models/localDb/provinsi_model.dart';
 import 'package:survey_stunting/models/provinsi.dart';
@@ -37,17 +40,20 @@ class UbahProfilController extends GetxController {
   final kelurahanTEC = TextEditingController();
   final nomorHpTextController = TextEditingController();
   final emailTextController = TextEditingController();
+  final institusiTextController = TextEditingController();
 
   Rx<UserProfile> profileData = UserProfile().obs;
   var provinsi = [].obs;
   var kabupaten = [].obs;
   var kecamatan = [].obs;
   var kelurahan = [].obs;
+  var institusi = [].obs;
 
   int provinsiId = 0;
   int kabupatenId = 0;
   int kecamatanId = 0;
   int kelurahanId = 0;
+  int institusiId = 0;
   // late int provinsiId;
   // late int kabupatenId;
   // late int kecamatanId;
@@ -67,6 +73,7 @@ class UbahProfilController extends GetxController {
   var kelurahanError = ''.obs;
   var nomorHpError = ''.obs;
   var emailError = ''.obs;
+  var namaInstitusiError = ''.obs;
 
   final tglLahirMaskFormatter = MaskTextInputFormatter(
     mask: '####-##-##',
@@ -90,6 +97,7 @@ class UbahProfilController extends GetxController {
         kabupatenId = int.parse(profileData.value.data!.kabupatenKota);
         kecamatanId = int.parse(profileData.value.data!.kecamatan);
         kelurahanId = int.parse(profileData.value.data!.desaKelurahan);
+        institusiId = int.parse(profileData.value.data!.institusiId);
       } on DioError catch (e) {
         handleError(error: e);
       }
@@ -103,6 +111,7 @@ class UbahProfilController extends GetxController {
         kabupatenId = int.parse(profileData.value.data!.kabupatenKota);
         kecamatanId = int.parse(profileData.value.data!.kecamatan);
         kelurahanId = int.parse(profileData.value.data!.desaKelurahan);
+        institusiId = int.parse(profileData.value.data!.institusiId);
       } else {
         debugPrint('data profile not found on local, please sync from server');
       }
@@ -252,6 +261,25 @@ class UbahProfilController extends GetxController {
     // }
   }
 
+  Future getInstitusi() async {
+    institusi.value = [];
+    institusiTextController.text = "";
+    try {
+      debugPrint('get institusi local');
+      List<InstitusiModel>? localInstitusi =
+          await DbHelper.getInstitusi(Objectbox.store_);
+      if (localInstitusi.isNotEmpty) {
+        institusi.value = localInstitusi;
+      } else {
+        institusi.value = [];
+        debugPrint(
+            'data institusi not found on local, please sync from server');
+      }
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
+  }
+
   Future updateUserProfile({
     required String nama,
     required String jenisKelamin,
@@ -279,6 +307,7 @@ class UbahProfilController extends GetxController {
             kelurahan: kelurahanId.toString(),
             nomorHp: nomorHp,
             email: email,
+            institusiId: institusiId.toString(),
             updatedAt: DateTime.now().toString(),
           );
           if (response) {
@@ -308,6 +337,7 @@ class UbahProfilController extends GetxController {
             nomorHp: nomorHp,
             email: email,
             userId: userId,
+            institusiId: institusiId.toString(),
             lastModified: DateTime.now().toString());
         int response = await DbHelper.putProfile(Objectbox.store_, profile);
         if (response > 0) {
@@ -334,6 +364,15 @@ class UbahProfilController extends GetxController {
     kecamatanError.value = '';
     kelurahanError.value = '';
     nomorHpError.value = '';
+    namaInstitusiError.value = '';
+
+    if (institusiTextController.value.text.trim().isEmpty) {
+      namaInstitusiError.value = 'Nama Institusi wajib diisi';
+    }
+
+    if (institusiId == 0) {
+      namaInstitusiError.value = 'Nama Institusi wajib diisi';
+    }
 
     if (namaLengkapTextController.value.text.trim().isEmpty) {
       namaLengkapError.value = 'Nama wajib diisi';
@@ -416,7 +455,8 @@ class UbahProfilController extends GetxController {
         kabupatenError.value.isNotEmpty ||
         kecamatanError.value.isNotEmpty ||
         kelurahanError.value.isNotEmpty ||
-        nomorHpError.value.isNotEmpty) {
+        nomorHpError.value.isNotEmpty ||
+        namaInstitusiError.value.isNotEmpty) {
       return false;
     }
     return true;
@@ -431,6 +471,8 @@ class UbahProfilController extends GetxController {
       tglLahirTextController.text = profileData.value.data!.tanggalLahir;
       alamatTextController.text = profileData.value.data!.alamat;
       nomorHpTextController.text = profileData.value.data!.nomorHp;
+      institusiTextController.text =
+          institusi.firstWhere((element) => element.id == institusiId).nama;
       emailTextController.text = profileData.value.data?.email ?? "";
       provinsiTEC.text =
           provinsi.firstWhere((element) => element.id == provinsiId).nama;
@@ -451,6 +493,7 @@ class UbahProfilController extends GetxController {
   @override
   void onInit() async {
     await checkConnection();
+    await getInstitusi();
     await getUserProfile();
     await getProvinsi();
     await getKabupaten();

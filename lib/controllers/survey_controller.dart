@@ -133,10 +133,14 @@ class SurveyController extends GetxController {
     if (isConnect) {
       debugPrint('get online nama survey');
       try {
-        List<NamaSurvey>? response = await DioClient().getNamaSurvey(
+        List<NamaSurvey>? nResponse = await DioClient().getNamaSurvey(
           token: token,
         );
-        namaSurvey = response!;
+        if (nResponse != null) {
+          List<NamaSurvey>? response =
+              nResponse.where((element) => element.isAktif == 1).toList();
+          namaSurvey = response;
+        }
       } on DioError catch (e) {
         if (e.response?.statusCode == 404) {
           namaSurvey = [];
@@ -146,8 +150,10 @@ class SurveyController extends GetxController {
       }
     } else {
       debugPrint('message: get local nama survey');
-      List<NamaSurveyModel>? localNamaSurvey =
+      List<NamaSurveyModel>? nlocalNamaSurvey =
           await DbHelper.getNamaSurvey(Objectbox.store_);
+      List<NamaSurveyModel> localNamaSurvey =
+          nlocalNamaSurvey.where((element) => element.isAktif == 1).toList();
       namaSurvey =
           localNamaSurvey.map((e) => NamaSurvey.fromJson(e.toJson())).toList();
     }

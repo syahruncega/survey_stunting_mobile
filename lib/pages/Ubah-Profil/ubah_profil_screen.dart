@@ -49,6 +49,25 @@ class UbahProfilScreen extends StatelessWidget {
                             SizedBox(
                               height: size.height * 0.06,
                             ),
+                            Obx(
+                              () => FilledAutocomplete(
+                                controller: controller.institusiTextController,
+                                hintText: "Pilih Institusi",
+                                title: "Institusi",
+                                errorText: controller.namaInstitusiError.value,
+                                items: controller.institusi
+                                    .map(
+                                        (e) => {"label": e.nama, "value": e.id})
+                                    .toList(),
+                                textInputAction: TextInputAction.next,
+                                onSuggestionSelected:
+                                    (Map<String, dynamic> suggestion) async {
+                                  controller.institusiTextController.text =
+                                      suggestion["label"];
+                                  controller.institusiId = suggestion["value"];
+                                },
+                              ),
+                            ),
                             FilledTextField(
                               controller: controller.namaLengkapTextController,
                               title: "Nama Lengkap",

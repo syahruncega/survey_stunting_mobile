@@ -52,6 +52,16 @@ class TambahRespondenScreen extends StatelessWidget {
                   ),
                   Obx(
                     () => FilledTextField(
+                      title: "Nama Kepala Keluarga",
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.text,
+                      controller: controller.namaKepalaKeluargaTEC,
+                      errorText: controller.namaKepalaKeluargaError.value,
+                      maxLength: 255,
+                    ),
+                  ),
+                  Obx(
+                    () => FilledTextField(
                       title: "Alamat",
                       minLine: 2,
                       maxLine: null,
