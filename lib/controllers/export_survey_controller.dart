@@ -744,16 +744,22 @@ class ExportSurveyController extends GetxController {
     if (isConnect) {
       debugPrint('get nama survey online');
       try {
-        List<NamaSurvey>? response =
+        List<NamaSurvey>? nResponse =
             await DioClient().getNamaSurvey(token: token);
-        namaSurvey.value = response!;
+        if (nResponse != null) {
+          List<NamaSurvey> response =
+              nResponse.where((element) => element.isAktif == 1).toList();
+          namaSurvey.value = response;
+        }
       } on DioError catch (e) {
         handleError(error: e);
       }
     } else {
       debugPrint('get nama survey offline');
-      List<NamaSurveyModel>? localNamaSurvey =
+      List<NamaSurveyModel>? nLocalNamaSurvey =
           await DbHelper.getNamaSurvey(Objectbox.store_);
+      List<NamaSurveyModel> localNamaSurvey =
+          nLocalNamaSurvey.where((element) => element.isAktif == 1).toList();
       namaSurvey.value = localNamaSurvey;
     }
   }
