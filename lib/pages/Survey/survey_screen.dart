@@ -210,11 +210,13 @@ class SurveyScreen extends StatelessWidget {
                                       hintText: "Pilih responden",
                                       errorText:
                                           surveyController.respondenError.value,
-                                      keyboardType: TextInputType.number,
+                                      keyboardType: TextInputType.text,
                                       controller: surveyController.respondenTEC,
                                       items: surveyController.responden
                                           .map((e) => {
-                                                "label": e.kartuKeluarga,
+                                                "label": e.kartuKeluarga +
+                                                    ' - ' +
+                                                    e.namaKepalaKeluarga,
                                                 "value": e.kodeUnik
                                               })
                                           .toList(),
