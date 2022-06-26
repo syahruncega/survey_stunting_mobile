@@ -3,7 +3,12 @@ import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 
-void synchronizeDialog(RxBool loading, Size size) {
+import '../controllers/sinkronisasi_controller.dart';
+
+Future synchronizeDialog(BuildContext context) async {
+  final syncController = SinkronisasiController();
+  var loading = true.obs;
+  Size size = MediaQuery.of(context).size;
   Get.defaultDialog(
     title: '',
     barrierDismissible: false,
@@ -43,4 +48,8 @@ void synchronizeDialog(RxBool loading, Size size) {
       ),
     ),
   );
+  await syncController.synchronize();
+  loading.value = false;
+  await Future.delayed(const Duration(seconds: 3));
+  Navigator.pop(context);
 }

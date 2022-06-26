@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:survey_stunting/consts/colors.dart';
 import 'package:survey_stunting/controllers/layout_controller.dart';
-import 'package:survey_stunting/controllers/sinkronisasi_controller.dart';
 import 'package:survey_stunting/pages/Beranda/beranda_screen.dart';
 import 'package:survey_stunting/pages/Export-Survey/export_survey_screen.dart';
 import 'package:survey_stunting/pages/Profil/profil_screen.dart';
@@ -23,7 +22,6 @@ class Layout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final syncController = SinkronisasiController();
     return GetBuilder<LayoutController>(
       builder: (controller) {
         return Scaffold(
@@ -74,14 +72,7 @@ class Layout extends StatelessWidget {
                               ),
                               backgroundColor: primaryColor,
                               onPressed: () async {
-                                var loading = true.obs;
-                                Size size = MediaQuery.of(context).size;
-                                synchronizeDialog(loading, size);
-                                await syncController.synchronize();
-                                loading.value = false;
-                                await Future.delayed(
-                                    const Duration(seconds: 3));
-                                Navigator.pop(context);
+                                await synchronizeDialog(context);
                               },
                             ),
                           ],
