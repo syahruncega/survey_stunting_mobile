@@ -4,11 +4,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:survey_stunting/consts/colors.dart';
 import 'package:survey_stunting/controllers/layout_controller.dart';
+import 'package:survey_stunting/controllers/sinkronisasi_controller.dart';
 import 'package:survey_stunting/pages/Beranda/beranda_screen.dart';
 import 'package:survey_stunting/pages/Export-Survey/export_survey_screen.dart';
 import 'package:survey_stunting/pages/Profil/profil_screen.dart';
 import 'package:survey_stunting/pages/Survey/survey_screen.dart';
 import '../../consts/globals_lib.dart' as global;
+import '../components/synchronize_dialog.dart';
 
 class Layout extends StatelessWidget {
   Layout({Key? key}) : super(key: key);
@@ -21,6 +23,7 @@ class Layout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final syncController = SinkronisasiController();
     return GetBuilder<LayoutController>(
       builder: (controller) {
         return Scaffold(
@@ -70,8 +73,15 @@ class Layout extends StatelessWidget {
                                 color: Colors.white,
                               ),
                               backgroundColor: primaryColor,
-                              onPressed: () {
-                                //call function to sync data;
+                              onPressed: () async {
+                                var loading = true.obs;
+                                Size size = MediaQuery.of(context).size;
+                                synchronizeDialog(loading, size);
+                                await syncController.synchronize();
+                                loading.value = false;
+                                await Future.delayed(
+                                    const Duration(seconds: 3));
+                                Navigator.pop(context);
                               },
                             ),
                           ],
