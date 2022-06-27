@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
+import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:excel/excel.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
@@ -106,8 +107,7 @@ class ExportSurveyController extends GetxController {
 
   static Future saveFile(String name, Uint8List bytes, String ext) async {
     await _checkPermission();
-    await FileSaver.instance
-        .saveFile(name, bytes, ext, mimeType: MimeType.MICROSOFTEXCEL);
+    DocumentFileSavePlus.saveFile(bytes, name + '.' + ext, "application/xlsx");
   }
 
   Future exportSurvey() async {
