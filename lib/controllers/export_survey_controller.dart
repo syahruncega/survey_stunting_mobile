@@ -355,38 +355,43 @@ class ExportSurveyController extends GetxController {
     kartuKeluargaField.cellStyle = cellStyle;
     kartuKeluargaField.value = 'kartu_keluarga';
 
-    var alamatField = sheetObject
+    var kepalaKeluargaField = sheetObject
         .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 0));
+    kepalaKeluargaField.cellStyle = cellStyle;
+    kepalaKeluargaField.value = 'nama_kepala_keluarga';
+
+    var alamatField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 0));
     alamatField.cellStyle = cellStyle;
     alamatField.value = 'alamat';
 
     var provinsiIdField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 0));
+        .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 0));
     provinsiIdField.cellStyle = cellStyle;
     provinsiIdField.value = 'provinsi_id';
 
     var kabupatenField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 0));
+        .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 0));
     kabupatenField.cellStyle = cellStyle;
     kabupatenField.value = 'kabupaten_kota_id';
 
     var kecamatanField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 0));
+        .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 0));
     kecamatanField.cellStyle = cellStyle;
     kecamatanField.value = 'kecamatan_id';
 
     var kelurahanField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 0));
+        .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 0));
     kelurahanField.cellStyle = cellStyle;
     kelurahanField.value = 'desa_kelurahan_id';
 
     var nomorHpField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 0));
+        .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: 0));
     nomorHpField.cellStyle = cellStyle;
     nomorHpField.value = 'nomor_hp';
 
     var kodeUnikField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: 0));
+        .cell(CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: 0));
     kodeUnikField.cellStyle = cellStyle;
     kodeUnikField.value = 'kode_unik';
 
@@ -405,36 +410,41 @@ class ExportSurveyController extends GetxController {
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 2, rowIndex: 1 + rowIndex))
-          .value = s.responden!.alamat;
+          .value = s.responden!.namaKepalaKeluarga;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 3, rowIndex: 1 + rowIndex))
-          .value = s.responden!.provinsiId;
+          .value = s.responden!.alamat;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 4, rowIndex: 1 + rowIndex))
-          .value = s.responden!.kabupatenKotaId;
+          .value = s.responden!.provinsiId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 5, rowIndex: 1 + rowIndex))
-          .value = s.responden!.kecamatanId;
+          .value = s.responden!.kabupatenKotaId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 6, rowIndex: 1 + rowIndex))
-          .value = s.responden!.desaKelurahanId;
+          .value = s.responden!.kecamatanId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 7, rowIndex: 1 + rowIndex))
-          .value = s.responden!.nomorHp;
+          .value = s.responden!.desaKelurahanId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 8, rowIndex: 1 + rowIndex))
+          .value = s.responden!.nomorHp;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 9, rowIndex: 1 + rowIndex))
           .value = s.responden!.kodeUnik;
 
       rowIndex++;
