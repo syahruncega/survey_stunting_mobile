@@ -128,7 +128,7 @@ class DbHelper {
   static Future<ProfileModel?> getProfileByUserId(Store store,
       {required int userId}) async {
     var profiles = await getProfile(store);
-    return profiles.singleWhere((profile) => profile.user.targetId == userId);
+    return profiles.lastWhere((profile) => profile.user.targetId == userId);
   }
 
   /// param :

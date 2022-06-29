@@ -10,6 +10,8 @@ import 'package:survey_stunting/routes/route_name.dart';
 import 'package:survey_stunting/services/dio_client.dart';
 import 'package:survey_stunting/services/handle_errors.dart';
 
+import '../models/user_profile.dart';
+
 class LoginController extends GetxController {
   final username = TextEditingController();
   final password = TextEditingController();
@@ -43,7 +45,14 @@ class LoginController extends GetxController {
         GetStorage().write("token", session?.token);
         GetStorage().write("userId", session?.data.id);
         GetStorage().write("session", sessionToJson(session!));
-        Get.offAllNamed(RouteName.layout);
+
+        UserProfile? profileData =
+            await DioClient().getProfile(token: session.token);
+        if (profileData == null) {
+          Get.toNamed(RouteName.lengkapiProfil);
+        } else {
+          Get.offAllNamed(RouteName.layout);
+        }
       } on DioError catch (e) {
         if (e.response?.statusCode == 401) {
           errorScackbar('Nama pengguna atau kata sandi salah');

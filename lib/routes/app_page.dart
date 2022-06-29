@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:survey_stunting/bindings/detail_survey_binding.dart';
 import 'package:survey_stunting/bindings/isi_survey_binding.dart';
 import 'package:survey_stunting/bindings/layout_binding.dart';
+import 'package:survey_stunting/bindings/lengkapi_profil_binding.dart';
 import 'package:survey_stunting/bindings/login_binding.dart';
 import 'package:survey_stunting/bindings/tambah_responden_binding.dart';
 import 'package:survey_stunting/bindings/ubah_akun_binding.dart';
@@ -17,6 +18,7 @@ import 'package:survey_stunting/pages/layout.dart';
 import 'package:survey_stunting/routes/route_name.dart';
 
 import '../bindings/sinkronisasi_binding.dart';
+import '../pages/Lengkapi-Profil/lengkapi_profil_screen.dart';
 
 class AppPage {
   static final pages = [
@@ -59,6 +61,11 @@ class AppPage {
       name: RouteName.sinkronisasi,
       page: () => const SinkronisasiScreen(),
       binding: SinkronisasiBinding(),
+    ),
+    GetPage(
+      name: RouteName.lengkapiProfil,
+      page: () => const LengkapiProfilScreen(),
+      binding: LengkapiProfilBinding(),
     ),
   ];
 }

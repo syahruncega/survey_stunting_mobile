@@ -637,6 +637,9 @@ class DioClient {
       return profileFromJson(response.data);
     } on DioError catch (e) {
       log('failed to get profile data, $e');
+      if (e.response?.statusCode == 404) {
+        return null;
+      }
       rethrow;
     }
   }

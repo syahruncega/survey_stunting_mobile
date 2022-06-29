@@ -8,4 +8,5 @@ abstract class RouteName {
   static const tambahResponden = "/tambah-responden";
   static const isiSurvey = "/isi-survey";
   static const detailSurvey = "/detail-survey";
+  static const lengkapiProfil = "/lengkapi-profil";
 }
