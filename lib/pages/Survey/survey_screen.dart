@@ -11,6 +11,7 @@ import 'package:survey_stunting/components/filled_text_field.dart';
 import 'package:survey_stunting/components/not_found.dart';
 import 'package:survey_stunting/components/rounded_button.dart';
 import 'package:survey_stunting/components/survey_item.dart';
+import 'package:survey_stunting/consts/colors.dart';
 import 'package:survey_stunting/controllers/survey_controller.dart';
 import 'package:survey_stunting/models/survey_parameters.dart';
 import 'package:survey_stunting/routes/route_name.dart';
@@ -172,6 +173,9 @@ class SurveyScreen extends StatelessWidget {
                     children: [
                       Flexible(
                         child: CustomElevatedButton(
+                          icon: SvgPicture.asset(
+                              "assets/icons/bulk/profile-2user.svg",
+                              color: Colors.white),
                           label: "Tambah Responden",
                           onPressed: () =>
                               Get.toNamed(RouteName.tambahResponden),
@@ -180,6 +184,10 @@ class SurveyScreen extends StatelessWidget {
                       const SizedBox(width: 10),
                       Obx(
                         () => CustomElevatedButton(
+                          icon: SvgPicture.asset(
+                              "assets/icons/outline/note.svg",
+                              color: Colors.white),
+                          backgroundColor: primaryColor,
                           isLoading: surveyController.isLoadingFilter.value,
                           label: "Tambah Survey",
                           width: size.width * 0.4,
