@@ -186,6 +186,7 @@ class SurveyController extends GetxController {
         await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
     int profileId = profileData!.id!;
     if (validate()) {
+      isLoading.value = true;
       if (isConnect) {
         debugPrint('create survey online');
         try {
@@ -199,7 +200,26 @@ class SurveyController extends GetxController {
               await DioClient().createSurvey(token: token, data: data);
           isLoading.value = false;
           if (response != null) {
+            //For optimistic UI
+            surveys.insert(
+              0,
+              Survey(
+                id: response[0].id,
+                kodeUnik: response[0].kodeUnik,
+                kodeUnikResponden: response[0].kodeUnikResponden,
+                namaSurveyId: response[0].namaSurveyId,
+                profileId: response[0].profileId,
+                isSelesai: response[0].isSelesai,
+                kategoriSelanjutnya: response[0].kategoriSelanjutnya,
+                namaSurvey: response[0].namaSurvey,
+                responden: response[0].responden,
+                profile: response[0].profile,
+                createdAt: response[0].createdAt,
+                updatedAt: response[0].updatedAt,
+              ),
+            );
             successScackbar("Survey berhasil disimpan");
+            Get.back(closeOverlays: true);
             Get.toNamed(RouteName.isiSurvey, arguments: [response[0], false]);
           } else {
             errorScackbar("Survey sudah pernah dibuat sebelumnya");
@@ -239,6 +259,7 @@ class SurveyController extends GetxController {
             arguments: [Survey.fromJson(data.toJson()), false]);
         successScackbar("Survey berhasil disimpan");
       }
+      isLoading.value = false;
     }
   }
 

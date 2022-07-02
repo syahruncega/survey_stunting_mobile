@@ -71,7 +71,7 @@ class ExportSurveyScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: size.height * 0.01,
+                  height: size.height * 0.02,
                 ),
                 Obx(
                   () => CustomElevatedButton(
@@ -85,7 +85,7 @@ class ExportSurveyScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: size.height * 0.01,
+                  height: size.height * 0.02,
                 ),
                 Obx(
                   () => Visibility(
