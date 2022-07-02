@@ -220,6 +220,7 @@ class SurveyScreen extends StatelessWidget {
                                           surveyController.respondenError.value,
                                       keyboardType: TextInputType.text,
                                       controller: surveyController.respondenTEC,
+                                      maxItemsShow: 15,
                                       items: surveyController.responden
                                           .map((e) => {
                                                 "label": e.kartuKeluarga +

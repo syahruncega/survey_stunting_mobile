@@ -7,6 +7,7 @@ class FilledAutocomplete extends StatelessWidget {
   final List<Map<String, dynamic>> items;
   final String? hintText;
   final String? title;
+  final int? maxItemsShow;
   final TextInputAction? textInputAction;
   final TextInputType? keyboardType;
   final bool enabled;
@@ -23,6 +24,7 @@ class FilledAutocomplete extends StatelessWidget {
     this.keyboardType,
     this.enabled = true,
     this.errorText,
+    this.maxItemsShow,
     Key? key,
   }) : super(key: key);
 
@@ -98,16 +100,22 @@ class FilledAutocomplete extends StatelessWidget {
             ),
             controller: controller,
           ),
-          suggestionsCallback: (pattern) => items.where((element) =>
-              element["label"].toLowerCase().contains(pattern.toLowerCase())),
+          getImmediateSuggestions: false,
+          onSuggestionSelected: onSuggestionSelected,
+          suggestionsCallback: (pattern) {
+            var data = items.where((element) =>
+                element["label"].toLowerCase().contains(pattern.toLowerCase()));
+            if (maxItemsShow != null) {
+              return data.take(maxItemsShow!);
+            }
+            return data;
+          },
           itemBuilder: (_, Map<String, dynamic> suggestion) => InkWell(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
               child: Text(suggestion["label"]),
             ),
           ),
-          getImmediateSuggestions: false,
-          onSuggestionSelected: onSuggestionSelected,
           noItemsFoundBuilder: (context) => const Padding(
             padding: EdgeInsets.all(20),
             child: Text("Item tidak ditemukan"),
