@@ -6,6 +6,7 @@ import 'package:survey_stunting/components/error_scackbar.dart';
 import 'package:survey_stunting/models/akun.dart';
 import 'package:survey_stunting/models/auth.dart';
 import 'package:survey_stunting/models/detail_survey.dart';
+import 'package:survey_stunting/models/institusi.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
 import 'package:survey_stunting/models/jawaban_survey.dart';
 import 'package:survey_stunting/models/kabupaten.dart';
@@ -62,6 +63,28 @@ class DioClient {
     } on DioError catch (e) {
       log('Error Logout: $e');
       rethrow;
+    }
+  }
+
+  Future<List<Institusi>?> getInstitusi({
+    required String token,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        "/institusi",
+        options: Options(headers: {
+          "authorization": "Bearer $token",
+        }),
+      );
+      return institusiFromJson(getData(response.data));
+    } on DioError catch (e) {
+      log('Error get institusi: $e');
+      if (e.response?.statusCode == 404) {
+        log('data institusi not found');
+        return null;
+      } else {
+        rethrow;
+      }
     }
   }
 
@@ -135,8 +158,6 @@ class DioClient {
     } on DioError catch (e) {
       log('Error create survey: $e');
       if (e.response?.statusCode == 422 || e.response?.statusCode == 302) {
-        errorScackbar("Syncroinize Survey gagal! \n"
-            "Survey sudah pernah dibuat sebelumnya");
         return null;
       } else {
         rethrow;
@@ -616,6 +637,9 @@ class DioClient {
       return profileFromJson(response.data);
     } on DioError catch (e) {
       log('failed to get profile data, $e');
+      if (e.response?.statusCode == 404) {
+        return null;
+      }
       rethrow;
     }
   }
@@ -669,6 +693,7 @@ class DioClient {
     required String kelurahan,
     required String nomorHp,
     String? email,
+    required String institusiId,
     required String updatedAt,
   }) async {
     try {
@@ -688,6 +713,7 @@ class DioClient {
             'desa_kelurahan': kelurahan,
             'nomor_hp': nomorHp,
             'email': email,
+            'institusi_id': institusiId,
             'updated_at': updatedAt,
           }));
       if (response.statusCode == 200) {

@@ -5,12 +5,14 @@ import 'package:flutter/foundation.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:survey_stunting/models/akun.dart';
+import 'package:survey_stunting/models/localDb/institusi_model.dart';
 import 'package:survey_stunting/models/localDb/provinsi_model.dart';
 import 'package:survey_stunting/models/provinsi.dart';
 import 'package:survey_stunting/models/responden.dart';
 
 import '../components/error_scackbar.dart';
 import '../components/success_scackbar.dart';
+import '../models/institusi.dart';
 import '../models/jawaban_soal.dart';
 import '../models/jawaban_survey.dart';
 import '../models/kabupaten.dart';
@@ -46,6 +48,7 @@ class SyncDataController {
 
   Future syncData({required bool syncAll}) async {
     if (syncAll) {
+      await syncDataInstitusi();
       await syncDataUser();
       await syncDataProfile();
       await syncDataProvinsi();
@@ -59,6 +62,7 @@ class SyncDataController {
       await syncResponden();
       await syncSurvey();
     } else {
+      await syncDataInstitusi();
       await syncDataUser();
       await syncDataProfile();
       await syncNamaSurvey();
@@ -71,6 +75,7 @@ class SyncDataController {
   }
 
   Future pullDataFromServer() async {
+    await pullInstitusi();
     await pullUser();
     await pullProfile();
     await pullProvinsi();
@@ -84,6 +89,32 @@ class SyncDataController {
     await pullResponden(isCreate: true);
     await pullSurvey(isCreate: true);
     await pullJawabanSurvey();
+  }
+
+  Future syncDataInstitusi() async {
+    try {
+      // Get institusi form server
+      List<Institusi>? institusi = await DioClient().getInstitusi(token: token);
+      // Get institusi local
+      List<InstitusiModel> localInstitusi = await DbHelper.getInstitusi(store_);
+      if (institusi != null) {
+        if (localInstitusi.isNotEmpty) {
+          int index = 0;
+          for (var item in institusi) {
+            if (item.id != localInstitusi[index].id) {
+              await pullInstitusi(institusiData: [item]);
+            }
+            index += 1;
+          }
+        } else {
+          await pullInstitusi(institusiData: institusi);
+        }
+      } else {
+        debugPrint("institusi data not found on server");
+      }
+    } on DioError catch (e) {
+      handleError(error: e);
+    }
   }
 
   Future syncDataProfile() async {
@@ -607,7 +638,9 @@ class SyncDataController {
         debugPrint("survey data not found on server");
       }
     } on DioError catch (e) {
-      handleError(error: e);
+      if (e.response?.statusCode != 404) {
+        handleError(error: e);
+      }
     }
   }
 
@@ -632,6 +665,7 @@ class SyncDataController {
           nomorHp: profileData.nomorHp,
           email: profileData.email,
           userId: int.parse(profileData.userId),
+          institusiId: profileData.institusiId,
           lastModified: DateTime.now().toString(),
         );
         await DbHelper.putProfile(store_, profile);
@@ -658,6 +692,7 @@ class SyncDataController {
       kelurahan: localProfile.kelurahanId,
       nomorHp: localProfile.nomorHp,
       email: localProfile.email,
+      institusiId: localProfile.institusi.targetId.toString(),
       updatedAt: localProfile.lastModified,
     );
 
@@ -731,6 +766,47 @@ class SyncDataController {
           continue;
         }
       }
+    }
+  }
+
+  Future pullInstitusi({List<Institusi>? institusiData}) async {
+    List<InstitusiModel> nInstitusi = [];
+    if (institusiData == null) {
+      try {
+        // Get institusi form server
+        List<Institusi>? institusi =
+            await DioClient().getInstitusi(token: token);
+        if (institusi != null) {
+          for (var item in institusi) {
+            InstitusiModel institusiModel = InstitusiModel(
+              id: item.id,
+              nama: item.nama,
+              alamat: item.alamat,
+              lastModified: DateTime.now().toString(),
+            );
+            nInstitusi.add(institusiModel);
+          }
+          await DbHelper.deleteAllInstitusi(store_);
+          await DbHelper.putInstitusi(store_, nInstitusi);
+          debugPrint("institusi data has been pulled from server to local");
+        } else {
+          debugPrint("institusi data not found on server");
+        }
+      } on DioError catch (e) {
+        handleError(error: e);
+      }
+    } else {
+      for (var ins in institusiData) {
+        InstitusiModel institusiModel = InstitusiModel(
+          id: ins.id,
+          nama: ins.nama,
+          alamat: ins.alamat,
+          lastModified: DateTime.now().toString(),
+        );
+        nInstitusi.add(institusiModel);
+      }
+      await DbHelper.putInstitusi(store_, nInstitusi);
+      debugPrint("institusi data has been pulled from server to local");
     }
   }
 
@@ -1072,6 +1148,7 @@ class SyncDataController {
               id: nama.id,
               nama: nama.nama,
               tipe: nama.tipe,
+              isAktif: nama.isAktif,
               lastModified: DateTime.now().toString(),
             );
             nNamaSurvey.add(namaSurveyModel);
@@ -1091,6 +1168,7 @@ class SyncDataController {
           id: nama.id,
           nama: nama.nama,
           tipe: nama.tipe,
+          isAktif: nama.isAktif,
           lastModified: DateTime.now().toString(),
         );
         nNamaSurvey.add(namaSurveyModel);
@@ -1115,6 +1193,7 @@ class SyncDataController {
               id: id,
               kodeUnik: int.parse(resp.kodeUnik!),
               kartuKeluarga: int.parse(resp.kartuKeluarga),
+              namaKepalaKeluarga: resp.namaKepalaKeluarga,
               alamat: resp.alamat,
               nomorHp: resp.nomorHp.toString(),
               provinsiId: int.parse(resp.provinsiId),
@@ -1142,6 +1221,7 @@ class SyncDataController {
             id: id,
             kodeUnik: resp.kodeUnik,
             kartuKeluarga: resp.kartuKeluarga,
+            namaKepalaKeluarga: resp.namaKepalaKeluarga,
             alamat: resp.alamat,
             nomorHp: resp.nomorHp.toString(),
             provinsiId: resp.provinsiId,
@@ -1165,6 +1245,7 @@ class SyncDataController {
             id: idToUpdate,
             kodeUnik: item.kodeUnik,
             kartuKeluarga: item.kartuKeluarga,
+            namaKepalaKeluarga: item.namaKepalaKeluarga,
             alamat: item.alamat,
             nomorHp: item.nomorHp,
             provinsiId: item.provinsiId,
@@ -1216,7 +1297,9 @@ class SyncDataController {
           debugPrint("survey data not found on server");
         }
       } on DioError catch (e) {
-        handleError(error: e);
+        if (e.response?.statusCode != 404) {
+          handleError(error: e);
+        }
       }
     } else {
       if (isCreate) {
@@ -1239,17 +1322,21 @@ class SyncDataController {
       } else {
         for (var item in surveyData) {
           int idToUpdate = await getCurrentSurveyId(kodeUnik: item.kodeUnik);
-          SurveyModel surveyModel = SurveyModel(
-            id: idToUpdate,
-            kodeUnik: item.kodeUnik,
-            kategoriSelanjutnya: item.kategoriSelanjutnya,
-            isSelesai: item.isSelesai,
-            namaSurveyId: item.namaSurveyId,
-            profileId: item.profileId,
-            kodeUnikRespondenId: item.kodeUnikRespondenId,
-            lastModified: item.lastModified,
-          );
-          nSurvey.add(surveyModel);
+          if (idToUpdate != -1) {
+            SurveyModel surveyModel = SurveyModel(
+              id: idToUpdate,
+              kodeUnik: item.kodeUnik,
+              kategoriSelanjutnya: item.kategoriSelanjutnya,
+              isSelesai: item.isSelesai,
+              namaSurveyId: item.namaSurveyId,
+              profileId: item.profileId,
+              kodeUnikRespondenId: item.kodeUnikRespondenId,
+              lastModified: item.lastModified,
+            );
+            nSurvey.add(surveyModel);
+          } else {
+            errorScackbar('Survey tidak ditemukan');
+          }
         }
         await DbHelper.putSurvey(store_, nSurvey);
         debugPrint("survey data has been pulled from server to local[update]");
@@ -1361,10 +1448,14 @@ class SyncDataController {
   }
 
   Future<int> getCurrentSurveyId({required int kodeUnik}) async {
-    SurveyModel survey = await DbHelper.getSurveyByKodeUnik(Objectbox.store_,
+    SurveyModel? survey = await DbHelper.getSurveyByKodeUnik(Objectbox.store_,
         kodeUnik: kodeUnik);
-    int id = survey.id!;
-    return id;
+    if (survey != null) {
+      int id = survey.id!;
+      return id;
+    } else {
+      return -1;
+    }
   }
 
   Future<int> getIdJawabanSurvey() async {

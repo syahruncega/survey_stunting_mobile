@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:survey_stunting/components/error_scackbar.dart';
 import 'package:survey_stunting/components/filled_text_field.dart';
 import 'package:survey_stunting/components/success_scackbar.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';
@@ -457,28 +458,36 @@ class IsiSurveyController extends GetxController {
     } else {
       debugPrint('update survey local');
       int idToUpdate = await getSurveyId(kodeUnik: int.parse(survey.kodeUnik!));
-      var surveyModel = SurveyModel(
-        id: idToUpdate,
-        kategoriSelanjutnya: kategoriSoal
-            .firstWhere((element) =>
-                element.urutan ==
-                (survey.isSelesai == "0" ? currentOrder.toString() : "1"))
-            .id,
-        kodeUnikRespondenId: kodeUnikResponden,
-        namaSurveyId: namaSurveyId,
-        profileId: profileId,
-        kodeUnik: int.parse(survey.kodeUnik!),
-        isSelesai: int.parse(survey.isSelesai),
-        lastModified: DateTime.now().toString(),
-      );
-      await DbHelper.putSurvey(Objectbox.store_, [surveyModel]);
+      if (idToUpdate != -1) {
+        var surveyModel = SurveyModel(
+          id: idToUpdate,
+          kategoriSelanjutnya: kategoriSoal
+              .firstWhere((element) =>
+                  element.urutan ==
+                  (survey.isSelesai == "0" ? currentOrder.toString() : "1"))
+              .id,
+          kodeUnikRespondenId: kodeUnikResponden,
+          namaSurveyId: namaSurveyId,
+          profileId: profileId,
+          kodeUnik: int.parse(survey.kodeUnik!),
+          isSelesai: int.parse(survey.isSelesai),
+          lastModified: DateTime.now().toString(),
+        );
+        await DbHelper.putSurvey(Objectbox.store_, [surveyModel]);
+      } else {
+        errorScackbar('Survey tidak ditemukan');
+      }
     }
   }
 
   Future<int> getSurveyId({required int kodeUnik}) async {
     var survey = await DbHelper.getSurveyByKodeUnik(Objectbox.store_,
         kodeUnik: kodeUnik);
-    return survey.id!;
+    if (survey != null) {
+      return survey.id!;
+    } else {
+      return -1;
+    }
   }
 
   Future refreshPage() async {

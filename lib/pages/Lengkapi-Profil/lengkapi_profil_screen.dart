@@ -4,32 +4,18 @@ import 'package:get/get.dart';
 import 'package:survey_stunting/components/filled_autocomplete.dart';
 import 'package:survey_stunting/components/filled_text_field.dart';
 import 'package:survey_stunting/consts/colors.dart';
-import 'package:survey_stunting/controllers/ubah_profil_controller.dart';
 
-class UbahProfilScreen extends StatelessWidget {
-  const UbahProfilScreen({Key? key}) : super(key: key);
+import '../../controllers/lengkapi_profil_controller.dart';
+
+class LengkapiProfilScreen extends StatelessWidget {
+  const LengkapiProfilScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return GetBuilder<UbahProfilController>(
+    return GetBuilder<LengkapiProfilController>(
       builder: (controller) {
         return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leading: IconButton(
-              onPressed: () => Get.back(),
-              icon: SvgPicture.asset(
-                "assets/icons/outline/arrow-left.svg",
-                color: Theme.of(context).textTheme.headline1!.color,
-              ),
-            ),
-            // title: Text(
-            //   "Dahboard",
-            //   style: Theme.of(context).textTheme.titleLarge,
-            // ),
-          ),
           body: Obx(
             () => controller.isLoaded.value == false
                 ? const Center(
@@ -44,8 +30,10 @@ class UbahProfilScreen extends StatelessWidget {
                           crossAxisAlignment: WrapCrossAlignment.start,
                           runSpacing: size.height * 0.02,
                           children: [
-                            Text("Update Profil",
-                                style: Theme.of(context).textTheme.headline1),
+                            Center(
+                              child: Text("Lengkapi Profil",
+                                  style: Theme.of(context).textTheme.headline1),
+                            ),
                             SizedBox(
                               height: size.height * 0.06,
                             ),

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
+import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:excel/excel.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
@@ -106,8 +107,7 @@ class ExportSurveyController extends GetxController {
 
   static Future saveFile(String name, Uint8List bytes, String ext) async {
     await _checkPermission();
-    await FileSaver.instance
-        .saveFile(name, bytes, ext, mimeType: MimeType.MICROSOFTEXCEL);
+    DocumentFileSavePlus.saveFile(bytes, name + '.' + ext, "application/xlsx");
   }
 
   Future exportSurvey() async {
@@ -355,38 +355,43 @@ class ExportSurveyController extends GetxController {
     kartuKeluargaField.cellStyle = cellStyle;
     kartuKeluargaField.value = 'kartu_keluarga';
 
-    var alamatField = sheetObject
+    var kepalaKeluargaField = sheetObject
         .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 0));
+    kepalaKeluargaField.cellStyle = cellStyle;
+    kepalaKeluargaField.value = 'nama_kepala_keluarga';
+
+    var alamatField = sheetObject
+        .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 0));
     alamatField.cellStyle = cellStyle;
     alamatField.value = 'alamat';
 
     var provinsiIdField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 0));
+        .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 0));
     provinsiIdField.cellStyle = cellStyle;
     provinsiIdField.value = 'provinsi_id';
 
     var kabupatenField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 0));
+        .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 0));
     kabupatenField.cellStyle = cellStyle;
     kabupatenField.value = 'kabupaten_kota_id';
 
     var kecamatanField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 0));
+        .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 0));
     kecamatanField.cellStyle = cellStyle;
     kecamatanField.value = 'kecamatan_id';
 
     var kelurahanField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 0));
+        .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 0));
     kelurahanField.cellStyle = cellStyle;
     kelurahanField.value = 'desa_kelurahan_id';
 
     var nomorHpField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 0));
+        .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: 0));
     nomorHpField.cellStyle = cellStyle;
     nomorHpField.value = 'nomor_hp';
 
     var kodeUnikField = sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: 0));
+        .cell(CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: 0));
     kodeUnikField.cellStyle = cellStyle;
     kodeUnikField.value = 'kode_unik';
 
@@ -405,36 +410,41 @@ class ExportSurveyController extends GetxController {
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 2, rowIndex: 1 + rowIndex))
-          .value = s.responden!.alamat;
+          .value = s.responden!.namaKepalaKeluarga;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 3, rowIndex: 1 + rowIndex))
-          .value = s.responden!.provinsiId;
+          .value = s.responden!.alamat;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 4, rowIndex: 1 + rowIndex))
-          .value = s.responden!.kabupatenKotaId;
+          .value = s.responden!.provinsiId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 5, rowIndex: 1 + rowIndex))
-          .value = s.responden!.kecamatanId;
+          .value = s.responden!.kabupatenKotaId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 6, rowIndex: 1 + rowIndex))
-          .value = s.responden!.desaKelurahanId;
+          .value = s.responden!.kecamatanId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 7, rowIndex: 1 + rowIndex))
-          .value = s.responden!.nomorHp;
+          .value = s.responden!.desaKelurahanId;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(
               columnIndex: 8, rowIndex: 1 + rowIndex))
+          .value = s.responden!.nomorHp;
+
+      sheetObject
+          .cell(CellIndex.indexByColumnRow(
+              columnIndex: 9, rowIndex: 1 + rowIndex))
           .value = s.responden!.kodeUnik;
 
       rowIndex++;
@@ -464,7 +474,7 @@ class ExportSurveyController extends GetxController {
         exportStatus.value = 'completed';
         if (exportStatus.value == 'completed') {
           successScackbar(
-              'Export berhasil, Lokasi : /Android/data/com.pkg.name/files/');
+              'Export berhasil, Lokasi : File Manager(Pengelola File)/Download/');
         }
       }
     } else {
@@ -744,16 +754,22 @@ class ExportSurveyController extends GetxController {
     if (isConnect) {
       debugPrint('get nama survey online');
       try {
-        List<NamaSurvey>? response =
+        List<NamaSurvey>? nResponse =
             await DioClient().getNamaSurvey(token: token);
-        namaSurvey.value = response!;
+        if (nResponse != null) {
+          List<NamaSurvey> response =
+              nResponse.where((element) => element.isAktif == 1).toList();
+          namaSurvey.value = response;
+        }
       } on DioError catch (e) {
         handleError(error: e);
       }
     } else {
       debugPrint('get nama survey offline');
-      List<NamaSurveyModel>? localNamaSurvey =
+      List<NamaSurveyModel>? nLocalNamaSurvey =
           await DbHelper.getNamaSurvey(Objectbox.store_);
+      List<NamaSurveyModel> localNamaSurvey =
+          nLocalNamaSurvey.where((element) => element.isAktif == 1).toList();
       namaSurvey.value = localNamaSurvey;
     }
   }

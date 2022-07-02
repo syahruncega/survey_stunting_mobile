@@ -15,6 +15,7 @@ class Responden {
     this.id,
     this.kodeUnik,
     required this.kartuKeluarga,
+    required this.namaKepalaKeluarga,
     required this.alamat,
     required this.provinsiId,
     required this.kabupatenKotaId,
@@ -29,6 +30,7 @@ class Responden {
   int? id;
   dynamic kodeUnik;
   String kartuKeluarga;
+  String namaKepalaKeluarga;
   String alamat;
   String provinsiId;
   String kabupatenKotaId;
@@ -43,6 +45,7 @@ class Responden {
         id: json["id"],
         kodeUnik: json["kode_unik"],
         kartuKeluarga: json["kartu_keluarga"],
+        namaKepalaKeluarga: json["nama_kepala_keluarga"],
         alamat: json["alamat"],
         provinsiId: json["provinsi_id"],
         kabupatenKotaId: json["kabupaten_kota_id"],
@@ -64,6 +67,7 @@ class Responden {
         "id": id,
         "kode_unik": kodeUnik,
         "kartu_keluarga": kartuKeluarga,
+        "nama_kepala_keluarga": namaKepalaKeluarga,
         "alamat": alamat,
         "provinsi_id": provinsiId,
         "kabupaten_kota_id": kabupatenKotaId,

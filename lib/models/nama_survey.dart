@@ -16,6 +16,7 @@ class NamaSurvey {
     required this.id,
     required this.nama,
     required this.tipe,
+    required this.isAktif,
     this.deletedAt,
     this.createdAt,
     this.updatedAt,
@@ -24,6 +25,7 @@ class NamaSurvey {
   int id;
   String nama;
   String tipe;
+  int isAktif;
   DateTime? deletedAt;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -32,6 +34,7 @@ class NamaSurvey {
         id: json["id"],
         nama: json["nama"],
         tipe: json["tipe"],
+        isAktif: int.parse(json["is_aktif"]),
         deletedAt: json["deleted_at"] != null
             ? DateTime.parse(json["deleted_at"])
             : null,
@@ -47,6 +50,7 @@ class NamaSurvey {
         "id": id,
         "nama": nama,
         "tipe": tipe,
+        "is_aktif": isAktif,
         "deleted_at": deletedAt?.toIso8601String(),
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),

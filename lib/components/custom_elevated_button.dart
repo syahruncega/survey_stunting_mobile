@@ -7,6 +7,7 @@ class CustomElevatedButton extends StatelessWidget {
   final bool isLoading;
   final double? width;
   final double? height;
+  final Widget icon;
 
   const CustomElevatedButton({
     required this.label,
@@ -15,6 +16,7 @@ class CustomElevatedButton extends StatelessWidget {
     this.isLoading = false,
     this.width = double.infinity,
     this.height = 40,
+    required this.icon,
     Key? key,
   }) : super(key: key);
 
@@ -22,7 +24,26 @@ class CustomElevatedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: BoxConstraints.tightFor(width: width, height: height),
-      child: ElevatedButton(
+      child: ElevatedButton.icon(
+        label: !isLoading
+            ? Text(
+                label,
+                style: const TextStyle(fontSize: 13),
+              )
+            : const Text(
+                'Mohon tunggu..',
+                style: TextStyle(fontSize: 13),
+              ),
+        icon: isLoading
+            ? SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).textTheme.button?.color,
+                  strokeWidth: 2,
+                ),
+              )
+            : icon,
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           primary: backgroundColor ?? Theme.of(context).colorScheme.secondary,
@@ -30,20 +51,6 @@ class CustomElevatedButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: isLoading
-            ? SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).textTheme.button?.color,
-                  strokeWidth: 2,
-                ),
-              )
-            : Text(
-                label,
-                style: Theme.of(context).textTheme.button,
-                textAlign: TextAlign.center,
-              ),
       ),
     );
   }

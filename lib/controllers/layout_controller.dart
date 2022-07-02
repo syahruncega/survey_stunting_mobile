@@ -3,6 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/state_manager.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_stunting/controllers/sync_data_controller.dart';
 
@@ -38,6 +41,11 @@ class LayoutController extends GetxController {
 
   void changeTabIndex(int index) {
     tabIndex = index;
+    if (tabIndex == 3) {
+      global.isFabVisible.value = false;
+    } else {
+      global.isFabVisible.value = true;
+    }
     update();
   }
 
@@ -57,8 +65,10 @@ class LayoutController extends GetxController {
       bool firstInstall_ = await firstInstall();
       if (firstInstall_) {
         debugPrint('FIRST_INSTALL');
-        SyncDataController(store_: Objectbox.store_).pullDataFromServer();
+        showDialog(scaffoldKey.currentContext!);
+        await SyncDataController(store_: Objectbox.store_).pullDataFromServer();
         prefs.setBool('first_install', false);
+        Navigator.pop(scaffoldKey.currentContext!);
       } else {
         debugPrint('ALREADY INSTALLED BEFORE');
         SyncDataController(store_: Objectbox.store_).syncData(syncAll: false);
@@ -79,5 +89,32 @@ class LayoutController extends GetxController {
       canExit = true;
     });
     super.onInit();
+  }
+
+  void showDialog(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    Get.defaultDialog(
+      title: '',
+      barrierDismissible: false,
+      content: WillPopScope(
+        onWillPop: () async => false,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Mohon tunggu..',
+                  style: TextStyle(
+                    fontFamily: GoogleFonts.inter().fontFamily,
+                    fontWeight: FontWeight.bold,
+                  )),
+              LottieBuilder.asset(
+                'assets/anim/loading-dot.json',
+                width: size.width * 0.2,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

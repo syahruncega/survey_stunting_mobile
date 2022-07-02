@@ -35,6 +35,7 @@ class Data {
   Data({
     required this.id,
     required this.userId,
+    required this.institusiId,
     required this.namaLengkap,
     required this.jenisKelamin,
     required this.tempatLahir,
@@ -53,6 +54,7 @@ class Data {
 
   int id;
   String userId;
+  String institusiId;
   String namaLengkap;
   String jenisKelamin;
   String tempatLahir;
@@ -71,6 +73,7 @@ class Data {
   factory Data.fromJson(Map<String, dynamic> json) => Data(
         id: json["id"],
         userId: json["user_id"],
+        institusiId: json["institusi_id"],
         namaLengkap: json["nama_lengkap"],
         jenisKelamin: json["jenis_kelamin"],
         tempatLahir: json["tempat_lahir"],
@@ -92,6 +95,7 @@ class Data {
   Map<String, dynamic> toJson() => {
         "id": id,
         "user_id": userId,
+        "institusi_id": institusiId,
         "nama_lengkap": namaLengkap,
         "jenis_kelamin": jenisKelamin,
         "tempat_lahir": tempatLahir,

@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:survey_stunting/consts/colors.dart';
 import 'package:survey_stunting/controllers/layout_controller.dart';
 import 'package:survey_stunting/pages/Beranda/beranda_screen.dart';
 import 'package:survey_stunting/pages/Export-Survey/export_survey_screen.dart';
 import 'package:survey_stunting/pages/Profil/profil_screen.dart';
 import 'package:survey_stunting/pages/Survey/survey_screen.dart';
+import '../../consts/globals_lib.dart' as global;
+import '../components/synchronize_dialog.dart';
 
 class Layout extends StatelessWidget {
   Layout({Key? key}) : super(key: key);
@@ -43,10 +46,42 @@ class Layout extends StatelessWidget {
             //   style: Theme.of(context).textTheme.titleLarge,
             // ),
           ),
-          body: WillPopScope(
-            onWillPop: controller.onWillPop,
-            child: SafeArea(
-              child: screens[controller.tabIndex],
+          body: Obx(
+            () => WillPopScope(
+              onWillPop: controller.onWillPop,
+              child: Stack(
+                children: <Widget>[
+                  SafeArea(
+                    child: screens[controller.tabIndex],
+                  ),
+                  AnimatedOpacity(
+                    opacity: global.isFabVisible.value ? 1 : 0,
+                    duration: const Duration(milliseconds: 400),
+                    child: Center(
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 5),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            FloatingActionButton(
+                              child: SvgPicture.asset(
+                                "assets/icons/outline/cloud-data-sync.svg",
+                                width: 28,
+                                height: 28,
+                                color: Colors.white,
+                              ),
+                              backgroundColor: primaryColor,
+                              onPressed: () async {
+                                await synchronizeDialog(context);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           drawer: const Drawer(),

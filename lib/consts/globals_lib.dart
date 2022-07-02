@@ -10,6 +10,7 @@ import '../services/dio_client.dart';
 
 var offlineMode = false.obs;
 var syncCompleted = false.obs;
+var isFabVisible = true.obs;
 
 /// Return true if connected
 Future<bool> isConnected() async {

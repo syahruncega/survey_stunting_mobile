@@ -12,6 +12,7 @@ class RespondenModel {
   int? id = 0;
   int kodeUnik;
   int kartuKeluarga;
+  String namaKepalaKeluarga;
   String alamat;
   String? nomorHp;
   int? provinsiId;
@@ -26,6 +27,7 @@ class RespondenModel {
     required this.kodeUnik,
     required this.kartuKeluarga,
     required this.alamat,
+    required this.namaKepalaKeluarga,
     this.nomorHp,
     this.provinsiId,
     this.kabupatenId,
@@ -48,6 +50,7 @@ class RespondenModel {
         kodeUnik: int.parse(json["kode_unik"]),
         kartuKeluarga: int.parse(json["kartu_keluarga"]),
         alamat: json["alamat"],
+        namaKepalaKeluarga: json["nama_kepala_keluarga"],
         provinsiId: int.parse(json["provinsi_id"]),
         kabupatenId: int.parse(json["kabupaten_kota_id"]),
         kecamatanId: int.parse(json["kecamatan_id"]),
@@ -62,6 +65,7 @@ class RespondenModel {
         "kode_unik": kodeUnik.toString(),
         "kartu_keluarga": kartuKeluarga.toString(),
         "alamat": alamat.toString(),
+        "nama_kepala_keluarga": namaKepalaKeluarga.toString(),
         "provinsi_id": provinsi.targetId.toString(),
         "kabupaten_kota_id": kabupaten.targetId.toString(),
         "kecamatan_id": kecamatan.targetId.toString(),

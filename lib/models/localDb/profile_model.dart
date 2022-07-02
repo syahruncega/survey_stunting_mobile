@@ -1,4 +1,5 @@
 import 'package:objectbox/objectbox.dart';
+import 'package:survey_stunting/models/localDb/institusi_model.dart';
 import 'package:survey_stunting/models/localDb/survey_model.dart';
 import 'package:survey_stunting/models/localDb/user_model.dart';
 
@@ -18,6 +19,7 @@ class ProfileModel {
   String nomorHp;
   String? email;
   int? userId;
+  String? institusiId;
   String lastModified;
 
   ProfileModel({
@@ -34,10 +36,13 @@ class ProfileModel {
     required this.nomorHp,
     this.email,
     this.userId,
+    this.institusiId,
     required this.lastModified,
   });
 
   final user = ToOne<UserModel>();
+
+  final institusi = ToOne<InstitusiModel>();
 
   @Backlink()
   final survey = ToMany<SurveyModel>();
@@ -45,6 +50,7 @@ class ProfileModel {
   Map<String, dynamic> toJson() => {
         "id": id,
         "user_id": userId.toString(),
+        "institusi_id": institusi.toString(),
         "nama_lengkap": namaLengkap.toString(),
         "jenis_kelamin": jenisKelamin.toString(),
         "tempat_lahir": tempatLahir.toString(),

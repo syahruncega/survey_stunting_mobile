@@ -6,8 +6,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:survey_stunting/consts/colors.dart';
 import 'package:survey_stunting/routes/app_page.dart';
 import 'package:survey_stunting/routes/route_name.dart';
+import 'package:survey_stunting/services/dio_client.dart';
 
 import 'models/localDb/helpers.dart';
+import 'models/user_profile.dart';
 
 late final Objectbox objectbox;
 Future<void> main() async {
@@ -159,6 +161,15 @@ class WrapperState extends State<Wrapper> {
     final session = box.read('token');
     if (session == null) {
       Get.offAllNamed(RouteName.login);
+    } else {
+      await checkProfile(session);
+    }
+  }
+
+  Future checkProfile(final token) async {
+    UserProfile? profileData = await DioClient().getProfile(token: token);
+    if (profileData == null) {
+      Get.toNamed(RouteName.lengkapiProfil);
     } else {
       Get.offAllNamed(RouteName.layout);
     }

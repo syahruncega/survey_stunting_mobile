@@ -8,12 +8,14 @@ class NamaSurveyModel {
   int? id = 0;
   String nama;
   String tipe;
+  int isAktif;
   String lastModified;
 
   NamaSurveyModel({
     this.id,
     required this.nama,
     required this.tipe,
+    required this.isAktif,
     required this.lastModified,
   });
 
@@ -27,6 +29,7 @@ class NamaSurveyModel {
         "id": id,
         "nama": nama.toString(),
         "tipe": tipe.toString(),
+        "is_aktif": isAktif.toString(),
         "updated_at": lastModified.toString(),
       };
 }
