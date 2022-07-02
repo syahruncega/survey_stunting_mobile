@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:survey_stunting/models/detail_survey.dart';
 import 'package:survey_stunting/models/jawaban_soal.dart';

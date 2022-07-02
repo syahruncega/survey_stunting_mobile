@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:survey_stunting/components/error_scackbar.dart';
 import 'package:survey_stunting/models/akun.dart';
 import 'package:survey_stunting/models/auth.dart';
 import 'package:survey_stunting/models/detail_survey.dart';

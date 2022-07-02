@@ -1,11 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:survey_stunting/components/custom_elevated_button_icon.dart';
 import 'package:survey_stunting/controllers/isi_survey.controller.dart';
-import 'package:survey_stunting/models/jawaban_survey.dart';
 
 class IsiSurveyScreen extends StatelessWidget {
   const IsiSurveyScreen({Key? key}) : super(key: key);
