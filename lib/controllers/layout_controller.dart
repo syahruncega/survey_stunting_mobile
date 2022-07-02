@@ -1,12 +1,15 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:survey_stunting/controllers/sync_data_controller.dart';
+import 'package:survey_stunting/models/session.dart';
 
 import '../models/localDb/helpers.dart';
 
@@ -16,6 +19,9 @@ class LayoutController extends GetxController {
   var scaffoldKey = GlobalKey<ScaffoldState>();
   DateTime backButtonPressedTime = DateTime.now();
   bool canExit = false;
+
+  Session session = Session.fromJson(jsonDecode(GetStorage().read("session")));
+  RxBool isDarkTheme = false.obs;
 
   var tabIndex = 0;
 

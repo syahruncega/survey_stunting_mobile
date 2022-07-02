@@ -106,6 +106,7 @@ class ProfilScreen extends StatelessWidget {
                 onConfirm: () async {
                   GetStorage().remove("token");
                   GetStorage().remove("session");
+                  GetStorage().remove("userId");
                   await DbHelper.deleteAll(Objectbox.store_);
                   Get.offAllNamed(RouteName.login);
                 },
