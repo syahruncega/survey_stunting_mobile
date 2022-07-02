@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:survey_stunting/components/custom_elevated_button.dart';
 import 'package:survey_stunting/components/filled_autocomplete.dart';
 import 'package:survey_stunting/components/not_found.dart';
 import 'package:survey_stunting/components/survey_item.dart';
@@ -73,39 +74,14 @@ class ExportSurveyScreen extends StatelessWidget {
                   height: size.height * 0.01,
                 ),
                 Obx(
-                  () => ElevatedButton.icon(
-                    onPressed: () async {
-                      await exportSurveyController.exportToExcelNew();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      primary: Theme.of(context).colorScheme.secondary,
-                    ),
-                    icon: exportSurveyController.exportStatus.value ==
-                            'completed'
-                        ? SvgPicture.asset("assets/icons/outline/import.svg",
-                            color: Colors.white)
-                        : Container(
-                            width: 24,
-                            height: 24,
-                            padding: const EdgeInsets.all(2.0),
-                            child: const CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 3,
-                            ),
-                          ),
-                    label:
-                        exportSurveyController.exportStatus.value == 'completed'
-                            ? Text(
-                                "Export",
-                                style: Theme.of(context).textTheme.button,
-                              )
-                            : Text(
-                                "Exporting..",
-                                style: Theme.of(context).textTheme.button,
-                              ),
+                  () => CustomElevatedButton(
+                    label: "Export",
+                    onPressed: () async =>
+                        await exportSurveyController.exportToExcelNew(),
+                    icon: SvgPicture.asset("assets/icons/outline/import.svg",
+                        color: Colors.white),
+                    isLoading: exportSurveyController.exportStatus.value !=
+                        'completed',
                   ),
                 ),
                 SizedBox(
