@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:survey_stunting/components/error_scackbar.dart';
 import 'package:survey_stunting/components/success_scackbar.dart';
+import 'package:survey_stunting/models/localDb/kategori_soal_model.dart';
 import 'package:survey_stunting/models/nama_survey.dart';
 import 'package:survey_stunting/models/responden.dart';
 import 'package:survey_stunting/models/session.dart';
@@ -223,6 +224,10 @@ class SurveyController extends GetxController {
           errorScackbar('Survey sudah ada');
           return;
         }
+        List<KategoriSoalModel> kategoriSoal =
+            await DbHelper.getKategoriSoalByNamaSurveyId(Objectbox.store_,
+                namaSurveyId: namaSurveyId);
+        int nextCategori = kategoriSoal[0].id!;
         int uniqueCode = await generateUniqueCode();
         SurveyModel data = SurveyModel(
           kodeUnik: uniqueCode,
@@ -230,7 +235,7 @@ class SurveyController extends GetxController {
           namaSurveyId: namaSurveyId,
           profileId: profileId,
           isSelesai: 0,
-          kategoriSelanjutnya: 11,
+          kategoriSelanjutnya: nextCategori,
           lastModified: DateTime.now().toString(),
         );
         await DbHelper.putSurvey(Objectbox.store_, [data]);

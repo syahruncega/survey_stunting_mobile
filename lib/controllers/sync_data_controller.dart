@@ -629,10 +629,10 @@ class SyncDataController {
                 isCreate: false);
           }
         } else {
-          // local user not exist
+          // local survey not exist
           // pull data from server
           debugPrint("local data not exist. pull data from server");
-          pullSurvey(isCreate: true);
+          pullSurvey(isCreate: true, syncJawabanSurvey: true);
         }
       } else {
         debugPrint("survey data not found on server");
@@ -1265,13 +1265,17 @@ class SyncDataController {
     }
   }
 
-  Future pullSurvey(
-      {List<SurveyModel>? surveyData, required bool isCreate}) async {
+  Future pullSurvey({
+    List<SurveyModel>? surveyData,
+    required bool isCreate,
+    bool syncJawabanSurvey = false,
+  }) async {
     int id = await getIdSurvey();
     List<SurveyModel> nSurvey = [];
     if (surveyData == null) {
       try {
-        // Get responden form server
+        List<int> kodeUnikSurvey = [];
+        // Get survey form server
         List<Survey>? survey = await DioClient().getSurvey(token: token);
         if (survey != null) {
           for (var surv in survey) {
@@ -1289,10 +1293,14 @@ class SyncDataController {
               lastModified: surv.updatedAt.toString(),
             );
             nSurvey.add(surveyModel);
+            kodeUnikSurvey.add(int.parse(surv.kodeUnik!));
             id += 1;
           }
           await DbHelper.putSurvey(store_, nSurvey);
           debugPrint("survey data has been pulled from server to local");
+          if (syncJawabanSurvey) {
+            await pullJawabanSurvey(kodeUnik: kodeUnikSurvey);
+          }
         } else {
           debugPrint("survey data not found on server");
         }
