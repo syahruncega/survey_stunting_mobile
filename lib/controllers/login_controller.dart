@@ -56,6 +56,8 @@ class LoginController extends GetxController {
       } on DioError catch (e) {
         if (e.response?.statusCode == 401) {
           errorScackbar('Nama pengguna atau kata sandi salah');
+        } else if (e.response?.statusCode == 403) {
+          errorScackbar('Akun tidak diizinkan menggunakan mobile version');
         } else {
           handleError(error: e);
         }

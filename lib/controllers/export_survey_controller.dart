@@ -474,7 +474,7 @@ class ExportSurveyController extends GetxController {
         exportStatus.value = 'completed';
         if (exportStatus.value == 'completed') {
           successScackbar(
-              'Export berhasil, Lokasi : /Android/data/com.pkg.name/files/');
+              'Export berhasil, Lokasi : File Manager(Pengelola File)/Download/');
         }
       }
     } else {

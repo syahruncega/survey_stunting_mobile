@@ -1297,7 +1297,9 @@ class SyncDataController {
           debugPrint("survey data not found on server");
         }
       } on DioError catch (e) {
-        handleError(error: e);
+        if (e.response?.statusCode != 404) {
+          handleError(error: e);
+        }
       }
     } else {
       if (isCreate) {
