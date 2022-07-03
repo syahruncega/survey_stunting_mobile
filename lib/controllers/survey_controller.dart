@@ -202,22 +202,8 @@ class SurveyController extends GetxController {
             //For optimistic UI
             surveys.insert(
               0,
-              Survey(
-                id: response[0].id,
-                kodeUnik: response[0].kodeUnik,
-                kodeUnikResponden: response[0].kodeUnikResponden,
-                namaSurveyId: response[0].namaSurveyId,
-                profileId: response[0].profileId,
-                isSelesai: response[0].isSelesai,
-                kategoriSelanjutnya: response[0].kategoriSelanjutnya,
-                namaSurvey: response[0].namaSurvey,
-                responden: response[0].responden,
-                profile: response[0].profile,
-                createdAt: response[0].createdAt,
-                updatedAt: response[0].updatedAt,
-              ),
+              response[0],
             );
-            successScackbar("Survey berhasil disimpan");
             Get.back(closeOverlays: true);
             Get.toNamed(RouteName.isiSurvey, arguments: [response[0], false]);
           } else {
