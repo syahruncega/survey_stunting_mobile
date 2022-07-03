@@ -1,5 +1,4 @@
 import 'package:objectbox/objectbox.dart';
-import 'package:survey_stunting/models/localDb/profile_model.dart';
 
 @Entity()
 class UserModel {

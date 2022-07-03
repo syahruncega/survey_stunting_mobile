@@ -23,21 +23,17 @@ class CustomElevatedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: BoxConstraints.tightFor(width: width, height: height),
+      constraints:
+          BoxConstraints.tightForFinite(width: width!, height: height!),
       child: ElevatedButton.icon(
-        label: !isLoading
-            ? Text(
-                label,
-                style: const TextStyle(fontSize: 13),
-              )
-            : const Text(
-                'Mohon tunggu..',
-                style: TextStyle(fontSize: 13),
-              ),
+        label: Text(
+          label,
+          style: Theme.of(context).textTheme.button,
+        ),
         icon: isLoading
             ? SizedBox(
-                width: 20,
-                height: 20,
+                width: 24,
+                height: 24,
                 child: CircularProgressIndicator(
                   color: Theme.of(context).textTheme.button?.color,
                   strokeWidth: 2,

@@ -1,6 +1,4 @@
 import 'package:objectbox/objectbox.dart';
-
-import 'jawaban_survey_model.dart';
 import 'soal_model.dart';
 
 @Entity()

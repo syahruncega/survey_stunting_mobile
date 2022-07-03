@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
@@ -7,14 +5,10 @@ import 'package:get_storage/get_storage.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:survey_stunting/components/error_scackbar.dart';
 import 'package:survey_stunting/components/success_scackbar.dart';
-import 'package:survey_stunting/models/kabupaten.dart';
-import 'package:survey_stunting/models/kecamatan.dart';
-import 'package:survey_stunting/models/kelurahan.dart';
 import 'package:survey_stunting/models/localDb/helpers.dart';
 import 'package:survey_stunting/models/localDb/institusi_model.dart';
 import 'package:survey_stunting/models/localDb/kecamatan_model.dart';
 import 'package:survey_stunting/models/localDb/provinsi_model.dart';
-import 'package:survey_stunting/models/provinsi.dart';
 import 'package:survey_stunting/models/user_profile.dart';
 import 'package:survey_stunting/services/dio_client.dart';
 import 'package:survey_stunting/services/handle_errors.dart';

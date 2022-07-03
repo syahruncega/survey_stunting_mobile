@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:math';
 
@@ -187,6 +186,7 @@ class SurveyController extends GetxController {
         await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
     int profileId = profileData!.id!;
     if (validate()) {
+      isLoading.value = true;
       if (isConnect) {
         debugPrint('create survey online');
         try {
@@ -200,7 +200,12 @@ class SurveyController extends GetxController {
               await DioClient().createSurvey(token: token, data: data);
           isLoading.value = false;
           if (response != null) {
-            successScackbar("Survey berhasil disimpan");
+            //For optimistic UI
+            surveys.insert(
+              0,
+              response[0],
+            );
+            Get.back(closeOverlays: true);
             Get.toNamed(RouteName.isiSurvey, arguments: [response[0], false]);
           } else {
             errorScackbar("Survey sudah pernah dibuat sebelumnya");
@@ -244,6 +249,7 @@ class SurveyController extends GetxController {
             arguments: [Survey.fromJson(data.toJson()), false]);
         successScackbar("Survey berhasil disimpan");
       }
+      isLoading.value = false;
     }
   }
 

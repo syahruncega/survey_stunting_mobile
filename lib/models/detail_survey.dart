@@ -3,7 +3,6 @@
 //     final detailSurvey = detailSurveyFromJson(jsonString);
 
 import 'dart:convert';
-import 'package:survey_stunting/models/jawaban_survey.dart';
 import 'package:survey_stunting/models/soal.dart';
 
 List<DetailSurvey> detailSurveyFromJson(String str) => List<DetailSurvey>.from(
