@@ -17,6 +17,7 @@ import 'package:survey_stunting/routes/route_name.dart';
 import 'package:survey_stunting/services/dio_client.dart';
 import 'package:survey_stunting/services/handle_errors.dart';
 
+import '../components/loading_dialog.dart';
 import '../models/localDb/helpers.dart';
 import '../models/localDb/nama_survey_mode.dart';
 import '../models/localDb/responden_model.dart';
@@ -182,7 +183,8 @@ class SurveyController extends GetxController {
     return true;
   }
 
-  Future submitForm() async {
+  Future submitForm(BuildContext context) async {
+    loadingDialog(context);
     await checkConnection();
     var profileData =
         await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
@@ -210,9 +212,11 @@ class SurveyController extends GetxController {
             Get.back(closeOverlays: true);
             Get.toNamed(RouteName.isiSurvey, arguments: [response[0], false]);
           } else {
+            loadingDialog(context, show: false);
             errorScackbar("Survey sudah pernah dibuat sebelumnya");
           }
         } on DioError catch (e) {
+          loadingDialog(context, show: false);
           if (e.response?.statusCode == 302) {
             errorScackbar(
                 'Survey dengan responden tersebut sudah ada. Silahkan pilih responden lain.');
