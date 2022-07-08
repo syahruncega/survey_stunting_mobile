@@ -319,7 +319,7 @@ class SurveyScreen extends StatelessWidget {
                                         title: "Hapus",
                                         backgroundColor: Colors.red.shade400,
                                         onPressed: () async {
-                                          Get.back();
+                                          Get.back(closeOverlays: true);
                                           await surveyController.deleteSurvey(
                                             kodeUnik: surveyController
                                                 .surveys[index].kodeUnik!,

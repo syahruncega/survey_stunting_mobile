@@ -184,12 +184,12 @@ class SurveyController extends GetxController {
   }
 
   Future submitForm(BuildContext context) async {
-    loadingDialog(context);
     await checkConnection();
     var profileData =
         await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
     int profileId = profileData!.id!;
     if (validate()) {
+      loadingDialog(context);
       isLoading.value = true;
       if (isConnect) {
         debugPrint('create survey online');
@@ -251,6 +251,7 @@ class SurveyController extends GetxController {
         );
         await DbHelper.putSurvey(Objectbox.store_, [data]);
         isLoading.value = false;
+        Get.back(closeOverlays: true);
         Get.toNamed(RouteName.isiSurvey,
             arguments: [Survey.fromJson(data.toJson()), false]);
         successScackbar("Survey berhasil disimpan");
