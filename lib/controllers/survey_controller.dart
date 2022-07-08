@@ -83,7 +83,8 @@ class SurveyController extends GetxController {
             : searchSurveyEditingController.text,
       );
       inspect(localSurveys_);
-      surveys = localSurveys_.map((e) => Survey.fromJson(e.toJson())).toList();
+      surveys = localSurveys_.map((e) => Survey.fromJson(e.toJson())).toList()
+        ..sort((a, b) => b.id!.compareTo(a.id!));
     }
     isLoading.value = false;
   }
