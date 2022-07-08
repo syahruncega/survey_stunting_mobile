@@ -26,9 +26,11 @@ Future synchronizeDialog(BuildContext context) async {
           children: <Widget>[
             SizedBox(
               child: LottieBuilder.asset(
-                loading.value
+                syncController.synchronizeStatus.value == 'waiting'
                     ? 'assets/anim/sync-data-phone.json'
-                    : 'assets/anim/loading-completed.json',
+                    : syncController.synchronizeStatus.value == 'successfully'
+                        ? 'assets/anim/loading-completed.json'
+                        : 'assets/anim/error-anim.json',
                 width: size.width * 0.5,
               ),
             ),
