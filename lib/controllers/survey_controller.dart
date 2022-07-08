@@ -125,7 +125,8 @@ class SurveyController extends GetxController {
           element.deletedAt == "null" || element.deletedAt == null);
       responden = tempLocalResponden
           .map((e) => Responden.fromJson(e.toJson()))
-          .toList();
+          .toList()
+        ..sort((a, b) => b.id!.compareTo(a.id!));
     }
   }
 
