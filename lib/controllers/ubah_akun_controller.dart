@@ -75,7 +75,12 @@ class UbahAkunController extends GetxController {
             errorScackbar('Update akun gagal, Username sudah ada.');
           }
         } on DioError catch (e) {
-          handleError(error: e);
+          akunUpdateStatus.value = 'failed';
+          if (e.response?.statusCode == 302 || e.response?.statusCode == 422) {
+            errorScackbar('Username sudah ada');
+          } else {
+            handleError(error: e);
+          }
         }
       } else {
         debugPrint('update akun local');

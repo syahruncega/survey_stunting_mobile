@@ -7,11 +7,14 @@ import 'package:survey_stunting/consts/colors.dart';
 import 'package:survey_stunting/routes/app_page.dart';
 import 'package:survey_stunting/routes/route_name.dart';
 import 'package:survey_stunting/services/dio_client.dart';
+import '../consts/globals_lib.dart' as global;
 
 import 'models/localDb/helpers.dart';
+import 'models/localDb/profile_model.dart';
 import 'models/user_profile.dart';
 
 late final Objectbox objectbox;
+late bool isConnect;
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await GetStorage.init();
@@ -159,19 +162,33 @@ class WrapperState extends State<Wrapper> {
     await GetStorage.init();
     final box = Get.find<GetStorage>();
     final session = box.read('token');
+    final userId = box.read('userId');
     if (session == null) {
       Get.offAllNamed(RouteName.login);
     } else {
-      await checkProfile(session);
+      await checkProfile(session, userId);
     }
   }
 
-  Future checkProfile(final token) async {
-    UserProfile? profileData = await DioClient().getProfile(token: token);
-    if (profileData == null) {
-      Get.toNamed(RouteName.lengkapiProfil);
+  Future checkProfile(final token, final userId) async {
+    await checkConnection();
+    if (isConnect) {
+      //get profile from server
+      UserProfile? profileData = await DioClient().getProfile(token: token);
+      if (profileData == null) {
+        Get.toNamed(RouteName.lengkapiProfil);
+      } else {
+        Get.offAllNamed(RouteName.layout);
+      }
     } else {
-      Get.offAllNamed(RouteName.layout);
+      //get profile from local
+      ProfileModel? data =
+          await DbHelper.getProfileByUserId(Objectbox.store_, userId: userId);
+      if (data == null) {
+        Get.toNamed(RouteName.lengkapiProfil);
+      } else {
+        Get.offAllNamed(RouteName.layout);
+      }
     }
   }
 
@@ -182,5 +199,9 @@ class WrapperState extends State<Wrapper> {
         child: CircularProgressIndicator(),
       ),
     );
+  }
+
+  Future checkConnection() async {
+    isConnect = await global.isConnected();
   }
 }

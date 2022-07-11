@@ -6,6 +6,7 @@ import 'package:survey_stunting/components/custom_elevated_button.dart';
 import 'package:survey_stunting/components/custom_icon_button.dart';
 import 'package:survey_stunting/components/filled_autocomplete.dart';
 import 'package:survey_stunting/components/filled_text_field.dart';
+import 'package:survey_stunting/components/loading_dialog.dart';
 import 'package:survey_stunting/components/not_found.dart';
 import 'package:survey_stunting/components/rounded_button.dart';
 import 'package:survey_stunting/components/survey_item.dart';
@@ -201,7 +202,10 @@ class SurveyScreen extends StatelessWidget {
                                   Theme.of(context).colorScheme.primary,
                               confirmTextColor: Colors.white,
                               title: "Filter",
-                              onConfirm: surveyController.submitForm,
+                              // onConfirm: surveyController.submitForm,
+                              onConfirm: () {
+                                surveyController.submitForm(context);
+                              },
                               onCancel: () {},
                               textCancel: "Batal",
                               cancelTextColor:
@@ -315,7 +319,7 @@ class SurveyScreen extends StatelessWidget {
                                         title: "Hapus",
                                         backgroundColor: Colors.red.shade400,
                                         onPressed: () async {
-                                          Get.back();
+                                          Get.back(closeOverlays: true);
                                           await surveyController.deleteSurvey(
                                             kodeUnik: surveyController
                                                 .surveys[index].kodeUnik!,

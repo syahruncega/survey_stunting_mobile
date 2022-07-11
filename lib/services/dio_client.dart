@@ -670,7 +670,7 @@ class DioClient {
           data: jsonEncode({'username': username, 'password': password}));
       if (response.statusCode == 200) {
         return true;
-      } else if (response.statusCode == 422) {
+      } else if (response.statusCode == 422 || response.statusCode == 302) {
         return false;
       }
     } on DioError catch (e) {
