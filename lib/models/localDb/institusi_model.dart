@@ -6,14 +6,14 @@ class InstitusiModel {
   @Id(assignable: true)
   int? id = 0;
   String nama;
-  String alamat;
+  String? alamat;
   String? deletedAt;
   String lastModified;
 
   InstitusiModel({
     this.id,
     required this.nama,
-    required this.alamat,
+    this.alamat,
     this.deletedAt,
     required this.lastModified,
   });

@@ -14,7 +14,7 @@ class Institusi {
   Institusi({
     required this.id,
     required this.nama,
-    required this.alamat,
+    this.alamat,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
@@ -22,7 +22,7 @@ class Institusi {
 
   int id;
   String nama;
-  String alamat;
+  String? alamat;
   dynamic createdAt;
   dynamic updatedAt;
   dynamic deletedAt;

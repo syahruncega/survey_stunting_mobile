@@ -243,7 +243,14 @@ class IsiSurveyController extends GetxController {
           }
           return FormBuilderFieldOption(
             value: jawabanSurvey,
-            child: Text(value.jawaban),
+            child: value.isLainnya == "0"
+                ? Text(value.jawaban)
+                : FilledTextField(
+                    initialValue: jawabanSurvey.jawabanLainnya ?? "",
+                    onChanged: (value) => jawabanSurvey.jawabanLainnya = value,
+                    hintText: "Lainnya",
+                    onSaved: (value) {},
+                  ),
           );
         }).toList();
 
